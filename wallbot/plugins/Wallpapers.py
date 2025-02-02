@@ -77,7 +77,7 @@ async def wallchannnl(client, message):
     await message.delete()
 
 @wbot.on_message(filters.private & filters.regex("Group 🎵") & pyro_cooldown.wait(10)) 
-async def wallchannnl(client, message):
+async def wallgropnl(client, message):
     m2 = await message.reply_text("https://t.me/XBOTS_X")
     await asyncio.sleep(DLE_TIME)
     await m2.delete()

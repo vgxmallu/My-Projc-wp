@@ -17,3 +17,4 @@ SUDO_USERS = [int(_x) for _x in SUDO_USERS]
 
 AUTH_CHATS = environ.get("AUTH_CHATS").split()
 AUTH_CHATS = [int(_x) for _x in AUTH_CHATS]
+LOG_CHANNEL = environ.get("LOG_CHANNEL")

@@ -69,14 +69,14 @@ async def wall_hhstart(client, message):
     await client.send_message(LOG_CHANNEL, MW.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     return
 
-@wbot.on_message(filters.private & filters.regex("Channel 📣")) 
+@wbot.on_message(filters.private & filters.regex("Group 🎵")) 
 async def wallchannnl(client, message):
     m2 = await message.reply_text("https://t.me/music_X_galaxy")
     await asyncio.sleep(DLE_TIME)
     await m2.delete()
     await message.delete()
 
-@wbot.on_message(filters.private & filters.regex("Group 🎵")) 
+@wbot.on_message(filters.private & filters.regex("Channel 📣")) 
 async def wallgropnl(client, message):
     m2 = await message.reply_text("https://t.me/XBOTS_X")
     await asyncio.sleep(DLE_TIME)
@@ -108,6 +108,32 @@ async def close_myr2(client, message):
     await asyncio.sleep(4)
     await ae.delete()
     await message.delete()
+
+@wbot.on_message(filters.private & filters.regex("Cats 🐈"))
+async def wall_anim(client, message):
+    r = requests.get("https://api.thecatapi.com/v1/images/search")
+    if r.status_code == 200:
+        data = r.json()
+        cat_url = data[0]["url"]
+        if cat_url.endswith(".gif"):
+            await message.reply_photo(
+                photo=cat_url, 
+                caption="meow 😺😼", 
+                reply_markup=ReplyKeyboardMarkup(
+                    [[
+                        "Cats 🐈"
+                    ],[
+                        "⬅️", "✖️Close✖️"
+                    ]], 
+                    resize_keyboard=True
+                ) 
+            ) 
+            await message.reply_text(morew)
+            await asyncio.sleep(4)
+            await message.delete()
+    else:
+        await message.reply_text("Failed to refresh cat picture 🙀")
+    
 
 #=================ZEDGE-WALLPEPERS======================
 

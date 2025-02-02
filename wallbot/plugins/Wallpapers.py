@@ -10,6 +10,7 @@ from wallbot.images_db.walls import ANIM_PICS, ANIMALS_PICS, LOGO_PICS, CARS_PIC
 from config import LOG_CHANNEL
 from wallbot.untils import pyro_cooldown
 
+DLE_TIME = 240
 
 
 #°st
@@ -35,7 +36,7 @@ async def wall_hhstart(client, message):
             resize_keyboard=True
         ) 
     )
-    await asyncio.sleep(10)
+    await asyncio.sleep(DLE_TIME)
     await message.delete()
     await client.send_message(LOG_CHANNEL, MW.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     return
@@ -106,7 +107,9 @@ ________________________________
 ```
 """
 
-
+morew = """
+If you want More Wallpapers 🏞️like this?, just touch below button again..;)
+"""
 @wbot.on_message(filters.private & filters.regex("🔽") | filters.private & filters.regex("🛟 CATEGORIES 🛟") | filters.private & filters.regex("Page 2️⃣") | filters.private & filters.regex("Page 1️⃣") | filters.private & filters.regex("➖➖➖➖➖➖➖➖➖➖")) 
 async def delete(client, message):
     await message.delete()
@@ -120,7 +123,7 @@ async def wallpaper(client, message):
             [[
                "Page 1️⃣", "✖️Close✖️", "➡️"
             ],[
-                "🛟 CATEGORIES 🛟"
+                "🧿 CATEGORIES 🧿"
             ],[
                 "Anime 🧚", "Animals 🦁", "Logos ♑"
             ],[
@@ -128,15 +131,16 @@ async def wallpaper(client, message):
             ],[
                 "Entertainment 🧑‍🎤", "Game 🎮", "Love ❤️"
             ],[
-                "Music 🎵", "Nature 🍃", "Sayings 📝"   
+                "Music 🎵", "Nature 🍃", "Sayings 📝"  
+            ],[
+                "➖➖➖➖➖➖➖➖➖➖"
             ]], 
             resize_keyboard=True
         ) 
     )
-    w1 = await message.reply_text(wall_tottal)
-    
+    #w1 = await message.reply_text(wall_tottal)
     await message.delete()
-    await asyncio.sleep(1200)
+    await asyncio.sleep(DLE_TIME)
     await m1.delete()
     await w1.delete()
 
@@ -160,12 +164,14 @@ async def wallpaper2(client, message):
                 "Entertainment 🧑‍🎤", "Game 🎮", "Love ❤️"
             ],[
                 "Music 🎵", "Nature 🍃", "Sayings 📝"
+            ],[
+                "➖➖➖➖➖➖➖➖➖➖"
             ]], 
             resize_keyboard=True
         ) 
     ) 
     await message.delete()
-    await asyncio.sleep(1200)
+    await asyncio.sleep(DLE_TIME)
     await m2.delete()
 
 @wbot.on_message(filters.private & filters.regex("➡️"))
@@ -175,7 +181,7 @@ async def wallpaper3(client, message):
         caption=cap_wall.format(message.from_user.mention), 
         reply_markup=ReplyKeyboardMarkup(
             [[
-                "⬅️", "✖️Close✖️", "Page 2️⃣"
+                "Page 2️⃣", "✖️Close✖️", "⬅️"
             ],[
                 "🛟 CATEGORIES 🛟"
             ],[
@@ -184,12 +190,14 @@ async def wallpaper3(client, message):
                 "Pattern ☸️", "Technology 📱", "Designs ✨"
             ],[
                 "Holiday 🏖️", "People 🧑‍🤝‍🧑", "Scenery" #".Others 🤷"
+            ],[
+                "➖➖➖➖➖➖➖➖➖➖"
             ]], 
             resize_keyboard=True
         ) 
     )
     await message.delete()
-    await asyncio.sleep(1200)
+    await asyncio.sleep(DLE_TIME)
     await m3.delete()
     
 #=============================PG1=============================
@@ -206,6 +214,7 @@ async def wall_anim(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Animals 🦁") & pyro_cooldown.wait(10))
@@ -221,6 +230,7 @@ async def wall_animal(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Logos ♑") & pyro_cooldown.wait(10))
@@ -236,6 +246,7 @@ async def wall_logo(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Car&Bike 🏎️") & pyro_cooldown.wait(10))
@@ -251,6 +262,7 @@ async def wall_car(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Drownings 🎑") & pyro_cooldown.wait(10))
@@ -266,6 +278,7 @@ async def wall_drowi(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Funny 😄") & pyro_cooldown.wait(10))
@@ -281,6 +294,10 @@ async def wall_funny(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
+    await asyncio.sleep(4)
+    await message.delete()
+
 @wbot.on_message(filters.private & filters.regex("Entertainment 🧑‍🎤") & pyro_cooldown.wait(10))
 async def wall_endet(client, message):
     await message.reply_photo(
@@ -294,6 +311,7 @@ async def wall_endet(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Gamee 🎮") & pyro_cooldown.wait(10))
@@ -309,6 +327,7 @@ async def wall_game(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Love ❤️") & pyro_cooldown.wait(10))
@@ -324,6 +343,7 @@ async def wall_lov(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Music 🎵") & pyro_cooldown.wait(10))
@@ -339,6 +359,7 @@ async def wall_music(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Nature 🍃") & pyro_cooldown.wait(10))
@@ -354,6 +375,10 @@ async def wall_natur(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
+    await asyncio.sleep(4)
+    await message.delete()
+    
 @wbot.on_message(filters.private & filters.regex("Sayings 📝") & pyro_cooldown.wait(10))
 async def wall_sayin(client, message):
     await message.reply_photo(
@@ -367,6 +392,7 @@ async def wall_sayin(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 #========≠==================PG2====================
@@ -383,6 +409,7 @@ async def wall_space(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete() 
 @wbot.on_message(filters.private & filters.regex("Comics 🦸") & pyro_cooldown.wait(10))
@@ -398,6 +425,7 @@ async def wall_comi(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Sports ⚽") & pyro_cooldown.wait(10))
@@ -413,6 +441,7 @@ async def wall_spor(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Pattern ☸️") & pyro_cooldown.wait(10))
@@ -428,6 +457,7 @@ async def wall_pattt(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Technology 📱") & pyro_cooldown.wait(10))
@@ -443,6 +473,7 @@ async def wall_texhno(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Designs ✨") & pyro_cooldown.wait(10))
@@ -458,6 +489,7 @@ async def wall_desins(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Hollyday 🏖️") & pyro_cooldown.wait(10))
@@ -473,6 +505,7 @@ async def wall_hollyd(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("People 🧑‍🤝‍🧑") & pyro_cooldown.wait(10))
@@ -488,6 +521,7 @@ async def wall_peopl(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 @wbot.on_message(filters.private & filters.regex("Others 🤷") & pyro_cooldown.wait(10))
@@ -503,6 +537,7 @@ async def wall_other(client, message):
             resize_keyboard=True
         ) 
     ) 
+    await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
 #=======================================================

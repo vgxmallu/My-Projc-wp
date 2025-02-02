@@ -24,11 +24,20 @@ MW = """
 ♐**ID** : `{}`
 🤖**BOT** : @Wallpepers_xbot
 """
+joinButton = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("X-BOTS-X", url='t.me/xbots_x')
+            ]
+        ]
+)
+
 @wbot.on_message(filters.private & filters.command("start") & pyro_cooldown.wait(10))
 async def wall_hhstart(client, message):
     await message.reply_photo(
         photo="https://envs.sh/m5m.jpg",
         caption="Welcome to Wallpapers x bot ;)",
+        reply_markup=joinButton,
         reply_markup=ReplyKeyboardMarkup(
             [[
                 "Wallpapers 🏞️", "✖️Close×"

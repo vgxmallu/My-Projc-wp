@@ -16,10 +16,10 @@ from wallbot.untils import pyro_cooldown
 @wbot.on_message(filters.command("remove_bt") & pyro_cooldown.wait(10)) 
 async def reply_rmv(client, message):
     ab = await message.reply_text(
-        text="Click Down Botton to KeyboardRemove\n`Message will be delete 4s`", 
+        text="Click Down Botton to Remove keyboard button\n`Message will be delete 4s`", 
         reply_markup=ReplyKeyboardMarkup(
             [[
-                "✖️Close×"
+                "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -29,7 +29,7 @@ async def reply_rmv(client, message):
     await message.delete()
     
         
-@wbot.on_message(filters.regex("✖️Close×"))
+@wbot.on_message(filters.regex("✖️Close✖️"))
 async def close_myr2(client, message):
     ae = await message.reply_text(
         text="Bottons removed ✅", 
@@ -89,7 +89,7 @@ async def wallpaper(client, message):
         caption=cap_wall.format(message.from_user.first_name), 
         reply_markup=ReplyKeyboardMarkup(
             [[
-               "Page 1️⃣", "❌ CLOSE ❌", "➡️"
+               "Page 1️⃣", "✖️Close✖️", "➡️"
             ],[
                 "🛟 CATEGORIES 🛟"
             ],[
@@ -110,9 +110,9 @@ async def wallpaper(client, message):
     await asyncio.sleep(1200)
     await m1.delete()
     await w1.delete()
-    
-#=================REGEX=====================
 
+
+#=================REGEX=====================
 @wbot.on_message(filters.private & filters.regex("⬅️") | filters.private & filters.regex("Wallpapers 🌇") & pyro_cooldown.wait(10)) 
 async def wallpaper2(client, message):
     m2 = await message.reply_photo(
@@ -120,7 +120,7 @@ async def wallpaper2(client, message):
         caption=cap_wall.format(message.from_user.first_name),
         reply_markup=ReplyKeyboardMarkup(
             [[
-                "Page 1️⃣", "❌ CLOSE ❌", "➡️"
+                "Page 1️⃣", "✖️Close✖️", "➡️"
             ],[
                 "🛟 CATEGORIES 🛟"
             ],[
@@ -146,7 +146,7 @@ async def wallpaper3(client, message):
         caption=cap_wall.format(message.from_user.mention), 
         reply_markup=ReplyKeyboardMarkup(
             [[
-                "⬅️", "❌ CLOSE ❌", "Page 2️⃣"
+                "⬅️", "✖️Close✖️", "Page 2️⃣"
             ],[
                 "🛟 CATEGORIES 🛟"
             ],[
@@ -172,7 +172,7 @@ async def wall_anim(client, message):
             [[
                 "Anime 🧚"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -187,7 +187,7 @@ async def wall_animal(client, message):
             [[
                 "Animals 🦁"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -202,7 +202,7 @@ async def wall_logo(client, message):
             [[
                 "Logos ♑"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -217,7 +217,7 @@ async def wall_car(client, message):
             [[
                 "Car&Bike 🏎️"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -232,7 +232,7 @@ async def wall_drowi(client, message):
             [[
                 "Drownings 🎑"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -247,7 +247,7 @@ async def wall_funny(client, message):
             [[
                 "Funny 😄"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -260,7 +260,7 @@ async def wall_endet(client, message):
             [[
                 "Entertainment 🧑‍🎤"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -275,7 +275,7 @@ async def wall_game(client, message):
             [[
                 "Game 🎮"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -290,7 +290,7 @@ async def wall_lov(client, message):
             [[
                 "Love ❤️"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -305,7 +305,7 @@ async def wall_music(client, message):
             [[
                 "Music 🎵"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -320,7 +320,7 @@ async def wall_natur(client, message):
             [[
                 "Nature 🍃"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -333,7 +333,7 @@ async def wall_sayin(client, message):
             [[
                 "Sayings 📝"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -349,7 +349,7 @@ async def wall_space(client, message):
             [[
                 "Space 🌠"
             ],[
-                "➡️", "❌ CLOSE ❌"
+                "➡️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -364,7 +364,7 @@ async def wall_comi(client, message):
             [[
                 "Comics 🦸"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -379,7 +379,7 @@ async def wall_spor(client, message):
             [[
                 "Sports ⚽"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -394,7 +394,7 @@ async def wall_pattt(client, message):
             [[
                 "Pattern ☸️"
             ],[
-                "⬅️", "❌ CLOSE ❌"
+                "⬅️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -409,7 +409,7 @@ async def wall_texhno(client, message):
             [[
                 "Technology 📱"
             ],[
-                "➡️", "❌ CLOSE ❌"
+                "➡️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -424,7 +424,7 @@ async def wall_desins(client, message):
             [[
                 "Designs ✨"
             ],[
-                "➡️", "❌ CLOSE ❌"
+                "➡️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -439,7 +439,7 @@ async def wall_hollyd(client, message):
             [[
                 "Hollyday 🏖️"
             ],[
-                "➡️", "❌ CLOSE ❌"
+                "➡️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -454,7 +454,7 @@ async def wall_peopl(client, message):
             [[
                 "People 🧑‍🤝‍🧑"
             ],[
-                "➡️", "❌ CLOSE ❌"
+                "➡️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 
@@ -469,7 +469,7 @@ async def wall_other(client, message):
             [[
                 "Others 🤷"
             ],[
-                "➡️", "❌ CLOSE ❌"
+                "➡️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 

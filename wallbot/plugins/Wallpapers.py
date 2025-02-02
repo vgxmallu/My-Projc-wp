@@ -57,7 +57,7 @@ async def wall_hhstart(client, message):
             [[
                 "Channel 📣", "Group 🎵"
             ],[
-                "Wallpapers Collections🏞️", "✖️Close×"
+                "Wallpapers Collections🏞️", "✖️Close✖️"
             ]], 
             resize_keyboard=True
         ) 

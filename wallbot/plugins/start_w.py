@@ -22,9 +22,7 @@ MW = """
 """
 @wbot.on_message(filters.private & filters.command("start") & pyro_cooldown.wait(10))
 async def wall_start(client, message):
-    await client.send_message(LOG_CHANNEL, MW.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
-    
-    g = await message.reply_photo(
+    await message.reply_photo(
         photo=random.choice(PICS),
         caption="Welcome to Wallpapers x bot ;)",
         reply_markup=ReplyKeyboardMarkup(

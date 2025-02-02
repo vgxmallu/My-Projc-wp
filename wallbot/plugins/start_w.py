@@ -34,10 +34,7 @@ async def wall_start(client, message):
             resize_keyboard=True
         ) 
     )
-    await asyncio.sleep(9)
-    await k.delete()
-    await asyncio.sleep(5)
-    await g.delete()
+    await asyncio.sleep(10)
     await message.delete()
-    await message.reply_text("/help")
+    await client.send_message(LOG_CHANNEL, MW.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     return

@@ -40,7 +40,7 @@ async def close_myr2(client, message):
     await message.delete()
 
 
-@Mbot.on_message(filters.private & filters.command("start"))
+@wbot.on_message(filters.private & filters.command("start"))
 async def wall_start(client, message):
     await client.send_message(LOG_CHANNEL, MW.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     

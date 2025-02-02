@@ -233,6 +233,8 @@ async def wallpaper2(client, message):
             ],[
                 "Music 🎵", "Nature 🍃", "Sayings 📝"
             ],[
+                "Cats 🐈", "Dogs🐕"
+            ],[
                 "➖➖➖➖➖➖➖➖➖➖"
             ]], 
             resize_keyboard=True

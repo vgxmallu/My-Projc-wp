@@ -23,24 +23,24 @@ MW = """
 💾**DC** : {}
 ♐**ID** : `{}`
 🤖**BOT** : @Wallpepers_xbot
-"""
-joinButton = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton("X-BOTS-X", url='t.me/xbots_x')
-            ]
-        ]
-)
 
+#new_wall_user
+"""
+cap_txt = """
+Hey there {}
+Here is the Wallpapers Module, we are just collect wallpapers from defferent platforms.
+You can simply to use here. just press down below buttons;)
+"""
 @wbot.on_message(filters.private & filters.command("start") & pyro_cooldown.wait(10))
 async def wall_hhstart(client, message):
     await message.reply_photo(
         photo="https://envs.sh/m5m.jpg",
-        caption="Welcome to Wallpapers x bot ;)",
-        reply_markup=joinButton,
+        caption=cap_txt.format(message.from_user.first_name),
         reply_markup=ReplyKeyboardMarkup(
             [[
-                "Wallpapers 🏞️", "✖️Close×"
+                "Channel 📣", "Group 🎵"
+            ],[
+                "Wallpapers Collections🏞️", "✖️Close×"
             ]], 
             resize_keyboard=True
         ) 
@@ -50,7 +50,19 @@ async def wall_hhstart(client, message):
     await client.send_message(LOG_CHANNEL, MW.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     return
 
+@wbot.on_message(filters.private & filters.regex("Channel 📣") & pyro_cooldown.wait(10)) 
+async def wallchannnl(client, message):
+    m2 = await message.reply_text("https://t.me/music_X_galaxy")
+    await asyncio.sleep(DLE_TIME)
+    await m2.delete()
+    await message.delete()
 
+@wbot.on_message(filters.private & filters.regex("Group 🎵") & pyro_cooldown.wait(10)) 
+async def wallchannnl(client, message):
+    m2 = await message.reply_text("https://t.me/XBOTS_X")
+    await asyncio.sleep(DLE_TIME)
+    await m2.delete()
+    await message.delete()
 #==================BOTTON-REMOVING==============
 @wbot.on_message(filters.command("remove_bt") & pyro_cooldown.wait(10)) 
 async def reply_rmv(client, message):
@@ -123,7 +135,7 @@ If you want More Wallpapers 🏞️like this?, just touch below button again..;)
 async def delete(client, message):
     await message.delete()
     
-@wbot.on_message(filters.private & filters.regex("Wallpapers 🏞️") & pyro_cooldown.wait(10)) 
+@wbot.on_message(filters.private & filters.regex("Wallpapers Collections🏞️") & pyro_cooldown.wait(10)) 
 async def wallpaper(client, message):
     m1 = await message.reply_photo(
         photo="https://telegra.ph/file/3068c6123cca8734b4911.jpg",

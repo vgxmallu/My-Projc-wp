@@ -3,7 +3,7 @@ import asyncio
 from pyrogram import filters
 from pyrogram.errors import MessageDeleteForbidden
 
-from config import OWNER_ID
+from config import OWNER_ID, SUDO_USERS
 
 data = {}
 
@@ -28,7 +28,7 @@ async def task(msg, warn=False, sec=None):
 def wait(sec):
     async def ___(flt, _, msg):
         user_id = msg.from_user.id if msg.from_user else msg.sender_chat.id
-        if user_id in OWNER_ID: # or user_id == OWNER_ID
+        if user_id in SUDO_USERS or user_id == OWNER_ID: 
             return True
         if user_id in data:
             if msg.date.timestamp() >= data[user_id]["timestamp"] + flt.data:

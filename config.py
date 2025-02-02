@@ -1,1 +1,19 @@
+from os import environ, mkdir, path, sys
+from dotenv import load_dotenv
+from pyrogram import Client
+import os
 
+
+
+# Mandatory Variable
+API_ID = int(environ["API_ID"])
+API_HASH = environ["API_HASH"]
+BOT_TOKEN = environ["BOT_TOKEN"]
+OWNER_ID = int(environ["OWNER_ID"])
+
+# Optional Variable
+SUDO_USERS = environ.get("SUDO_USERS", str(OWNER_ID)).split()
+SUDO_USERS = [int(_x) for _x in SUDO_USERS]
+
+AUTH_CHATS = environ.get("AUTH_CHATS").split()
+AUTH_CHATS = [int(_x) for _x in AUTH_CHATS]

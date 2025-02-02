@@ -61,7 +61,7 @@ class wbot(Client):
                 "https://envs.sh/mcw.jpg",
                 "**Wallpapers Bot is started** ✅",
             )
-        LOGGER.info(f"\nSocial-media-DL is ONLINE 🟢\n\n{BOT_INFO.username} Is Running 💨💥\n")
+        LOGGER.info(f"\nWallpepers is ONLINE 🟢\n\n{BOT_INFO.username} Is Running 💨💥\n")
 
     async def stop(self, *args):
         await super().stop()

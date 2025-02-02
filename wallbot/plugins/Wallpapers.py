@@ -8,7 +8,7 @@ from random import choice
 from wallbot import wbot
 from wallbot.images_db.walls import ANIM_PICS, ANIMALS_PICS, LOGO_PICS, CARS_PICS, DROWIG_PICS, FUNNY_PICS, ENTERT_PICS, GAME_PICS, LOVE_PICS, MUSIC_PICS, NATURE_PICS, SAYING_PICS, SPACE_PICS, COMIC_PICS, SPORT_PICS, PATTER_PICS, TECHNO_PICS, DESIN_PICS, HOLDAY_PICS, PEOPL_PICS, OTHERS_PICS                      
 from config import LOG_CHANNEL, Telegram, DB_URL, DB_NAME
-from wallbot.untils import pyro_cooldown
+#from wallbot.untils import pyro_cooldown
 
 from wallbot.handlers.broadcast import broadcast
 from wallbot.handlers.check_user import handle_user_status
@@ -36,7 +36,7 @@ Hey there {}
 Here is the Wallpapers Module, we are just collect wallpapers from defferent platforms.
 You can simply to use here. just press down below buttons;)
 """
-@wbot.on_message(filters.private & filters.command("start") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.command("start"))
 async def wall_hhstart(client, message):
     chat_id = message.from_user.id
     if not await db.is_user_exist(chat_id):
@@ -69,21 +69,21 @@ async def wall_hhstart(client, message):
     await client.send_message(LOG_CHANNEL, MW.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     return
 
-@wbot.on_message(filters.private & filters.regex("Channel 📣") & pyro_cooldown.wait(10)) 
+@wbot.on_message(filters.private & filters.regex("Channel 📣")) 
 async def wallchannnl(client, message):
     m2 = await message.reply_text("https://t.me/music_X_galaxy")
     await asyncio.sleep(DLE_TIME)
     await m2.delete()
     await message.delete()
 
-@wbot.on_message(filters.private & filters.regex("Group 🎵") & pyro_cooldown.wait(10)) 
+@wbot.on_message(filters.private & filters.regex("Group 🎵")) 
 async def wallgropnl(client, message):
     m2 = await message.reply_text("https://t.me/XBOTS_X")
     await asyncio.sleep(DLE_TIME)
     await m2.delete()
     await message.delete()
 #==================BOTTON-REMOVING==============
-@wbot.on_message(filters.command("remove_bt") & pyro_cooldown.wait(10)) 
+@wbot.on_message(filters.command("remove_bt")) 
 async def reply_rmv(client, message):
     ab = await message.reply_text(
         text="Click Down Botton to Remove keyboard button\n`Message will be delete 4s`", 
@@ -171,7 +171,9 @@ async def wallpaper(client, message):
             ],[
                 "Entertainment 🧑‍🎤", "Game 🎮", "Love ❤️"
             ],[
-                "Music 🎵", "Nature 🍃", "Sayings 📝"  
+                "Music 🎵", "Nature 🍃", "Sayings 📝"
+            ],[
+                "Cats 🐈", "Dogs🐕"
             ],[
                 "➖➖➖➖➖➖➖➖➖➖"
             ]], 
@@ -186,7 +188,7 @@ async def wallpaper(client, message):
 
 
 #=================REGEX=====================
-@wbot.on_message(filters.private & filters.regex("⬅️") | filters.private & filters.regex("Wallpapers 🌇") & pyro_cooldown.wait(10)) 
+@wbot.on_message(filters.private & filters.regex("⬅️") | filters.private & filters.regex("Wallpapers 🌇")) 
 async def wallpaper2(client, message):
     m2 = await message.reply_photo(
         photo="https://telegra.ph/file/3068c6123cca8734b4911.jpg",
@@ -241,7 +243,7 @@ async def wallpaper3(client, message):
     await m3.delete()
     
 #=============================PG1=============================
-@wbot.on_message(filters.private & filters.regex("Anime 🧚") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Anime 🧚"))
 async def wall_anim(client, message):
     await message.reply_photo(
         photo=random.choice(ANIM_PICS), #text="Type botton to get more...", 
@@ -257,7 +259,7 @@ async def wall_anim(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Animals 🦁") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Animals 🦁"))
 async def wall_animal(client, message):
     await message.reply_photo(
         photo=random.choice(ANIMALS_PICS), #text="Type botton to get more...", 
@@ -273,7 +275,7 @@ async def wall_animal(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Logos ♑") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Logos ♑"))
 async def wall_logo(client, message):
     await message.reply_photo(
         photo=random.choice(LOGO_PICS), #text="Type botton to get more...", 
@@ -289,7 +291,7 @@ async def wall_logo(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Car&Bike 🏎️") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Car&Bike 🏎️"))
 async def wall_car(client, message):
     await message.reply_photo(
         photo=random.choice(CARS_PICS), #text="Type botton to get more...", 
@@ -305,7 +307,7 @@ async def wall_car(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Drownings 🎑") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Drownings 🎑"))
 async def wall_drowi(client, message):
     await message.reply_photo(
         photo=random.choice(DROWIG_PICS), #text="Type botton to get more...", 
@@ -321,7 +323,7 @@ async def wall_drowi(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Funny 😄") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Funny 😄"))
 async def wall_funny(client, message):
     await message.reply_photo(
         photo=random.choice(FUNNY_PICS), #text="Type botton to get more...", 
@@ -338,7 +340,7 @@ async def wall_funny(client, message):
     await asyncio.sleep(4)
     await message.delete()
 
-@wbot.on_message(filters.private & filters.regex("Entertainment 🧑‍🎤") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Entertainment 🧑‍🎤"))
 async def wall_endet(client, message):
     await message.reply_photo(
         photo=random.choice(ENTERT_PICS), #text="Type botton to get more...", 
@@ -354,7 +356,7 @@ async def wall_endet(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Gamee 🎮") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Gamee 🎮"))
 async def wall_game(client, message):
     await message.reply_photo(
         photo=random.choice(GAME_PICS), #text="Type botton to get more...", 
@@ -370,7 +372,7 @@ async def wall_game(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Love ❤️") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Love ❤️"))
 async def wall_lov(client, message):
     await message.reply_photo(
         photo=random.choice(LOVE_PICS), #text="Type botton to get more...", 
@@ -386,7 +388,7 @@ async def wall_lov(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Music 🎵") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Music 🎵"))
 async def wall_music(client, message):
     await message.reply_photo(
         photo=random.choice(MUSIC_PICS), #text="Type botton to get more...", 
@@ -402,7 +404,7 @@ async def wall_music(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Nature 🍃") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Nature 🍃"))
 async def wall_natur(client, message):
     await message.reply_photo(
         photo=random.choice(NATURE_PICS), #text="Type botton to get more...", 
@@ -419,7 +421,7 @@ async def wall_natur(client, message):
     await asyncio.sleep(4)
     await message.delete()
     
-@wbot.on_message(filters.private & filters.regex("Sayings 📝") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Sayings 📝"))
 async def wall_sayin(client, message):
     await message.reply_photo(
         photo=random.choice(SAYING_PICS), #text="Type botton to get more...", 
@@ -436,7 +438,7 @@ async def wall_sayin(client, message):
     await asyncio.sleep(4)
     await message.delete()
 #========≠==================PG2====================
-@wbot.on_message(filters.private & filters.regex("Space 🌠") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Space 🌠"))
 async def wall_space(client, message):
     await message.reply_photo(
         photo=random.choice(SPACE_PICS), #text="Type botton to get more...", 
@@ -452,7 +454,7 @@ async def wall_space(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete() 
-@wbot.on_message(filters.private & filters.regex("Comics 🦸") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Comics 🦸"))
 async def wall_comi(client, message):
     await message.reply_photo(
         photo=random.choice(COMIC_PICS), #text="Type botton to get more...", 
@@ -468,7 +470,7 @@ async def wall_comi(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Sports ⚽") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Sports ⚽"))
 async def wall_spor(client, message):
     await message.reply_photo(
         photo=random.choice(SPORT_PICS), #text="Type botton to get more...", 
@@ -484,7 +486,7 @@ async def wall_spor(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Pattern ☸️") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Pattern ☸️"))
 async def wall_pattt(client, message):
     await message.reply_photo(
         photo=random.choice(PATTER_PICS), #text="Type botton to get more...", 
@@ -500,7 +502,7 @@ async def wall_pattt(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Technology 📱") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Technology 📱"))
 async def wall_texhno(client, message):
     await message.reply_photo(
         photo=random.choice(TECHNO_PICS), #text="Type botton to get more...", 
@@ -516,7 +518,7 @@ async def wall_texhno(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Designs ✨") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Designs ✨"))
 async def wall_desins(client, message):
     await message.reply_photo(
         photo=random.choice(DESIN_PICS), #text="Type botton to get more...", 
@@ -532,7 +534,7 @@ async def wall_desins(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Hollyday 🏖️") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Hollyday 🏖️"))
 async def wall_hollyd(client, message):
     await message.reply_photo(
         photo=random.choice(HOLDAY_PICS), #text="Type botton to get more...", 
@@ -548,7 +550,7 @@ async def wall_hollyd(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("People 🧑‍🤝‍🧑") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("People 🧑‍🤝‍🧑"))
 async def wall_peopl(client, message):
     await message.reply_photo(
         photo=random.choice(PEOPL_PICS), #text="Type botton to get more...", 
@@ -564,7 +566,7 @@ async def wall_peopl(client, message):
     await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
-@wbot.on_message(filters.private & filters.regex("Others 🤷") & pyro_cooldown.wait(10))
+@wbot.on_message(filters.private & filters.regex("Others 🤷"))
 async def wall_other(client, message):
     await message.reply_photo(
         photo=random.choice(OTHERS_PICS), #text="Type botton to get more...", 

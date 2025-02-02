@@ -12,6 +12,35 @@ from wallbot.untils import pyro_cooldown
 
 
 
+#°st
+MW = """
+📣 **LOG ALERT** 🏞️🤖
+
+📛**Triggered Command** : /start
+👤**Name** : {}
+👾**Username** : @{}
+💾**DC** : {}
+♐**ID** : `{}`
+🤖**BOT** : @Wallpepers_xbot
+"""
+@wbot.on_message(filters.private & filters.command("start") & pyro_cooldown.wait(10))
+async def wall_hhstart(client, message):
+    await message.reply_photo(
+        photo=random.choice(PICS),
+        caption="Welcome to Wallpapers x bot ;)",
+        reply_markup=ReplyKeyboardMarkup(
+            [[
+                "Wallpapers 🏞️", "✖️Close×"
+            ]], 
+            resize_keyboard=True
+        ) 
+    )
+    await asyncio.sleep(10)
+    await message.delete()
+    await client.send_message(LOG_CHANNEL, MW.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
+    return
+
+
 #==================BOTTON-REMOVING==============
 @wbot.on_message(filters.command("remove_bt") & pyro_cooldown.wait(10)) 
 async def reply_rmv(client, message):

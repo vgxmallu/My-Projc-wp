@@ -115,22 +115,21 @@ async def wall_anim(client, message):
     if r.status_code == 200:
         data = r.json()
         cat_url = data[0]["url"]
-        if cat_url.endswith(".gif"):
-            await message.reply_photo(
-                photo=cat_url, 
-                caption="meow 😺😼", 
-                reply_markup=ReplyKeyboardMarkup(
-                    [[
-                        "Cats 🐈"
-                    ],[
-                        "⬅️", "✖️Close✖️"
-                    ]], 
-                    resize_keyboard=True
-                ) 
+        await message.reply_photo(
+            photo=cat_url, 
+            caption="meow 😺😼", 
+            reply_markup=ReplyKeyboardMarkup(
+                [[
+                     "Cats 🐈"
+                ],[
+                     "⬅️", "✖️Close✖️"
+                ]], 
+                resize_keyboard=True
             ) 
-            await message.reply_text(morew)
-            await asyncio.sleep(4)
-            await message.delete()
+        ) 
+        await message.reply_text(morew)
+        await asyncio.sleep(4)
+        await message.delete()
     else:
         await message.reply_text("Failed to refresh cat picture 🙀")
     

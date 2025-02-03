@@ -116,7 +116,7 @@ async def wall_cat(client, message):
         data = r.json()
         cat_url = data[0]["url"]
         await message.reply_photo(
-            photo=random.choice(cat_url), 
+            photo=cat_url, 
             reply_markup=ReplyKeyboardMarkup(
                 [[
                      "Cats 🐈"
@@ -136,7 +136,7 @@ async def wall_cat(client, message):
 async def wall_cospi(client, message):
     img = requests.get("https://waifu-api.vercel.app").json()
     await message.reply_photo(
-        photo=random.choice(img), 
+        photo=img, 
         reply_markup=ReplyKeyboardMarkup(
             [[
                  "CosePlay😜"

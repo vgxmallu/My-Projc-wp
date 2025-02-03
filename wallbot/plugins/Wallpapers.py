@@ -66,6 +66,7 @@ async def wall_hhstart(client, message):
     await em.react(choice(Telegram.EMOJIS_2))
     await asyncio.sleep(DLE_TIME)
     await message.delete()
+    await em.delete()
     return
 
 @wbot.on_message(filters.private & filters.regex("Group 🎵")) 

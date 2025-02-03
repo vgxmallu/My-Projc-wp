@@ -180,7 +180,7 @@ If you want More Wallpapers 🏞️like this?, just touch below button again..;)
 async def delete(client, message):
     await message.delete()
     
-@wbot.on_message(filters.private & filters.regex("Wallpapers Collections🏞️") & pyro_cooldown.wait(10)) 
+@wbot.on_message(filters.private & filters.regex("Wallpapers Collections🏞️")) 
 async def wallpaper(client, message):
     m1 = await message.reply_photo(
         photo="https://telegra.ph/file/3068c6123cca8734b4911.jpg",
@@ -210,7 +210,7 @@ async def wallpaper(client, message):
     await message.delete()
     await asyncio.sleep(DLE_TIME)
     await m1.delete()
-    await w1.delete()
+    #await w1.delete()
 
 
 #=================REGEX=====================
@@ -273,7 +273,7 @@ async def wallpaper3(client, message):
 #=============================PG1=============================
 @wbot.on_message(filters.private & filters.regex("Anime 🧚"))
 async def wall_anim(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(ANIM_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -284,12 +284,15 @@ async def wall_anim(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
-    await asyncio.sleep(4)
+    dl2 = await message.reply_text(morew)
+    await asyncio.sleep(5)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Animals 🦁"))
 async def wall_animal(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(ANIMALS_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -300,12 +303,15 @@ async def wall_animal(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Logos ♑"))
 async def wall_logo(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(LOGO_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -316,12 +322,15 @@ async def wall_logo(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Car&Bike 🏎️"))
 async def wall_car(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(CARS_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -332,12 +341,15 @@ async def wall_car(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Drownings 🎑"))
 async def wall_drowi(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(DROWIG_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -348,12 +360,15 @@ async def wall_drowi(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Funny 😄"))
 async def wall_funny(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(FUNNY_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -364,13 +379,16 @@ async def wall_funny(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 
 @wbot.on_message(filters.private & filters.regex("Entertainment 🧑‍🎤"))
 async def wall_endet(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(ENTERT_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -381,12 +399,15 @@ async def wall_endet(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Gamee 🎮"))
 async def wall_game(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(GAME_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -397,12 +418,15 @@ async def wall_game(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Love ❤️"))
 async def wall_lov(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(LOVE_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -413,12 +437,15 @@ async def wall_lov(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Music 🎵"))
 async def wall_music(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(MUSIC_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -429,12 +456,15 @@ async def wall_music(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Nature 🍃"))
 async def wall_natur(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(NATURE_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -445,13 +475,16 @@ async def wall_natur(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
     
 @wbot.on_message(filters.private & filters.regex("Sayings 📝"))
 async def wall_sayin(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(SAYING_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -462,13 +495,16 @@ async def wall_sayin(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 #========≠==================PG2====================
 @wbot.on_message(filters.private & filters.regex("Space 🌠"))
 async def wall_space(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(SPACE_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -479,12 +515,15 @@ async def wall_space(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
-    await message.delete() 
+    await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Comics 🦸"))
 async def wall_comi(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(COMIC_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -495,12 +534,15 @@ async def wall_comi(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Sports ⚽"))
 async def wall_spor(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(SPORT_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -511,12 +553,15 @@ async def wall_spor(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Pattern ☸️"))
 async def wall_pattt(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(PATTER_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -527,12 +572,15 @@ async def wall_pattt(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Technology 📱"))
 async def wall_texhno(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(TECHNO_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -543,12 +591,15 @@ async def wall_texhno(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Designs ✨"))
 async def wall_desins(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(DESIN_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -559,12 +610,15 @@ async def wall_desins(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Hollyday 🏖️"))
 async def wall_hollyd(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(HOLDAY_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -575,12 +629,15 @@ async def wall_hollyd(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("People 🧑‍🤝‍🧑"))
 async def wall_peopl(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(PEOPL_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -591,12 +648,15 @@ async def wall_peopl(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 @wbot.on_message(filters.private & filters.regex("Others 🤷"))
 async def wall_other(client, message):
-    await message.reply_photo(
+    dl = await message.reply_photo(
         photo=random.choice(OTHERS_PICS), #text="Type botton to get more...", 
         reply_markup=ReplyKeyboardMarkup(
             [[
@@ -607,9 +667,12 @@ async def wall_other(client, message):
             resize_keyboard=True
         ) 
     ) 
-    await message.reply_text(morew)
+    dl2 = await message.reply_text(morew)
     await asyncio.sleep(4)
     await message.delete()
+    await asyncio.sleep(DLE_TIME)
+    await dl.delete()
+    await dl2.delete()
 #=======================================================
 
               

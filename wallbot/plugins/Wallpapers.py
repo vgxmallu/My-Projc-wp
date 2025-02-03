@@ -49,7 +49,7 @@ async def wall_hhstart(client, message):
             )
         else:
             logging.info(f"🥳NewUser🥳 :- 😼Name : {message.from_user.first_name} 😹ID : {message.from_user.id}")
-            
+    await client.send_message(LOG_CHANNEL, MW.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     em=await message.reply_photo(
         photo="https://envs.sh/m5m.jpg",
         caption=cap_txt.format(message.from_user.first_name),
@@ -66,7 +66,6 @@ async def wall_hhstart(client, message):
     await em.react(choice(Telegram.EMOJIS_2))
     await asyncio.sleep(DLE_TIME)
     await message.delete()
-    await client.send_message(LOG_CHANNEL, MW.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     return
 
 @wbot.on_message(filters.private & filters.regex("Group 🎵")) 

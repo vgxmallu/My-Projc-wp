@@ -115,7 +115,7 @@ async def wall_cat(client, message):
     if r.status_code == 200:
         data = r.json()
         cat_url = data[0]["url"]
-        await message.reply_media(
+        await message.reply_photo(
             photo=random.choice(cat_url), 
             reply_markup=ReplyKeyboardMarkup(
                 [[
@@ -135,7 +135,7 @@ async def wall_cat(client, message):
 @wbot.on_message(filters.private & filters.regex("CosePlay😜"))
 async def wall_cospi(client, message):
     img = requests.get("https://waifu-api.vercel.app").json()
-    await message.reply_media(
+    await message.reply_photo(
         photo=random.choice(img), 
         reply_markup=ReplyKeyboardMarkup(
             [[

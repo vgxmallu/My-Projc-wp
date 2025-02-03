@@ -184,7 +184,7 @@ async def wallpaper(client, message):
         caption=cap_wall.format(message.from_user.first_name), 
         reply_markup=ReplyKeyboardMarkup(
             [[
-               "Page 1️⃣", "✖️Close✖️", "➡️"
+               "1️⃣", "✖️Close✖️", "➡️"
             ],[
                 "🧿 CATEGORIES 🧿"
             ],[
@@ -218,7 +218,7 @@ async def wallpaper2(client, message):
         caption=cap_wall.format(message.from_user.first_name),
         reply_markup=ReplyKeyboardMarkup(
             [[
-                "Page 1️⃣", "✖️Close✖️", "➡️"
+                "1️⃣", "✖️Close✖️", "➡️"
             ],[
                 "🛟 CATEGORIES 🛟"
             ],[

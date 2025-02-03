@@ -117,7 +117,6 @@ async def wall_anim(client, message):
         cat_url = data[0]["url"]
         await message.reply_photo(
             photo=cat_url, 
-            caption="meow 😺😼", 
             reply_markup=ReplyKeyboardMarkup(
                 [[
                      "Cats 🐈"

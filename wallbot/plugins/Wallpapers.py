@@ -109,13 +109,13 @@ async def close_myr2(client, message):
     await message.delete()
 
 @wbot.on_message(filters.private & filters.regex("Cats 🐈"))
-async def wall_anim(client, message):
+async def wall_cat(client, message):
     r = requests.get("https://api.thecatapi.com/v1/images/search")
     if r.status_code == 200:
         data = r.json()
         cat_url = data[0]["url"]
-        await message.reply_photo(
-            photo=cat_url, 
+        await message.reply_media(
+            photo=random.choice(cat_url), 
             reply_markup=ReplyKeyboardMarkup(
                 [[
                      "Cats 🐈"
@@ -128,10 +128,26 @@ async def wall_anim(client, message):
         await message.reply_text(morew)
         await asyncio.sleep(4)
         await message.delete()
-    else:
-        await message.reply_text("Failed to refresh cat picture 🙀")
+    
     
 
+@wbot.on_message(filters.private & filters.regex("CosePlay😜"))
+async def wall_cospi(client, message):
+    img = requests.get("https://waifu-api.vercel.app").json()
+    await message.reply_media(
+        photo=random.choice(img), 
+        reply_markup=ReplyKeyboardMarkup(
+            [[
+                 "CosePlay😜"
+            ],[
+                 "⬅️", "✖️Close✖️"
+            ]], 
+            resize_keyboard=True
+        ) 
+    )
+    await message.reply_text(morew)
+    await asyncio.sleep(4)
+    await message.delete()
 #=================ZEDGE-WALLPEPERS======================
 
 cap_wall = """
@@ -196,7 +212,7 @@ async def wallpaper(client, message):
             ],[
                 "Music 🎵", "Nature 🍃", "Sayings 📝"
             ],[
-                "Cats 🐈", "Dogs🐕"
+                "Cats 🐈", "Dogs 🐕", "CosePlay😜"
             ],[
                 "➖➖➖➖➖➖➖➖➖➖"
             ]], 

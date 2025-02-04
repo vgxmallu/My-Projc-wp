@@ -190,7 +190,7 @@ ________________________________
 morew = """
 If you want More Wallpapers 🏞️like this?, just touch below button again..;)
 """
-@wbot.on_message(filters.private & filters.regex("🔽") | filters.private & filters.regex("🛟 CATEGORIES 🛟") | filters.private & filters.regex("Page 2️⃣") | filters.private & filters.regex("Page 1️⃣") | filters.private & filters.regex("➖➖➖➖➖➖➖➖➖➖")) 
+@wbot.on_message(filters.private & filters.regex("🌀 Ai-CATEGORIES 🌀") | filters.private & filters.regex("🔽") | filters.private & filters.regex("🛟 CATEGORIES 🛟") | filters.private & filters.regex("Page 2️⃣") | filters.private & filters.regex("Page 1️⃣") | filters.private & filters.regex("➖➖➖➖➖➖➖➖➖➖")) 
 async def delete(client, message):
     await message.delete()
     
@@ -201,7 +201,7 @@ async def wallpaper(client, message):
         caption=cap_wall.format(message.from_user.first_name), 
         reply_markup=ReplyKeyboardMarkup(
             [[
-               "1️⃣", "✖️Close✖️", "➡️"
+               "1️⃣", "✖️Close✖️", "Ai-➡️"
             ],[
                 "🧿 CATEGORIES 🧿"
             ],[
@@ -213,7 +213,11 @@ async def wallpaper(client, message):
             ],[
                 "Music 🎵", "Nature 🍃", "Sayings 📝"
             ],[
-                "Cats 🐈", "Dogs 🐕", "CosePlay😜"
+                "Space 🌠", "Comics 🦸", "Sports ⚽"
+            ],[
+                "Pattern ☸️", "Technology 📱", "Designs ✨"
+            ],[
+                "Holiday 🏖️", "People 🧑‍🤝‍🧑", "Scenery"
             ],[
                 "➖➖➖➖➖➖➖➖➖➖"
             ]], 
@@ -235,7 +239,7 @@ async def wallpaper2(client, message):
         caption=cap_wall.format(message.from_user.first_name),
         reply_markup=ReplyKeyboardMarkup(
             [[
-                "1️⃣", "✖️Close✖️", "➡️"
+                "1️⃣", "✖️Close✖️", "Ai-➡️"
             ],[
                 "🛟 CATEGORIES 🛟"
             ],[
@@ -247,7 +251,11 @@ async def wallpaper2(client, message):
             ],[
                 "Music 🎵", "Nature 🍃", "Sayings 📝"
             ],[
-                "Cats 🐈", "Dogs🐕"
+                "Space 🌠", "Comics 🦸", "Sports ⚽"
+            ],[
+                "Pattern ☸️", "Technology 📱", "Designs ✨"
+            ],[
+                "Holiday 🏖️", "People 🧑‍🤝‍🧑", "Scenery"
             ],[
                 "➖➖➖➖➖➖➖➖➖➖"
             ]], 
@@ -265,15 +273,15 @@ async def wallpaper3(client, message):
         caption=cap_wall.format(message.from_user.mention), 
         reply_markup=ReplyKeyboardMarkup(
             [[
-                "Page 2️⃣", "✖️Close✖️", "⬅️"
+                "2️⃣", "✖️Close✖️", "⬅️"
             ],[
-                "🛟 CATEGORIES 🛟"
+                "🌀 Ai-CATEGORIES 🌀"
             ],[
-                "Space 🌠", "Comics 🦸", "Sports ⚽"
+                "Ai-Anime", ".", "."
             ],[
-                "Pattern ☸️", "Technology 📱", "Designs ✨"
+                ".", ".", "."
             ],[
-                "Holiday 🏖️", "People 🧑‍🤝‍🧑", "Scenery" #".Others 🤷"
+                ".", ".", "."
             ],[
                 "➖➖➖➖➖➖➖➖➖➖"
             ]], 

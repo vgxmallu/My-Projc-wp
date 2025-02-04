@@ -50,6 +50,7 @@ async def wall_hhstart(client, message):
         else:
             logging.info(f"🥳NewUser🥳 :- 😼Name : {message.from_user.first_name} 😹ID : {message.from_user.id}")
     await client.send_message(LOG_CHANNEL, MW.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
+    await message.reply_sticker("CAACAgUAAxkBAAEEq6hnojW7yf17DNcVIK9EjFXMT1KLHwAC6A8AAiMcmFTzoSbGEwoGITYE")
     em=await message.reply_photo(
         photo="https://envs.sh/m5m.jpg",
         caption=cap_txt.format(message.from_user.first_name),

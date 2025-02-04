@@ -80,7 +80,7 @@ async def photo_handler(_, message: Message):
         
         if success:
             # Prepare the message text with the upload URL
-            final_text = f"[your link is ready.]({upload_url_or_error})"
+            final_text = f"{upload_url_or_error}"
 
             # Inline buttons with the response link
             reply_markup = InlineKeyboardMarkup(
@@ -108,3 +108,53 @@ async def photo_handler(_, message: Message):
         # Ensure that the local file is always removed
         if os.path.exists(local_path):
             os.remove(local_path)
+
+
+@app.on_message(filters.private & filters.command(["tgmedia"]))
+async def telegraph(client, message):
+    replied = message.reply_to_message
+    if not replied:
+        await message.reply("Reply to a supported media file")
+        return
+    if not (
+        (replied.photo and replied.photo.file_size <= 5242880)
+        or (replied.animation and replied.animation.file_size <= 5242880)
+        or (
+            replied.video
+            and replied.video.file_name.endswith(".mp4")
+            and replied.video.file_size <= 5242880
+        )
+        or (
+            replied.document
+            and replied.document.file_name.endswith(
+                (".jpg", ".jpeg", ".png", ".gif", ".mp4"),
+            )
+            and replied.document.file_size <= 5242880
+        )
+    ):
+        await message.reply("Not supported!")
+        return
+    download_location = await client.download_media(
+        message=message.reply_to_message,
+        file_name="root/downloads/",
+    )
+    try:
+        response = upload_file(download_location)
+    except Exception as document:
+        await message.reply(message, text=document)
+    else:
+        await message.reply(
+            f"<b>Tᴇʟᴇɢʀᴀᴘʜ ʟɪɴᴋ:-</b>\n\n <code>https://telegra.ph{response[0]}</code>",
+            quote=True,
+            reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(text="ᴏᴘᴇɴ ʟɪɴᴋ", url=f"https://telegra.ph{response[0]}"),
+                    InlineKeyboardButton(text="sʜᴀʀᴇ ʟɪɴᴋ", url=f"https://telegram.me/share/url?url=https://telegra.ph{response[0]}")
+                ],
+                [InlineKeyboardButton(text="ᴄʟᴏsᴇ", callback_data="delete")]
+            ]
+        )
+    )
+    finally:
+        os.remove(download_location)

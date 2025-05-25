@@ -17,7 +17,7 @@ async def start(client: Client, message: Message):
         await add_user(user_id, user_name, first_name)
     
     await message.reply_photo(
-        photo="https://i.ibb.co/XktTk8f2/145d93c11b4e.jpg",
+        photo="https://files.catbox.moe/wpxnj9.jpg",
         caption=START_TEXT.format(
             user=message.from_user.mention,
             bot=(await client.get_me()).first_name
@@ -43,7 +43,7 @@ async def start_group(client: Client, message: Message):
         await add_group(message.chat.id, message.chat.title)
     
     await message.reply_photo(
-        photo="https://i.ibb.co/XktTk8f2/145d93c11b4e.jpg",
+        photo="https://files.catbox.moe/wpxnj9.jpg",
         caption=START_TEXT.format(
             user=message.from_user.mention,
             bot=(await client.get_me()).first_name

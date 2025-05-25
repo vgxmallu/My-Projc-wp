@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 from pyrogram import Client
 import os
 import time
-from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS
+from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
+from wallbot.plugins.word import load_words, load_common_words
+from motor.motor_asyncio import AsyncIOMotorClient
+
 
 formatter = logging.Formatter('%(levelname)s %(asctime)s - %(name)s - %(message)s')
 
@@ -58,7 +61,7 @@ class wbot(Client):
         for chat in AUTH_CHATS:
             await self.send_photo(
                 chat,
-                "https://envs.sh/mcw.jpg",
+                "https://files.catbox.moe/endqeo.jpg",
                 "**my Test Bot is started** ✅",
             )
         LOGGER.info(f"\nTest is ONLINE 🟢\n\n{BOT_INFO.username} Is Running 💨💥\n")
@@ -66,3 +69,18 @@ class wbot(Client):
     async def stop(self, *args):
         await super().stop()
         LOGGER.info("Bot is OFFLINE 🔴")
+
+
+DEV_LIST = [784589736]
+
+client = AsyncIOMotorClient(DB_URL)
+db = client['WordNWord']
+user_Collection = db['user']
+collection = db['word']
+
+WORD_LIST = set(load_words())
+WORD_SET = set(WORD_LIST)
+MEAN_WORD = load_common_words()
+MEAN_WORD_SET = set(MEAN_WORD)
+
+print(f"Loaded {len(WORD_SET)} words from the word list.")

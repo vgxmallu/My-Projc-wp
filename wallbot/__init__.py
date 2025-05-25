@@ -59,9 +59,9 @@ class wbot(Client):
             await self.send_photo(
                 chat,
                 "https://envs.sh/mcw.jpg",
-                "**Wallpapers Bot is started** ✅",
+                "**my Test Bot is started** ✅",
             )
-        LOGGER.info(f"\nWallpepers is ONLINE 🟢\n\n{BOT_INFO.username} Is Running 💨💥\n")
+        LOGGER.info(f"\nTest is ONLINE 🟢\n\n{BOT_INFO.username} Is Running 💨💥\n")
 
     async def stop(self, *args):
         await super().stop()

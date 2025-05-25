@@ -5,8 +5,7 @@ from wallbot import wbot as word
 
 START_TEXT = """**👋 Hey {user}!
 
-{bot} - Hi! I host games of word chain in Telegram groups.
-Add me to a group to start playing games!
+ Hi! My name is {bot}I i have somany futurs!
 **"""
 
 @word.on_message(filters.command(["start", "help"]) & filters.private)

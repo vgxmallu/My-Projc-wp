@@ -25,9 +25,6 @@ def get_player_info(tag):
     else:
         return "Player not found or API error"
 """
-COC_HEADERS = {
-    "Authorization": f"Bearer {API_TOKEN}"
-}
 
 def get_player_info(tag):
     """Fetch player info from Clash of Clans API."""

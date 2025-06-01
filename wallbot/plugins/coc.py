@@ -29,7 +29,7 @@ async def player_command(client, message):
     if len(message.command) < 2:
         await message.reply("Usage: /player #TAG")
         return
-    tag = await message.command[1]
+    tag = message.command[1]
     await message.reply("Fetching player info...")
     info = get_player_info(tag)
     await message.reply(info)

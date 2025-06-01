@@ -5,7 +5,7 @@ from wallbot import wbot
 COC_API_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjllMDg3YjNjLTI4YzgtNGQzNy05ZjZlLTBmNWFjNmUyMDMyZCIsImlhdCI6MTc0ODc3NzU5Miwic3ViIjoiZGV2ZWxvcGVyL2RhNDhmM2Q2LTBlYTItYzQxYy01ZWFlLWJmNDRhY2YzMDRjZCIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjE0NS4xMjcuMjI4LjI5IiwiMTQ1LjEyNy4yMjguMjkiXSwidHlwZSI6ImNsaWVudCJ9XX0.XJ4fpd0N9q_D2pXnOcL2k3KOmHjnaDvcMsGn5LsjFYu3v9dCS5_KRqMCfy20CtTXpieDa94LLQB8_-KfWS4pTQ"
 
 # Clash of Clans API base URL
-COC_API_URL = "https://api.clashofclans.com/v1/players/{}"
+COC_API_URL = "api.clashofclans.com/v1/players/{}"
 COC_HEADERS = {"Authorization": f"Bearer {COC_API_TOKEN}"}
 
 

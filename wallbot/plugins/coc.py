@@ -25,11 +25,11 @@ def get_player_info(tag):
 
 # Command example: /player #TAG
 @wbot.on_message(filters.command("player"))
-def player_command(client, message):
+async def player_command(client, message):
     if len(message.command) < 2:
-        message.reply("Usage: /player #TAG")
+        await message.reply("Usage: /player #TAG")
         return
-    tag = message.command[1]
-    message.reply("Fetching player info...")
+    tag = await message.command[1]
+    await message.reply("Fetching player info...")
     info = get_player_info(tag)
-    message.reply(info)
+    await message.reply(info)

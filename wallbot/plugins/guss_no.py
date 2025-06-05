@@ -7,13 +7,13 @@ user_games = {}
 
 
 
-@wbot.on_message(filters.command("play"))
+@wbot.on_message(filters.command("gplay"))
 async def play(client, message):
     num = random.randint(1, 100)
     user_games[message.from_user.id] = num
     await message.reply("I'm thinking of a number between 1 and 100. Try to guess it!")
 
-@wbot.on_message(filters.text & ~filters.command("play"))
+@wbot.on_message(filters.text & ~filters.command("gplay"))
 async def guess(client, message):
     user_id = message.from_user.id
     if user_id not in user_games:

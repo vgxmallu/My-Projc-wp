@@ -42,8 +42,8 @@ async def newgame(_, message: Message):
     await message.reply("Game created! Another player, type /join to join the game.")
 
 # Join game
-@app.on_message(filters.command("join"))
-async def join(_, message: Message):
+@app.on_message(filters.command("xjoin"))
+async def xjoin(_, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
     game = games.get(chat_id)

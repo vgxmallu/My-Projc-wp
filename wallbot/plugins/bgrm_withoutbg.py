@@ -21,18 +21,18 @@ def remove_bg(input_file):
         return None
 
 @app.on_message(filters.photo)
-def photo_handler(client, message):
-    msg = message.reply("Processing your image, please wait...")
+async def photo_handler(client, message):
+    msg = await message.reply("Processing your image, please wait...")
     photo = message.photo[-1]  # Get the highest resolution photo
-    file_path = app.download_media(photo, file_name="input.jpg")
+    file_path = await app.download_media(photo, file_name="input.jpg")
     output = remove_bg(file_path)
     if output:
         out_path = "no_bg.png"
         with open(out_path, "wb") as f:
             f.write(output)
-        message.reply_document(out_path, caption="Here is your image without background!")
+        await message.reply_document(out_path, caption="Here is your image without background!")
         os.remove(out_path)
     else:
-        message.reply("Failed to remove background. Please try again later.")
+        await message.reply("Failed to remove background. Please try again later.")
     os.remove(file_path)
     msg.delete()

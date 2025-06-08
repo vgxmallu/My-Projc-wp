@@ -4,7 +4,7 @@ from pyrogram import Client, filters
 from wallbot import wbot as app
 
 
-PHOTOROOM_API_KEY = "key-mdr7UmnpgH5ELRoz"
+PHOTOROOM_API_KEY = "sk_pr_default_b7d17b93dab574c7879ba565d5da0ea45bd0ebe5"
 
 
 async def remove_background(file_path):

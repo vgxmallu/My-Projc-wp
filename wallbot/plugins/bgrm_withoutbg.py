@@ -1,7 +1,7 @@
 import os
 import requests
 from pyrogram import Client, filters
-
+from wallbot import wbot as app
 
 WITHOUTBG_API_KEY = "key-mdr7UmnpgH5ELRoz"  # Replace with your withoutbg.com API Key
 

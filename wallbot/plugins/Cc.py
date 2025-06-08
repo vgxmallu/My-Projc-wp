@@ -30,8 +30,8 @@ async def xoxo(_, message: Message):
     await message.reply("🎮 Welcome to XOXO Game!\nUse /newgame to start a new game.")
 
 # New game
-@app.on_message(filters.command("newgame"))
-async def newgame(_, message: Message):
+@app.on_message(filters.command("xonewgame"))
+async def xnewgame(_, message: Message):
     chat_id = message.chat.id
     games[chat_id] = {
         "board": create_board(),
@@ -42,7 +42,7 @@ async def newgame(_, message: Message):
     await message.reply("Game created! Another player, type /join to join the game.")
 
 # Join game
-@app.on_message(filters.command("xjoin"))
+@app.on_message(filters.command("xojoin"))
 async def xjoin(_, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
@@ -64,7 +64,7 @@ async def xjoin(_, message: Message):
     await message.reply("Game started!\n" + render(game["board"]) + f"\nPlayer 1: ❌\nPlayer 2: ⭕\n\nType /move 1-9 to play.")
 
 # Move command
-@app.on_message(filters.command("move"))
+@app.on_message(filters.command("xomove"))
 async def move(_, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id

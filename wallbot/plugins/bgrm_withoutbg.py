@@ -20,18 +20,24 @@ def remove_bg(input_file):
     else:
         return None
 
-@app.on_message(filters.photo)
-async def photo_handler(client, message):
+@app.on_message(filters.command("rmbg2"))
+async def rmphoto_handhler(client, message):
     msg = await message.reply("Processing your image, please wait...")
-    photo = message.photo[-1]  # Get the highest resolution photo
-    file_path = await app.download_media(photo, file_name="input.jpg")
-    output = remove_bg(file_path)
-    if output:
-        out_path = "no_bg.png"
+    replied = message.reply_to_message
+    #photo = message.photo[-1]  # Get the highest resolution photo
+    if not replied:
+      return await rmbg.edit("Reply to a photo to Remove it's Backgroud")
+    
+    
+    if replied.photo:
+        file_path = await app.download_media(replied, file_name="input.jpg")
+        output = await remove_bg(file_path)
+         
         with open(out_path, "wb") as f:
             f.write(output)
-        await message.reply_document(out_path, caption="Here is your image without background!")
-        os.remove(out_path)
+        await message.reply_photo(output, caption="Here is your Image without Background")
+        await message.reply_document(output, caption="Here is your image without background!")
+        os.remove(output)
     else:
         await message.reply("Failed to remove background. Please try again later.")
     os.remove(file_path)

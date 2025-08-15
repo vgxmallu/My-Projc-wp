@@ -21,3 +21,4 @@ telegraph
 datetime
 beautifulsoup4
 httpx[http2]
+cachetools==6.1.0

@@ -10,12 +10,6 @@ START_TEXT = """**👋 Hey {user}!
 
 @word.on_message(filters.command(["start", "help"]) & filters.private)
 async def start(client: Client, message: Message):
-    user_id = message.from_user.id
-    user_name = message.from_user.username
-    first_name = message.from_user.first_name
-    if not await get_user(user_id):
-        await add_user(user_id, user_name, first_name)
-    
     await message.reply_photo(
         photo="https://files.catbox.moe/wpxnj9.jpg",
         caption=START_TEXT.format(
@@ -33,14 +27,6 @@ async def start(client: Client, message: Message):
 
 @word.on_message(filters.command("start") & filters.group)
 async def start_group(client: Client, message: Message):
-    user_id = message.from_user.id
-    user_name = message.from_user.username
-    first_name = message.from_user.first_name
-    if not await get_user(user_id):
-        await add_user(user_id, user_name, first_name)
-
-    if not await get_group(message.chat.id):
-        await add_group(message.chat.id, message.chat.title)
     
     await message.reply_photo(
         photo="https://files.catbox.moe/wpxnj9.jpg",

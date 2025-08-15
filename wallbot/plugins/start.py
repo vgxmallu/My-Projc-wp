@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from wallbot.database.db import add_user, get_user, add_group, get_group
+#from wallbot.database.db import add_user, get_user, add_group, get_group
 from wallbot import wbot as word
 
 START_TEXT = """**👋 Hey {user}!

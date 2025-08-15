@@ -78,14 +78,14 @@ async def forwarded(_, msg):
                 text += f'●─⌊ **ID:** ⌉\n╰───○ `{msg.forward_from_chat.id}`'
             await msg.reply(text, quote=True)
 # Sticker id-------
-@Client.on_message(filters.command("stickerid", CMD) & pyro_cooldown.wait(10))
+@Client.on_message(filters.command("stickerid", CMD))
 async def stickerid(bot, message):   
     if message.reply_to_message.sticker:
        await message.reply(f"●─⌊ **STICKER ID** ⌉\n╰───○ `{message.reply_to_message.sticker.file_id}`\n\n●─⌊ **UNIQUE ID** ⌉ \n╰───○ `{message.reply_to_message.sticker.file_unique_id}`", quote=True)
     else: 
        await message.reply("ɴɪᴄᴇ,ɪᴛs ɴᴏᴛ ᴀ sᴛɪᴄᴋᴇʀ")
 # Dc finder
-@Client.on_message(filters.private & filters.command("dc", CMD) & pyro_cooldown.wait(10))
+@Client.on_message(filters.private & filters.command("dc", CMD))
 async def dc(bot, update):
     text = START_TEXT.format(update.from_user.dc_id)
     await update.reply_text(

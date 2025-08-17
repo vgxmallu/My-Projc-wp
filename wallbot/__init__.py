@@ -39,6 +39,20 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 LOGGER = logging.getLogger(__name__)
 
 
+async def check_feeds():
+    """Check all feeds for new entries"""
+    feeds = await get_feeds()
+    if not feeds:
+        return
+    
+    print(f"\nChecking {len(feeds)} feeds at {datetime.now().isoformat()}")
+    
+    for feed in feeds:
+        print(f"Processing feed: {feed['title']}")
+        await process_feed(feed)
+        await asyncio.sleep(2)  # Delay between feeds
+
+
 class wbot(Client):
     def __init__(self):
         name = self.__class__.__name__.lower()
@@ -69,6 +83,14 @@ class wbot(Client):
     async def stop(self, *args):
         await super().stop()
         LOGGER.info("Bot is OFFLINE 🔴")
+
+async def main():    
+    #await app.start()
+    print("Bot started")
+    asyncio.create_task(feed_checker())
+    # Keep the application running
+    while True:
+        await asyncio.sleep(3600)  # Sleep for 1 hour
 
 
 DEV_LIST = [784589736]

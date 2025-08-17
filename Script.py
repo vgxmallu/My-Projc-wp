@@ -1,5 +1,8 @@
 START_TEXT = """
-Hoiiiiiiiiiiiiiiiiiii
+👋 Hey!
+
+ My name is 𝐺𝑜𝑗𝑜 𝑆𝑎𝑡𝑜𝑟𝑢 𝕏 | 𝐵𝑜𝑡𓆪😉 I i have somany futurs.😱
+ just /help to find out 🤗my All commands!
 """
 
 ID_TEXT = """

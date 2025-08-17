@@ -70,7 +70,7 @@ class wbot(Client):
                 "**my Test Bot is started** ✅",
             )
         LOGGER.info(f"\nTest is ONLINE 🟢\n\n{BOT_INFO.username} Is Running 💨💥\n")
-        asyncio.create_task(feed_checker())
+        
     async def stop(self, *args):
         await super().stop()
         LOGGER.info("Bot is OFFLINE 🔴")
@@ -86,6 +86,7 @@ async def feed_checker():
         
         await asyncio.sleep(CHECK_INTERVAL)
         
+asyncio.create_task(feed_checker())
 loop = asyncio.get_event_loop()
 loop.run_until_complete(start())
 

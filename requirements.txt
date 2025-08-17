@@ -22,7 +22,7 @@ datetime
 beautifulsoup4
 httpx[http2]
 cachetools==6.1.0
-
+feedparser==6.0.11
 
 bs4
 speedtest-cli

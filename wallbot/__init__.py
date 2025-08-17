@@ -42,16 +42,7 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 LOGGER = logging.getLogger(__name__)
 
 
-async def feed_checker():
-    """Periodic feed checking task"""
-    print("RSS Feed Bot started")
-    while True:
-        try:
-            await check_feeds()
-        except Exception as e:
-            print(f"Error in feed checker: {str(e)}")
-        
-        await asyncio.sleep(CHECK_INTERVAL)
+
 
 class wbot(Client):
     def __init__(self):
@@ -84,7 +75,17 @@ class wbot(Client):
         await super().stop()
         LOGGER.info("Bot is OFFLINE 🔴")
 
-
+async def feed_checker():
+    """Periodic feed checking task"""
+    print("RSS Feed Bot started")
+    while True:
+        try:
+            await check_feeds()
+        except Exception as e:
+            print(f"Error in feed checker: {str(e)}")
+        
+        await asyncio.sleep(CHECK_INTERVAL)
+        
 loop = asyncio.get_event_loop()
 loop.run_until_complete(start())
 

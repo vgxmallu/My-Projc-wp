@@ -97,7 +97,7 @@ async def fffstart(client, message):
         await asyncio.sleep(1)
         await thunder.delete()
         button = [
-        [InlineKeyboardButton('Menu 🌌', callback_data='help')]]
+        [InlineKeyboardButton('📣My Channel', url='t.me/xbots_x')]]
         reply_markup = InlineKeyboardMarkup(button)
         await message.reply(Script.START_TEXT, reply_markup=reply_markup, quote=True, parse_mode=enums.ParseMode.HTML)
                 

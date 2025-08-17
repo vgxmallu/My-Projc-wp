@@ -99,7 +99,7 @@ async def fffstart(client, message):
         button = [
         [InlineKeyboardButton('📣My Channel', url='t.me/xbots_x')]]
         reply_markup = InlineKeyboardMarkup(button)
-        await message.reply(Script.START_TEXT, reply_markup=reply_markup, quote=True, parse_mode=enums.ParseMode.HTML)
+        await message.reply_photo(photo="https://files.catbox.moe/wpxnj9.jpg", Script.START_TEXT, reply_markup=reply_markup, quote=True, parse_mode=enums.ParseMode.HTML)
                 
 
                 

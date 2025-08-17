@@ -92,6 +92,9 @@ async def main():
     while True:
         await asyncio.sleep(3600)  # Sleep for 1 hour
 
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
+
 
 DEV_LIST = [784589736]
 

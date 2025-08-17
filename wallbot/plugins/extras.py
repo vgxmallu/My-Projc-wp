@@ -55,7 +55,7 @@ async def ping(client, message):
                 await m.edit(f'Pong!\n{elapsed_time:.3f}ms')
                 
 #start
-@Client.on_message(filters.command('st'))
+@Client.on_message(filters.command('start'))
 async def fffstart(client, message):
     if len(message.command) > 1 and message.command[1].startswith("upload_"):
         k = await message.reply("Fetching Download link...")

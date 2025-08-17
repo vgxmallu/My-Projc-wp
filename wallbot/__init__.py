@@ -8,6 +8,9 @@ import time
 from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
 from wallbot.plugins.word import load_words, load_common_words
 from motor.motor_asyncio import AsyncIOMotorClient
+import asyncio
+from wallbot.plugins.rss import feed_checker
+
 
 
 formatter = logging.Formatter('%(levelname)s %(asctime)s - %(name)s - %(message)s')

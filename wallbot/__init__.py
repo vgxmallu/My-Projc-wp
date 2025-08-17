@@ -9,7 +9,7 @@ from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
 from wallbot.plugins.word import load_words, load_common_words
 from motor.motor_asyncio import AsyncIOMotorClient
 import asyncio
-from wallbot.plugins.rss import feed_checker
+from wallbot.plugins.rss import check_feeds
 
 
 
@@ -42,19 +42,16 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 LOGGER = logging.getLogger(__name__)
 
 
-async def check_feeds():
-    """Check all feeds for new entries"""
-    feeds = await get_feeds()
-    if not feeds:
-        return
-    
-    print(f"\nChecking {len(feeds)} feeds at {datetime.now().isoformat()}")
-    
-    for feed in feeds:
-        print(f"Processing feed: {feed['title']}")
-        await process_feed(feed)
-        await asyncio.sleep(2)  # Delay between feeds
-
+async def feed_checker():
+    """Periodic feed checking task"""
+    print("RSS Feed Bot started")
+    while True:
+        try:
+            await check_feeds()
+        except Exception as e:
+            print(f"Error in feed checker: {str(e)}")
+        
+        await asyncio.sleep(CHECK_INTERVAL)
 
 class wbot(Client):
     def __init__(self):

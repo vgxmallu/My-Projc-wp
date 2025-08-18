@@ -9,7 +9,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from pymongo import MongoClient, DESCENDING
 from pymongo.errors import DuplicateKeyError
-from wallbot import wbot as app
+from wallbot import wbot
 from config import DB_URL
 
 
@@ -188,7 +188,7 @@ async def update_feed_last_checked(feed_id: str):
 
 
 
-@app.on_message(filters.command("addfeed") & filters.user(ADMIN_USER_ID))
+@wbot.on_message(filters.command("addfeed") & filters.user(ADMIN_USER_ID))
 async def add_feed_cmd(client: Client, message: Message):
     if len(message.command) < 2:
         await message.reply_text("Usage: /addfeed [RSS URL]")
@@ -198,7 +198,7 @@ async def add_feed_cmd(client: Client, message: Message):
     success, response = await add_feed(url)
     await message.reply_text(response)
 
-@app.on_message(filters.command("removefeed") & filters.user(ADMIN_USER_ID))
+@wbot.on_message(filters.command("removefeed") & filters.user(ADMIN_USER_ID))
 async def remove_feed_cmd(client: Client, message: Message):
     if len(message.command) < 2:
         await message.reply_text("Usage: /removefeed [feed_id]")
@@ -208,7 +208,7 @@ async def remove_feed_cmd(client: Client, message: Message):
     success, response = await remove_feed(feed_id)
     await message.reply_text(response)
 
-@app.on_message(filters.command("listfeeds"))
+@wbot.on_message(filters.command("listfeeds"))
 async def list_feeds_cmd(client: Client, message: Message):
     feeds = await get_feeds()
     if not feeds:
@@ -227,7 +227,7 @@ async def list_feeds_cmd(client: Client, message: Message):
     
     await message.reply_text(response)
 
-@app.on_message(filters.command("sub") & filters.group)
+@wbot.on_message(filters.command("sub") & filters.group)
 async def subscribe_cmd(client: Client, message: Message):
     if len(message.command) < 2:
         await message.reply_text("Usage: /sub [feed_id]")
@@ -242,7 +242,7 @@ async def subscribe_cmd(client: Client, message: Message):
     )
     await message.reply_text(response)
 
-@app.on_message(filters.command("unsub") & filters.group)
+@wbot.on_message(filters.command("unsub") & filters.group)
 async def unsubscribe_cmd(client: Client, message: Message):
     if len(message.command) < 2:
         await message.reply_text("Usage: /unsub [feed_id]")
@@ -254,7 +254,7 @@ async def unsubscribe_cmd(client: Client, message: Message):
     success, response = await unsubscribe_group(feed_id, group_id)
     await message.reply_text(response)
 
-@app.on_message(filters.command("listsubs") & filters.group)
+@wbot.on_message(filters.command("listsubs") & filters.group)
 async def list_subs_cmd(client: Client, message: Message):
     group_id = message.chat.id
     subs = await get_group_subscriptions(group_id)
@@ -271,7 +271,7 @@ async def list_subs_cmd(client: Client, message: Message):
     
     await message.reply_text(response)
 
-@app.on_message(filters.command("forcecheck") & filters.user(ADMIN_USER_ID))
+@wbot.on_message(filters.command("forcecheck") & filters.user(ADMIN_USER_ID))
 async def force_check_cmd(client: Client, message: Message):
     await message.reply_text("⏳ Checking feeds...")
     await check_feeds()

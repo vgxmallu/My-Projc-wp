@@ -75,8 +75,7 @@ class wbot(Client):
         await super().stop()
         LOGGER.info("Bot is OFFLINE 🔴")
 """
-async def feed_checker():
-    """Periodic feed checking task"""
+async def feed_checker()
     print("RSS Feed Bot started")
     while True:
         try:

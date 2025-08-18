@@ -74,7 +74,7 @@ class wbot(Client):
     async def stop(self, *args):
         await super().stop()
         LOGGER.info("Bot is OFFLINE 🔴")
-
+"""
 async def feed_checker():
     """Periodic feed checking task"""
     print("RSS Feed Bot started")
@@ -89,6 +89,7 @@ async def feed_checker():
 asyncio.create_task(feed_checker())
 loop = asyncio.get_event_loop()
 loop.run_until_complete(start())
+"""
 
 
 DEV_LIST = [784589736]

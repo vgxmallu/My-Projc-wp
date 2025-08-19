@@ -1,4 +1,4 @@
-from wbot.database import mongodb
+from wallbot.database import mongodb
 
 usersdb = mongodb["users"]
 cleandb = mongodb["cleanmode"]

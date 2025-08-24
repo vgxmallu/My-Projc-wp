@@ -27,3 +27,4 @@ feedparser==6.0.11
 bs4
 speedtest-cli
 gTTS
+wget

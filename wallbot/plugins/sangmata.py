@@ -88,7 +88,7 @@ async def set_mataa(_, ctx):
     gg = await ctx.delete()
     if len(ctx.command) == 1:
         return await ctx.reply_text(
-            "Use <code>/{} on</code>, to enable Music X Dl. If you want disable, you can use off parameter.".format(ctx.command[0])
+            "Use <code>/{} on</code>, to enable. If you want disable, you can use off parameter.".format(ctx.command[0])
         )
     if ctx.command[1] == "on":
         cekset = await is_sangmata_on(ctx.chat.id)

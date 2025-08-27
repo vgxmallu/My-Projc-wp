@@ -6,7 +6,7 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from wallbot import wbot as app
-from wallbot.utils.human_read.human_read import get_readable_time
+from wallbot.utils.human_read import get_readable_time
 
 
 anime_query = """

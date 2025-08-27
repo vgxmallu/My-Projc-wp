@@ -28,3 +28,4 @@ bs4
 speedtest-cli
 gTTS
 wget
+imdbpy

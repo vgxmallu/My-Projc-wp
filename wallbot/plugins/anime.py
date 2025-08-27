@@ -239,4 +239,4 @@ async def anime_search(_, mesg):
             await reply.edit(msg)
     else:
         await reply.edit(msg)
-    await reply.delete()
+    #await reply.delete()

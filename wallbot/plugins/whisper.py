@@ -3,7 +3,7 @@ from pyrogram.types import (
     Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 )
 from pyrogram.errors import Unauthorized
-
+from wallbot import wbot as app
 
 # Database to store whispers (in production, use a proper database)
 whisper_db = {}

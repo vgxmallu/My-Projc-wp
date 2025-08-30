@@ -7,7 +7,7 @@ python-dateutil
 python-dotenv
 requests
 asgiref 
-
+apscheduler==3.10.4
 pykeyboard
 aiohttp==3.9.2 
 asyncio

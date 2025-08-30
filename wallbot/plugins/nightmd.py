@@ -29,11 +29,11 @@ OPEN_CHAT = ChatPermissions(
     can_pin_messages = True,
     can_invite_users = True )
     
-buttons = InlineKeyboardMarkup([[InlineKeyboardButton("๏ ᴇɴᴀʙʟᴇ ๏", callback_data="add_night"),InlineKeyboardButton("๏ ᴅɪsᴀʙʟᴇ ๏", callback_data="rm_night")]])         
+buttons = InlineKeyboardMarkup([[InlineKeyboardButton("✓ On", callback_data="add_night"),InlineKeyboardButton("× Off", callback_data="rm_night")]])         
 
 @app.on_message(filters.command("nightmode") & filters.group)
 async def _nightmode(_, message):
-    return await message.reply_photo(photo="https://telegra.ph//file/06649d4d0bbf4285238ee.jpg", caption="**ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ᴇɴᴀʙʟᴇ ᴏʀ ᴅɪsᴀʙʟᴇ ɴɪɢʜᴛᴍᴏᴅᴇ ɪɴ ᴛʜɪs ᴄʜᴀᴛ.**",reply_markup=buttons)
+    return await message.reply_photo(photo="https://telegra.ph//file/06649d4d0bbf4285238ee.jpg", caption="**Click to on and of Night mod in chat.**",reply_markup=buttons)
               
      
 @app.on_callback_query(filters.regex("^(add_night|rm_night)$"))
@@ -48,16 +48,16 @@ async def nightcb(bot, query: CallbackQuery):
     if user_id in administrators:   
         if data == "add_night":
             if check_night:        
-                await query.message.edit_caption("**๏ ɴɪɢʜᴛᴍᴏᴅᴇ ɪs ᴀʟʀᴇᴀᴅʏ ᴇɴᴀʙʟᴇᴅ ɪɴ ᴛʜɪs ᴄʜᴀᴛ.**")
+                await query.message.edit_caption("**Already on this caht.**")
             elif not check_night :
                 await nightmode_on(chat_id)
                 await query.message.edit_caption("**๏ ᴀᴅᴅᴇᴅ ᴄʜᴀᴛ ᴛᴏ ᴍʏ ᴅᴀᴛᴀʙᴀsᴇ . ᴛʜɪs ɢʀᴏᴜᴘ ᴡɪʟʟ ʙᴇ ᴄʟᴏsᴇᴅ ᴏɴ 𝟷𝟸ᴀᴍ [IST] ᴀɴᴅ ᴡɪʟʟ ᴏᴘᴇɴᴇᴅ ᴏɴ 𝟶𝟼ᴀᴍ [IST] .**") 
         if data == "rm_night":
             if check_night:  
                 await nightmode_off(chat_id)      
-                await query.message.edit_caption("**๏ ɴɪɢʜᴛᴍᴏᴅᴇ ʀᴇᴍᴏᴠᴇᴅ ғʀᴏᴍ ᴍʏ ᴅᴀᴛᴀʙᴀsᴇ !**")
+                await query.message.edit_caption("**N Mod removed!**")
             elif not check_night:
-                await query.message.edit_caption("**๏  ɴɪɢʜᴛᴍᴏᴅᴇ ɪs ᴀʟʀᴇᴀᴅʏ ᴅɪsᴀʙʟᴇᴅ  ɪɴ ᴛʜɪs ᴄʜᴀᴛ.**") 
+                await query.message.edit_caption("**N mod already off.**") 
             
     
     

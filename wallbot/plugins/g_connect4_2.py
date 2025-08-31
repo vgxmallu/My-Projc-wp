@@ -1,783 +1,808 @@
-# connect4_ultimate.py
-"""
-Advanced Connect 4 Bot (Pyrogram + motor + MongoDB)
-Features:
- - PvP (group/private) and PvE (vs bot) with Easy/Medium/Hard (minimax)
- - Spectator mode: /spectate <game_id>
- - Undo (one-step) and Replay of games
- - Tournament mode (create/join/start) in group chats
- - Custom emojis/themes for board rendering
- - Persistent games + players + tournaments in MongoDB
- - Auto-cleanup inactive games and error handling
-"""
-
-import asyncio
-import uuid
+import os
 import random
-import time
+import asyncio
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Optional, Tuple
-
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from motor.motor_asyncio import AsyncIOMotorClient
+from enum import Enum
+from typing import Dict, List, Optional, Tuple
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
+from pyrogram.types import (
+    Message, InlineKeyboardMarkup, InlineKeyboardButton, 
+    CallbackQuery, ReplyKeyboardMarkup, ReplyKeyboardRemove
+)
+from pymongo import MongoClient, DESCENDING, ASCENDING
+from pymongo.errors import DuplicateKeyError
 from config import DB_URL
 from wallbot import wbot as app
 
-# ------------------- CONFIG -------------------
+# Initialize MongoDB
 
-DB_NAME = "connect4_ultimate"
+mongo_client = MongoClient(DB_URL)
+db = mongo_client.connect4_bot
+
+# Collections
+games_col = db.games
+users_col = db.users
+tournaments_col = db.tournaments
+leaderboard_col = db.leaderboard
+
+# Create indexes
+games_col.create_index([("status", 1), ("created_at", 1)])
+games_col.create_index("players")
+users_col.create_index("user_id", unique=True)
+tournaments_col.create_index([("status", 1), ("start_date", 1)])
+leaderboard_col.create_index("user_id", unique=True)
+
+# Initialize Pyrogram Client
 
 # Game constants
-ROWS, COLS = 6, 7
-DEFAULT_THEME = {
-    "empty": "⚪",
-    "p1": "🔴",  # represents X
-    "p2": "🟡"   # represents O / bot
-}
-GAME_TIMEOUT_MINUTES = 15   # inactivity -> auto-forfeit / cleanup
-MINIMAX_DEPTH_MEDIUM = 3
-MINIMAX_DEPTH_HARD = 5
-# ----------------------------------------------
+ROWS = 6
+COLS = 7
+EMPTY = "⚪"
+PLAYER1 = "🔴"
+PLAYER2 = "🟡"
+BOT = "🤖"
+WINNING_LENGTH = 4
 
-mongo = AsyncIOMotorClient(DB_URL)
-db = mongo[DB_NAME]
-games_col = db["games"]
-players_col = db["players"]
-tourn_col = db["tournaments"]
-themes_col = db["themes"]
+# Game difficulty levels
+class Difficulty(Enum):
+    EASY = 1
+    MEDIUM = 2
+    HARD = 3
 
-scheduler = AsyncIOScheduler(timezone="UTC")
-scheduler.start()
+# Game status
+class GameStatus(Enum):
+    WAITING = "waiting"
+    ACTIVE = "active"
+    COMPLETED = "completed"
+    ABANDONED = "abandoned"
 
-# ----------------- UTILITIES ------------------
-def new_board() -> List[List[str]]:
-    return [[" " for _ in range(COLS)] for _ in range(ROWS)]
+# Tournament status
+class TournamentStatus(Enum):
+    REGISTERING = "registering"
+    ACTIVE = "active"
+    COMPLETED = "completed"
 
-def board_to_text(board: List[List[str]], theme: dict) -> str:
-    sym = { " ": theme["empty"], "X": theme["p1"], "O": theme["p2"] }
-    lines = ["".join(sym[cell] for cell in row) for row in board]
-    header = " ".join(str(i+1) for i in range(COLS))
-    return f"Cols: {header}\n" + "\n".join(lines)
+# Database models
+async def get_or_create_user(user_id: int, username: str = "", first_name: str = ""):
+    """Get user from DB or create if not exists"""
+    user = users_col.find_one({"user_id": user_id})
+    if not user:
+        user = {
+            "user_id": user_id,
+            "username": username,
+            "first_name": first_name,
+            "created_at": datetime.now(),
+            "games_played": 0,
+            "games_won": 0,
+            "games_lost": 0,
+            "tournaments_won": 0,
+            "rating": 1000  # Elo rating
+        }
+        users_col.insert_one(user)
+        # Add to leaderboard
+        leaderboard_col.insert_one({
+            "user_id": user_id,
+            "username": username,
+            "first_name": first_name,
+            "rating": 1000,
+            "games_played": 0,
+            "games_won": 0,
+            "last_updated": datetime.now()
+        })
+    return user
 
-def possible_moves(board: List[List[str]]) -> List[int]:
-    return [c for c in range(COLS) if board[0][c] == " "]
+async def update_user_stats(user_id: int, won: bool = None):
+    """Update user statistics"""
+    update_data = {"$inc": {"games_played": 1}}
+    
+    if won is True:
+        update_data["$inc"]["games_won"] = 1
+        update_data["$inc"]["rating"] = 20  # Increase rating for win
+    elif won is False:
+        update_data["$inc"]["games_lost"] = 1
+        update_data["$inc"]["rating"] = -15  # Decrease rating for loss
+    
+    users_col.update_one({"user_id": user_id}, update_data)
+    
+    # Update leaderboard
+    user = users_col.find_one({"user_id": user_id})
+    leaderboard_col.update_one(
+        {"user_id": user_id},
+        {
+            "$set": {
+                "rating": user["rating"],
+                "games_played": user["games_played"],
+                "games_won": user["games_won"],
+                "last_updated": datetime.now()
+            }
+        }
+    )
 
-def drop_piece(board: List[List[str]], col: int, piece: str) -> bool:
-    for r in range(ROWS-1, -1, -1):
-        if board[r][col] == " ":
-            board[r][col] = piece
-            return True
+async def create_game(player1_id: int, player2_id: int = None, is_bot: bool = False, 
+                     difficulty: Difficulty = Difficulty.MEDIUM, tournament_id: str = None):
+    """Create a new game"""
+    board = [[EMPTY for _ in range(COLS)] for _ in range(ROWS)]
+    
+    game = {
+        "player1_id": player1_id,
+        "player2_id": player2_id if not is_bot else None,
+        "is_bot": is_bot,
+        "bot_difficulty": difficulty.value if is_bot else None,
+        "current_player": player1_id,
+        "board": board,
+        "status": GameStatus.ACTIVE.value,
+        "moves": [],
+        "created_at": datetime.now(),
+        "updated_at": datetime.now(),
+        "tournament_id": tournament_id
+    }
+    
+    result = games_col.insert_one(game)
+    return str(result.inserted_id)
+
+async def get_game(game_id: str):
+    """Get a game by ID"""
+    return games_col.find_one({"_id": game_id})
+
+async def update_game(game_id: str, update_data: dict):
+    """Update game data"""
+    update_data["updated_at"] = datetime.now()
+    games_col.update_one({"_id": game_id}, {"$set": update_data})
+
+async def abandon_game(game_id: str, user_id: int):
+    """Mark a game as abandoned"""
+    game = await get_game(game_id)
+    if not game:
+        return False
+    
+    # Determine winner (the player who didn't abandon)
+    winner_id = game["player1_id"] if game["player1_id"] != user_id else game["player2_id"]
+    
+    await update_game(game_id, {
+        "status": GameStatus.ABANDONED.value,
+        "winner_id": winner_id
+    })
+    
+    # Update stats
+    await update_user_stats(winner_id, True)
+    await update_user_stats(user_id, False)
+    
+    return True
+
+async def cleanup_old_games():
+    """Clean up games older than 24 hours"""
+    cutoff = datetime.now() - timedelta(hours=24)
+    result = games_col.delete_many({
+        "created_at": {"$lt": cutoff},
+        "status": {"$ne": GameStatus.COMPLETED.value}
+    })
+    return result.deleted_count
+
+async def get_leaderboard(limit: int = 10):
+    """Get top players from leaderboard"""
+    return list(leaderboard_col.find().sort("rating", DESCENDING).limit(limit))
+
+async def create_tournament(name: str, created_by: int, max_players: int = 8):
+    """Create a new tournament"""
+    tournament = {
+        "name": name,
+        "created_by": created_by,
+        "max_players": max_players,
+        "players": [],
+        "status": TournamentStatus.REGISTERING.value,
+        "start_date": None,
+        "end_date": None,
+        "winner_id": None,
+        "bracket": {},
+        "current_round": 0,
+        "created_at": datetime.now()
+    }
+    
+    result = tournaments_col.insert_one(tournament)
+    return str(result.inserted_id)
+
+async def join_tournament(tournament_id: str, user_id: int):
+    """Add a player to a tournament"""
+    tournament = tournaments_col.find_one({"_id": tournament_id})
+    if not tournament:
+        return False, "Tournament not found"
+    
+    if tournament["status"] != TournamentStatus.REGISTERING.value:
+        return False, "Tournament registration is closed"
+    
+    if len(tournament["players"]) >= tournament["max_players"]:
+        return False, "Tournament is full"
+    
+    if user_id in tournament["players"]:
+        return False, "Already joined this tournament"
+    
+    tournaments_col.update_one(
+        {"_id": tournament_id},
+        {"$push": {"players": user_id}}
+    )
+    
+    return True, "Joined tournament successfully"
+
+# Game logic
+def is_valid_move(board: List[List[str]], col: int) -> bool:
+    """Check if a move is valid"""
+    return 0 <= col < COLS and board[0][col] == EMPTY
+
+def make_move(board: List[List[str]], col: int, player: str) -> Tuple[bool, List[List[str]]]:
+    """Make a move on the board"""
+    if not is_valid_move(board, col):
+        return False, board
+    
+    # Find the lowest empty row in the column
+    for row in range(ROWS-1, -1, -1):
+        if board[row][col] == EMPTY:
+            board[row][col] = player
+            return True, board
+    
+    return False, board
+
+def check_winner(board: List[List[str]], player: str) -> bool:
+    """Check if a player has won"""
+    # Check horizontal
+    for row in range(ROWS):
+        for col in range(COLS - WINNING_LENGTH + 1):
+            if all(board[row][col+i] == player for i in range(WINNING_LENGTH)):
+                return True
+    
+    # Check vertical
+    for row in range(ROWS - WINNING_LENGTH + 1):
+        for col in range(COLS):
+            if all(board[row+i][col] == player for i in range(WINNING_LENGTH)):
+                return True
+    
+    # Check diagonal (top-left to bottom-right)
+    for row in range(ROWS - WINNING_LENGTH + 1):
+        for col in range(COLS - WINNING_LENGTH + 1):
+            if all(board[row+i][col+i] == player for i in range(WINNING_LENGTH)):
+                return True
+    
+    # Check diagonal (bottom-left to top-right)
+    for row in range(WINNING_LENGTH - 1, ROWS):
+        for col in range(COLS - WINNING_LENGTH + 1):
+            if all(board[row-i][col+i] == player for i in range(WINNING_LENGTH)):
+                return True
+    
     return False
 
-def board_full(board: List[List[str]]) -> bool:
-    return all(cell != " " for row in board for cell in row)
+def is_board_full(board: List[List[str]]) -> bool:
+    """Check if the board is full"""
+    return all(cell != EMPTY for row in board for cell in row)
 
-def check_winner(board: List[List[str]]) -> Optional[str]:
-    # returns "X" or "O" or "DRAW" or None
-    for r in range(ROWS):
-        for c in range(COLS-3):
-            if board[r][c] != " " and all(board[r][c+i] == board[r][c] for i in range(4)):
-                return board[r][c]
-    for c in range(COLS):
-        for r in range(ROWS-3):
-            if board[r][c] != " " and all(board[r+i][c] == board[r][c] for i in range(4)):
-                return board[r][c]
-    for r in range(ROWS-3):
-        for c in range(COLS-3):
-            if board[r][c] != " " and all(board[r+i][c+i] == board[r][c] for i in range(4)):
-                return board[r][c]
-    for r in range(3, ROWS):
-        for c in range(COLS-3):
-            if board[r][c] != " " and all(board[r-i][c+i] == board[r][c] for i in range(4)):
-                return board[r][c]
-    if board_full(board):
-        return "DRAW"
-    return None
+def board_to_string(board: List[List[str]]) -> str:
+    """Convert board to string representation"""
+    # Add column numbers
+    board_str = "".join(f"{i+1}️⃣" for i in range(COLS)) + "\n"
+    
+    # Add board rows
+    for row in board:
+        board_str += "".join(cell for cell in row) + "\n"
+    
+    return board_str
 
-def render_kb(gid: str, active: bool = True) -> InlineKeyboardMarkup:
-    # top row: columns 1..7
-    row = []
-    for c in range(COLS):
-        cb = f"move|{gid}|{c}" if active else f"noop|{gid}|{c}"
-        row.append(InlineKeyboardButton(str(c+1), callback_data=cb))
-    # controls
-    ctrl = [
-        InlineKeyboardButton("↺ Undo", callback_data=f"undo|{gid}"),
-        InlineKeyboardButton("⟳ Replay", callback_data=f"replay|{gid}"),
-        InlineKeyboardButton("🔁 Rematch", callback_data=f"rematch|{gid}")
-    ]
-    return InlineKeyboardMarkup([row, ctrl, [InlineKeyboardButton("👀 Spectate", callback_data=f"spectate|{gid}")]])
+def get_bot_move(board: List[List[str]], difficulty: Difficulty) -> int:
+    """Get a move for the bot based on difficulty"""
+    # Easy: Random move
+    if difficulty == Difficulty.EASY:
+        valid_moves = [col for col in range(COLS) if is_valid_move(board, col)]
+        return random.choice(valid_moves) if valid_moves else -1
+    
+    # Medium: Try to win or block opponent, otherwise random
+    if difficulty == Difficulty.MEDIUM:
+        # Check if bot can win
+        for col in range(COLS):
+            if is_valid_move(board, col):
+                test_board = [row[:] for row in board]  # Copy board
+                _, new_board = make_move(test_board, col, PLAYER2)
+                if check_winner(new_board, PLAYER2):
+                    return col
+        
+        # Check if need to block player
+        for col in range(COLS):
+            if is_valid_move(board, col):
+                test_board = [row[:] for row in board]  # Copy board
+                _, new_board = make_move(test_board, col, PLAYER1)
+                if check_winner(new_board, PLAYER1):
+                    return col
+        
+        # Otherwise random
+        valid_moves = [col for col in range(COLS) if is_valid_move(board, col)]
+        return random.choice(valid_moves) if valid_moves else -1
+    
+    # Hard: Minimax algorithm (simplified)
+    if difficulty == Difficulty.HARD:
+        # This is a simplified version - a full minimax would be better
+        best_score = float('-inf')
+        best_move = -1
+        
+        for col in range(COLS):
+            if is_valid_move(board, col):
+                test_board = [row[:] for row in board]  # Copy board
+                _, new_board = make_move(test_board, col, PLAYER2)
+                
+                # Simple evaluation function
+                score = evaluate_board(new_board, PLAYER2)
+                
+                if score > best_score:
+                    best_score = score
+                    best_move = col
+        
+        return best_move if best_move != -1 else random.choice([col for col in range(COLS) if is_valid_move(board, col)])
 
-# ----------------- DB HELPERS -----------------
-async def ensure_player(uid: int) -> Dict[str, Any]:
-    p = await players_col.find_one({"_id": uid})
-    if not p:
-        p = {"_id": uid, "wins": 0, "losses": 0, "draws": 0, "elo": 1200, "games": 0}
-        await players_col.insert_one(p)
-    return p
-
-async def update_player_result(winner: Optional[int], loser: Optional[int], draw=False):
-    if draw:
-        if winner is None and loser is None:
-            return
-    if draw:
-        # both players increment draws
-        if winner is not None: await players_col.update_one({"_id": winner}, {"$inc": {"draws": 1, "games": 1}}, upsert=True)
-        if loser  is not None: await players_col.update_one({"_id": loser}, {"$inc": {"draws": 1, "games": 1}}, upsert=True)
-        return
-    # winner & loser numeric
-    await ensure_player(winner)
-    await ensure_player(loser)
-    # simple elo change
-    w_doc = await players_col.find_one({"_id": winner})
-    l_doc = await players_col.find_one({"_id": loser})
-    # elo expected
-    def exp(a,b): return 1/(1+10**((b-a)/400))
-    k = 32
-    e_w = exp(w_doc["elo"], l_doc["elo"])
-    e_l = exp(l_doc["elo"], w_doc["elo"])
-    new_w = int(w_doc["elo"] + k*(1 - e_w))
-    new_l = int(l_doc["elo"] + k*(0 - e_l))
-    await players_col.update_one({"_id": winner}, {"$inc": {"wins":1, "games":1}, "$set": {"elo": new_w}})
-    await players_col.update_one({"_id": loser}, {"$inc": {"losses":1, "games":1}, "$set": {"elo": new_l}})
-
-# themes table with a default
-async def get_theme(chat_id: int) -> Dict[str,str]:
-    t = await themes_col.find_one({"_id": chat_id})
-    if not t:
-        return DEFAULT_THEME
-    return {"empty": t.get("empty", DEFAULT_THEME["empty"]), "p1": t.get("p1", DEFAULT_THEME["p1"]), "p2": t.get("p2", DEFAULT_THEME["p2"])}
-
-async def set_theme(chat_id: int, empty: str, p1: str, p2: str):
-    await themes_col.update_one({"_id": chat_id}, {"$set": {"empty": empty, "p1": p1, "p2": p2}}, upsert=True)
-
-# ----------------- AI (Minimax) ----------------
-# evaluation heuristics similar to earlier: centre preference + window scoring
-def score_window(window: List[str], piece: str) -> int:
+def evaluate_board(board: List[List[str]], player: str) -> int:
+    """Evaluate the board for a player (simplified)"""
+    opponent = PLAYER1 if player == PLAYER2 else PLAYER2
     score = 0
-    opp = "O" if piece == "X" else "X"
-    if window.count(piece) == 4:
-        score += 1000
-    elif window.count(piece) == 3 and window.count(" ") == 1:
-        score += 50
-    elif window.count(piece) == 2 and window.count(" ") == 2:
-        score += 10
-    if window.count(opp) == 3 and window.count(" ") == 1:
-        score -= 80
+    
+    # Center preference
+    center_col = COLS // 2
+    for row in range(ROWS):
+        if board[row][center_col] == player:
+            score += 3
+    
+    # Check for potential wins
+    for row in range(ROWS):
+        for col in range(COLS):
+            if board[row][col] == player:
+                # Horizontal
+                if col <= COLS - WINNING_LENGTH:
+                    window = [board[row][col+i] for i in range(WINNING_LENGTH)]
+                    score += evaluate_window(window, player, opponent)
+                
+                # Vertical
+                if row <= ROWS - WINNING_LENGTH:
+                    window = [board[row+i][col] for i in range(WINNING_LENGTH)]
+                    score += evaluate_window(window, player, opponent)
+                
+                # Diagonal (positive slope)
+                if row <= ROWS - WINNING_LENGTH and col <= COLS - WINNING_LENGTH:
+                    window = [board[row+i][col+i] for i in range(WINNING_LENGTH)]
+                    score += evaluate_window(window, player, opponent)
+                
+                # Diagonal (negative slope)
+                if row >= WINNING_LENGTH - 1 and col <= COLS - WINNING_LENGTH:
+                    window = [board[row-i][col+i] for i in range(WINNING_LENGTH)]
+                    score += evaluate_window(window, player, opponent)
+    
     return score
 
-def board_score(board: List[List[str]], piece: str) -> int:
+def evaluate_window(window: List[str], player: str, opponent: str) -> int:
+    """Evaluate a window of 4 consecutive cells"""
     score = 0
-    center_array = [board[r][COLS//2] for r in range(ROWS)]
-    score += center_array.count(piece) * 6
-    # horizontal
-    for r in range(ROWS):
-        row = board[r]
-        for c in range(COLS-3):
-            score += score_window(row[c:c+4], piece)
-    # vertical
-    for c in range(COLS):
-        col = [board[r][c] for r in range(ROWS)]
-        for r in range(ROWS-3):
-            score += score_window(col[r:r+4], piece)
-    # diags
-    for r in range(ROWS-3):
-        for c in range(COLS-3):
-            window = [board[r+i][c+i] for i in range(4)]
-            score += score_window(window, piece)
-    for r in range(3, ROWS):
-        for c in range(COLS-3):
-            window = [board[r-i][c+i] for i in range(4)]
-            score += score_window(window, piece)
+    
+    if window.count(player) == 4:
+        score += 100
+    elif window.count(player) == 3 and window.count(EMPTY) == 1:
+        score += 5
+    elif window.count(player) == 2 and window.count(EMPTY) == 2:
+        score += 2
+    
+    if window.count(opponent) == 3 and window.count(EMPTY) == 1:
+        score -= 4
+    
     return score
 
-def minimax(board: List[List[str]], depth:int, alpha:int, beta:int, maximizing:bool, piece:str) -> Tuple[int, Optional[int]]:
-    valid_cols = possible_moves(board)
-    terminal = check_winner(board)
-    if depth == 0 or terminal is not None:
-        if terminal == piece:
-            return (10**7, None)
-        elif terminal == ("O" if piece == "X" else "X"):
-            return (-10**7, None)
-        elif terminal == "DRAW":
-            return (0, None)
-        else:
-            return (board_score(board, piece), None)
-    if maximizing:
-        value = -10**9
-        best_col = random.choice(valid_cols)
-        for col in valid_cols:
-            bcopy = [row[:] for row in board]
-            drop_piece(bcopy, col, piece)
-            new_score, _ = minimax(bcopy, depth-1, alpha, beta, False, piece)
-            if new_score > value:
-                value, best_col = new_score, col
-            alpha = max(alpha, value)
-            if alpha >= beta:
-                break
-        return value, best_col
-    else:
-        value = 10**9
-        opp = "O" if piece == "X" else "X"
-        best_col = random.choice(valid_cols)
-        for col in valid_cols:
-            bcopy = [row[:] for row in board]
-            drop_piece(bcopy, col, opp)
-            new_score, _ = minimax(bcopy, depth-1, alpha, beta, True, piece)
-            if new_score < value:
-                value, best_col = new_score, col
-            beta = min(beta, value)
-            if alpha >= beta:
-                break
-        return value, best_col
-
-# entry AI mover
-def ai_choose(board: List[List[str]], level:str) -> int:
-    empty = possible_moves(board)
-    if level == "easy":
-        return random.choice(empty)
-    if level == "medium":
-        # try to win or block immediate, else one-step minimax small depth
-        for c in empty:
-            bcopy = [row[:] for row in board]
-            drop_piece(bcopy, c, "O")
-            if check_winner(bcopy) == "O":
-                return c
-        for c in empty:
-            bcopy = [row[:] for row in board]
-            drop_piece(bcopy, c, "X")
-            if check_winner(bcopy) == "X":
-                return c
-        _, col = minimax(board, MINIMAX_DEPTH_MEDIUM, -10**9, 10**9, True, "O")
-        return col if col is not None else random.choice(empty)
-    # hard
-    _, col = minimax(board, MINIMAX_DEPTH_HARD, -10**9, 10**9, True, "O")
-    return col if col is not None else random.choice(empty)
-
-# ----------------- GAME LIFECYCLE ----------------
-# Games are stored in MongoDB with fields:
-# _id, chat_id, players [p1,p2], board, turn (player id or 0 for bot), status, created_at, last_move_at, history(list), theme
-# We'll also maintain a simple in-memory mapping of message_id -> game_id for in-chat message edits (best-effort)
-msg_to_game: Dict[int, str] = {}   # message_id -> gid
-
-# Auto cleanup scheduled job: close games inactive beyond timeout
-async def cleanup_job():
-    cutoff = datetime.utcnow() - timedelta(minutes=GAME_TIMEOUT_MINUTES)
-    cursor = games_col.find({"status": "active", "last_move_at": {"$lt": cutoff.timestamp()}})
-    async for g in cursor:
-        gid = g["_id"]
-        # award win to opponent of turn
-        turn = g["turn"]
-        players = g["players"]
-        if len(players) >= 2:
-            winner = players[0] if players[1] == turn else players[1]
-            await update_player_result(winner, turn, draw=False)  # uses same function
-        await games_col.update_one({"_id": gid}, {"$set": {"status": "forfeited", "ended_at": datetime.utcnow().timestamp()}})
-
-scheduler.add_job(lambda: asyncio.create_task(cleanup_job()), "interval", minutes=2)
-
-# ----------------- COMMANDS -----------------
-@app.on_message(filters.command("start"))
-async def cmd_start(_, message: Message):
-    await message.reply(
-        "🎮 Connect 4 Ultimate\nCommands:\n"
-        "/challenge (reply to user) — challenge in chat\n"
-        "/pve <easy|medium|hard> — play private vs bot\n        /spectate <game_id> — view a game's board\n"
-        "/undo — undo last move (only allowed immediately by previous mover)\n"
-        "/replay <game_id> — replay a finished game step-by-step\n"
-        "/theme set <empty> <p1> <p2> — set emojis for this chat\n"
-        "/tourney create <name> — create tournament (group)\n/tourney join <id> — join\n/tourney start <id> — start tournament\n"
-        "/profile — show your stats\n/leaderboard — top players by ELO"
+# Handlers
+@app.on_message(filters.command("sttc4"))
+async def starthhdhd_command(client, message: Message):
+    """Handle/start command"""
+    user = await get_or_create_user(
+        message.from_user.id,
+        message.from_user.username,
+        message.from_user.first_name
     )
-
-# ----------------- PvP Challenge -----------------
-@app.on_message(filters.command("c4challenge") & (filters.group | filters.private))
-async def cmd_ccehallenge(_, message: Message):
-    # must reply to a user or provide username
-    if not message.reply_to_message and len(message.command) < 2:
-        return await message.reply("Reply to someone or use `/challenge @username`")
-    try:
-        target = message.reply_to_message.from_user if message.reply_to_message else (await app.get_users(message.command[1]))
-    except Exception:
-        return await message.reply("Couldn't find that user.")
-    if target.id == message.from_user.id:
-        return await message.reply("You can't challenge yourself.")
-    gid = str(uuid.uuid4())
-    board = new_board()
-    theme = await get_theme(message.chat.id)
-    game_doc = {
-        "_id": gid,
-        "chat_id": message.chat.id,
-        "players": [message.from_user.id, target.id],
-        "board": board,
-        "turn": message.from_user.id,
-        "status": "pending",
-        "created_at": datetime.utcnow().timestamp(),
-        "last_move_at": datetime.utcnow().timestamp(),
-        "history": [],  # list of moves: {by, col, piece, ts}
-        "theme": theme,
-        "message_id": None
-    }
-    await games_col.insert_one(game_doc)
-    kb = InlineKeyboardMarkup([[
-        InlineKeyboardButton("✅ Accept", callback_data=f"accept|{gid}|{target.id}"),
-        InlineKeyboardButton("❌ Decline", callback_data=f"decline|{gid}|{target.id}")
-    ]])
-    sent = await message.reply_text(
-        f"🎮 Challenge created (ID `{gid}`)\n{message.from_user.mention} ➜ {target.mention}\n{target.mention}, press Accept to start.",
-        reply_markup=kb
+    
+    welcome_text = (
+        "🎮 *Connect 4 Bot* 🎮\n\n"
+        "Play Connect 4 against friends or the bot!\n\n"
+        "**Available Commands:**\n"
+        "/play - Start a new game\n"
+        "/leaderboard - View top players\n"
+        "/stats - Your game statistics\n"
+        "/tournament - Tournament management\n\n"
+        "**Game Features:**\n"
+        "• Player vs Player\n"
+        "• Player vs Bot (3 difficulty levels)\n"
+        "• Tournament mode\n"
+        "• Leaderboard system\n"
+        "• Auto game cleanup\n\n"
+        "Use /help for detailed instructions."
     )
-    await games_col.update_one({"_id": gid}, {"$set": {"message_id": sent.message_id}})
-
-@app.on_callback_query(filters.regex(r"^accept\|"))
-async def cb_accept(_, query: CallbackQuery):
-    _, gid, expected_id = query.data.split("|")
-    if query.from_user.id != int(expected_id):
-        return await query.answer("Only the challenged user can accept.", show_alert=True)
-    g = await games_col.find_one({"_id": gid})
-    if not g:
-        return await query.answer("Game not found.", show_alert=True)
-    if g["status"] != "pending":
-        return await query.answer("Game already started or canceled.", show_alert=True)
-    await ensure_player(g["players"][0]); await ensure_player(g["players"][1])
-    await games_col.update_one({"_id": gid}, {"$set": {"status": "active", "last_move_at": datetime.utcnow().timestamp()}})
-    theme = g.get("theme", DEFAULT_THEME)
-    text = f"🎮 Game `{gid}` started!\n\n{board_to_text(g['board'], theme)}\n\nTurn: <a href='tg://user?id={g['turn']}'>player</a>"
-    kb = render_kb(gid)
-    # edit the original message if present else send new
-    try:
-        if g.get("message_id"):
-            await query.message.edit(text, reply_markup=kb)
-            msg_id = g["message_id"]
-        else:
-            m = await query.message.reply(text, reply_markup=kb)
-            msg_id = m.message_id
-        msg_to_game[msg_id] = gid
-        await games_col.update_one({"_id": gid}, {"$set": {"message_id": msg_id}})
-    except Exception:
-        await query.message.reply(text, reply_markup=kb)
-    await query.answer("Game started!")
-
-@app.on_callback_query(filters.regex(r"^decline\|"))
-async def cb_decline(_, query: CallbackQuery):
-    _, gid, expected_id = query.data.split("|")
-    if query.from_user.id != int(expected_id):
-        return await query.answer("Only challenged user can decline.", show_alert=True)
-    await games_col.delete_one({"_id": gid})
-    await query.message.edit("❌ Challenge declined.")
-    await query.answer("Declined.")
-
-# ----------------- PvE (private) -----------------
-@app.on_message(filters.command("c4pve") & filters.private)
-async def cmd_pvc4e(_, message: Message):
-    if len(message.command) < 2:
-        return await message.reply("Usage: /pve easy|medium|hard")
-    level = message.command[1].lower()
-    if level not in ("easy","medium","hard"):
-        return await message.reply("Choose easy/medium/hard")
-    gid = str(uuid.uuid4())
-    board = new_board()
-    theme = await get_theme(message.chat.id)
-    game_doc = {
-        "_id": gid, "chat_id": message.chat.id, "players":[message.from_user.id, 0],
-        "board": board, "turn": message.from_user.id, "status":"active",
-        "created_at": datetime.utcnow().timestamp(), "last_move_at": datetime.utcnow().timestamp(),
-        "history": [], "theme": theme, "pve_level": level, "message_id": None
-    }
-    await games_col.insert_one(game_doc)
-    kb = render_kb(gid)
-    sent = await message.reply(f"🤖 PvE `{level}` started. Game ID: `{gid}`\n{board_to_text(board, theme)}", reply_markup=kb)
-    await games_col.update_one({"_id": gid}, {"$set": {"message_id": sent.message_id}})
-    msg_to_game[sent.message_id] = gid
-
-# ----------------- Move Handler -----------------
-@app.on_callback_query(filters.regex(r"^move\|"))
-async def cb_move(_, query: CallbackQuery):
-    _, gid, col_s = query.data.split("|")
-    col = int(col_s)
-    g = await games_col.find_one({"_id": gid})
-    if not g:
-        return await query.answer("Game not found.", show_alert=True)
-    if g["status"] != "active":
-        return await query.answer("Game is not active.", show_alert=True)
-    user = query.from_user
-    # turn validation
-    if g["turn"] != user.id:
-        return await query.answer("Not your turn!", show_alert=True)
-    board = g["board"]
-    if board[0][col] != " ":
-        return await query.answer("Column is full!", show_alert=True)
-    # place
-    piece = "X" if user.id == g["players"][0] else "O"
-    drop_piece(board, col, piece)
-    g["history"].append({"by": user.id, "col": col, "piece": piece, "ts": datetime.utcnow().timestamp()})
-    g["last_move_at"] = datetime.utcnow().timestamp()
-    # winner check
-    win = check_winner(board)
-    theme = g.get("theme", DEFAULT_THEME)
-    if win == "X" or win == "O":
-        # map piece to player id
-        winner_id = g["players"][0] if win == "X" else g["players"][1]
-        loser_id = g["players"][1] if winner_id == g["players"][0] else g["players"][0]
-        await update_player_result(winner_id, loser_id, draw=False)
-        await games_col.update_one({"_id": gid}, {"$set": {"board": board, "status":"finished", "winner": winner_id, "ended_at": datetime.utcnow().timestamp(), "history": g["history"]}})
-        text = f"🏆 Game `{gid}` finished!\nWinner: <a href='tg://user?id={winner_id}'>player</a>\n\n{board_to_text(board, theme)}"
-        try:
-            if g.get("message_id"):
-                await query.message.edit(text, reply_markup=render_kb(gid, active=False))
-            else:
-                await query.message.reply(text, reply_markup=render_kb(gid, active=False))
-        except:
-            pass
-        return await query.answer("You won!")
-    elif win == "DRAW":
-        # draw
-        await update_player_result(g["players"][0], g["players"][1], draw=True)
-        await games_col.update_one({"_id": gid}, {"$set": {"board": board, "status":"finished", "winner": None, "ended_at": datetime.utcnow().timestamp(), "history": g["history"]}})
-        text = f"🤝 Game `{gid}` ended in a draw.\n\n{board_to_text(board, theme)}"
-        try:
-            if g.get("message_id"):
-                await query.message.edit(text, reply_markup=render_kb(gid, active=False))
-            else:
-                await query.message.reply(text, reply_markup=render_kb(gid, active=False))
-        except:
-            pass
-        return await query.answer("Draw!")
-    # switch turn
-    # for pve, bot is players[1]==0
-    next_turn = g["players"][1] if user.id == g["players"][0] else g["players"][0]
-    await games_col.update_one({"_id": gid}, {"$set": {"board": board, "turn": next_turn, "last_move_at": g["last_move_at"], "history": g["history"]}})
-    # edit board message
-    text = f"🎮 Game `{gid}`\n\n{board_to_text(board, theme)}\n\nTurn: <a href='tg://user?id={next_turn}'>player</a>"
-    try:
-        if g.get("message_id"):
-            await query.message.edit(text, reply_markup=render_kb(gid))
-        else:
-            await query.message.reply(text, reply_markup=render_kb(gid))
-    except:
-        pass
-    await query.answer("Move played.")
-    # If pve and it's bot's turn, schedule bot move
-    g2 = await games_col.find_one({"_id": gid})
-    if g2["players"][1] == 0 and g2["turn"] == 0 and g2["status"] == "active":
-        asyncio.create_task(do_bot_move(gid))
-
-# bot auto-move for pve
-async def do_bot_move(gid: str):
-    await asyncio.sleep(1.0 + random.random()*1.5)
-    g = await games_col.find_one({"_id": gid})
-    if not g or g["status"] != "active": return
-    board = g["board"]
-    level = g.get("pve_level", "easy")
-    col = ai_choose(board, level)
-    if col is None:
-        return
-    drop_piece(board, col, "O")
-    g["history"].append({"by": 0, "col": col, "piece": "O", "ts": datetime.utcnow().timestamp()})
-    g["last_move_at"] = datetime.utcnow().timestamp()
-    # check
-    win = check_winner(board)
-    theme = g.get("theme", DEFAULT_THEME)
-    if win == "O":
-        # bot wins
-        await games_col.update_one({"_id": gid}, {"$set": {"board": board, "status":"finished", "winner": 0, "ended_at": datetime.utcnow().timestamp(), "history": g["history"]}})
-        try:
-            if g.get("message_id"):
-                await app.edit_message_text(g["chat_id"], g["message_id"], f"🤖 Bot wins in game `{gid}`\n\n{board_to_text(board, theme)}", reply_markup=render_kb(gid, active=False))
-            else:
-                await app.send_message(g["chat_id"], f"🤖 Bot wins in game `{gid}`\n\n{board_to_text(board, theme)}")
-        except:
-            pass
-        return
-    elif win == "DRAW":
-        await games_col.update_one({"_id": gid}, {"$set": {"board": board, "status":"finished", "winner": None, "ended_at": datetime.utcnow().timestamp(), "history": g["history"]}})
-        try:
-            if g.get("message_id"):
-                await app.edit_message_text(g["chat_id"], g["message_id"], f"🤝 Draw vs Bot in `{gid}`\n\n{board_to_text(board, theme)}", reply_markup=render_kb(gid, active=False))
-            else:
-                await app.send_message(g["chat_id"], f"🤝 Draw vs Bot in `{gid}`\n\n{board_to_text(board, theme)}")
-        except:
-            pass
-        return
-    # else switch to human
-    await games_col.update_one({"_id": gid}, {"$set": {"board": board, "turn": g["players"][0], "last_move_at": g["last_move_at"], "history": g["history"]}})
-    try:
-        if g.get("message_id"):
-            await app.edit_message_text(g["chat_id"], g["message_id"], f"🎮 Game `{gid}`\n\n{board_to_text(board, theme)}\n\nYour turn", reply_markup=render_kb(gid))
-    except:
-        pass
-
-# ----------------- Spectator -----------------
-@app.on_message(filters.command("spectatec4"))
-async def cmd_spec4ctate(_, message: Message):
-    if len(message.command) < 2:
-        return await message.reply("Usage: /spectate <game_id>")
-    gid = message.command[1].strip()
-    g = await games_col.find_one({"_id": gid})
-    if not g:
-        return await message.reply("Game not found.")
-    theme = g.get("theme", DEFAULT_THEME)
-    text = f"👀 Spectating `{gid}`\nStatus: {g['status']}\n\n{board_to_text(g['board'], theme)}"
-    kb = render_kb(gid, active=(g["status"]=="active"))
-    await message.reply(text, reply_markup=kb)
-
-# ----------------- Undo (one-step) -----------------
-@app.on_callback_query(filters.regex(r"^undo\|"))
-async def cb_undo(_, query: CallbackQuery):
-    _, gid = query.data.split("|")
-    g = await games_col.find_one({"_id": gid})
-    if not g: return await query.answer("Game not found.")
-    if g["status"] != "active":
-        return await query.answer("Can only undo in active games.")
-    # only the player who made the last move can request undo immediately
-    if not g["history"]:
-        return await query.answer("No moves to undo.")
-    last = g["history"][-1]
-    if query.from_user.id != last["by"]:
-        return await query.answer("Only the player who made the last move can undo it.", show_alert=True)
-    # pop last move and revert board
-    g["history"].pop()
-    # rebuild board from history
-    board = new_board()
-    for mv in g["history"]:
-        drop_piece(board, mv["col"], mv["piece"])
-    # revert turn to the player who made undone move
-    prev_turn = last["by"]
-    await games_col.update_one({"_id": gid}, {"$set": {"board": board, "turn": prev_turn, "history": g["history"], "last_move_at": datetime.utcnow().timestamp()}})
-    theme = g.get("theme", DEFAULT_THEME)
-    text = f"↺ Undo performed by <a href='tg://user?id={prev_turn}'>player</a>\n\n{board_to_text(board, theme)}"
-    try:
-        if g.get("message_id"):
-            await query.message.edit(text, reply_markup=render_kb(gid))
-        else:
-            await query.message.reply(text, reply_markup=render_kb(gid))
-    except:
-        pass
-    await query.answer("Move undone.")
-
-# ----------------- Replay -----------------
-@app.on_callback_query(filters.regex(r"^replay\|"))
-async def cb_replay(_, query: CallbackQuery):
-    _, gid = query.data.split("|")
-    g = await games_col.find_one({"_id": gid})
-    if not g:
-        return await query.answer("Game not found.")
-    history = g.get("history", [])
-    theme = g.get("theme", DEFAULT_THEME)
-    if not history:
-        return await query.answer("No history.")
-    # post the replay steps as separate messages (or one message with step buttons)
-    # for brevity we'll do stepwise edited message with Next/Prev controls
-    # We'll create a simple ephemeral message and run a small stepper
-    msg = await query.message.reply_text("▶️ Starting replay...")
-    idx = 0
-    board = new_board()
-    async def update_step(i):
-        b = new_board()
-        for mv in history[:i+1]:
-            drop_piece(b, mv["col"], mv["piece"])
-        await msg.edit(f"Replay `{gid}` — step {i+1}/{len(history)}\n\n{board_to_text(b, theme)}")
-    await update_step(idx)
-    # quick manual stepper: react to Next/Prev via inline buttons - we'll send buttons and handle interaction for 60s
-    kb = InlineKeyboardMarkup([
-        [InlineKeyboardButton("◀️ Prev", callback_data=f"rprev|{gid}|{msg.message_id}|{0}"), InlineKeyboardButton("Next ▶️", callback_data=f"rnext|{gid}|{msg.message_id}|{0}")],
+    
+    keyboard = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("🎯 Play vs Friend", callback_data="play_pvp"),
+            InlineKeyboardButton("🤖 Play vs Bot", callback_data="play_bot")
+        ],
+        [
+            InlineKeyboardButton("📊 Leaderboard", callback_data="leaderboard"),
+            InlineKeyboardButton("📈 My Stats", callback_data="stats")
+        ]
     ])
-    await msg.edit_reply_markup(kb)
-    await query.answer("Replay started. Use buttons on the replay message.")
+    
+    await message.reply_text(welcome_text, reply_markup=keyboard)
 
-# handlers for replay next/prev (embed message_id for reference)
-@app.on_callback_query(filters.regex(r"^rnext\|"))
-async def cb_rnext(_, query: CallbackQuery):
-    _, gid, mid_s, idx_s = query.data.split("|")
-    mid = int(mid_s); idx = int(idx_s)
-    m = query  # reuse query info
-    # fetch message
-    try:
-        msg = await app.get_messages(query.message.chat.id, mid)
-    except:
-        return await query.answer("Replay expired.")
-    g = await games_col.find_one({"_id": gid})
-    if not g: return await query.answer("Game gone.")
-    history = g.get("history", [])
-    theme = g.get("theme", DEFAULT_THEME)
-    idx = min(len(history)-1, idx+1)
-    b = new_board()
-    for mv in history[:idx+1]:
-        drop_piece(b, mv["col"], mv["piece"])
-    kb = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ Prev", callback_data=f"rprev|{gid}|{mid}|{idx}"), InlineKeyboardButton("Next ▶️", callback_data=f"rnext|{gid}|{mid}|{idx}")]])
-    await app.edit_message_text(query.message.chat.id, mid, f"Replay `{gid}` — step {idx+1}/{len(history)}\n\n{board_to_text(b, theme)}", reply_markup=kb)
-    await query.answer()
+@app.on_message(filters.command("playc4"))
+async def play_command(client, message: Message):
+    """Handle /play command"""
+    keyboard = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("🎯 Play vs Friend", callback_data="play_pvp"),
+            InlineKeyboardButton("🤖 Play vs Bot", callback_data="play_bot")
+        ]
+    ])
+    
+    await message.reply_text(
+        "Choose your game mode:",
+        reply_markup=keyboard
+    )
 
-@app.on_callback_query(filters.regex(r"^rprev\|"))
-async def cb_rprev(_, query: CallbackQuery):
-    _, gid, mid_s, idx_s = query.data.split("|")
-    mid = int(mid_s); idx = int(idx_s)
-    try:
-        msg = await app.get_messages(query.message.chat.id, mid)
-    except:
-        return await query.answer("Replay expired.")
-    g = await games_col.find_one({"_id": gid})
-    if not g: return await query.answer("Game gone.")
-    history = g.get("history", [])
-    theme = g.get("theme", DEFAULT_THEME)
-    idx = max(0, idx-1)
-    b = new_board()
-    for mv in history[:idx+1]:
-        drop_piece(b, mv["col"], mv["piece"])
-    kb = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ Prev", callback_data=f"rprev|{gid}|{mid}|{idx}"), InlineKeyboardButton("Next ▶️", callback_data=f"rnext|{gid}|{mid}|{idx}")]])
-    await app.edit_message_text(query.message.chat.id, mid, f"Replay `{gid}` — step {idx+1}/{len(history)}\n\n{board_to_text(b, theme)}", reply_markup=kb)
-    await query.answer()
+@app.on_message(filters.command("cleaderboard4"))
+async def leaderbo4cdkard_command(client, message: Message):
+    """Handle /leaderboard command"""
+    leaderboard = await get_leaderboard(10)
+    
+    if not leaderboard:
+        await message.reply_text("No players on the leaderboard yet!")
+        return
+    
+    response = "🏆 *Top Players* 🏆\n\n"
+    
+    for i, player in enumerate(leaderboard):
+        medal = "🥇" if i == 0 else "🥈" if i == 1 else "🥉" if i == 2 else f"{i+1}."
+        response += f"{medal} {player.get('first_name', 'Unknown')} - {player['rating']} pts\n"
+    
+    await message.reply_text(response)
 
-# ----------------- Rematch -----------------
-@app.on_callback_query(filters.regex(r"^rematch\|"))
-async def cb_rematch(_, query: CallbackQuery):
-    _, gid = query.data.split("|")
-    g = await games_col.find_one({"_id": gid})
-    if not g:
-        return await query.answer("Game not found.")
-    players = g["players"]
-    new_gid = str(uuid.uuid4())
-    board = new_board()
-    newdoc = {
-        "_id": new_gid, "chat_id": g["chat_id"], "players": players, "board": board,
-        "turn": players[0], "status": "active", "created_at": datetime.utcnow().timestamp(),
-        "last_move_at": datetime.utcnow().timestamp(), "history": [], "theme": g.get("theme", DEFAULT_THEME)
+@app.on_message(filters.command("statc4"))
+async def statscrr_command(client, message: Message):
+    """Handle /stats command"""
+    user = await get_or_create_user(
+        message.from_user.id,
+        message.from_user.username,
+        message.from_user.first_name
+    )
+    
+    win_rate = (user["games_won"] / user["games_played"] * 100) if user["games_played"] > 0 else 0
+    
+    response = (
+        f"📊 *Stats for {user['first_name']}* 📊\n\n"
+        f"• Rating: {user['rating']}\n"
+        f"• Games Played: {user['games_played']}\n"
+        f"• Games Won: {user['games_won']}\n"
+        f"• Win Rate: {win_rate:.1f}%\n"
+        f"• Tournaments Won: {user['tournaments_won']}\n"
+    )
+    
+    await message.reply_text(response)
+
+@app.on_callback_query(filters.regex("^play_"))
+async def play_callback(client, callback_query: CallbackQuery):
+    """Handle play callback"""
+    data = callback_query.data
+    user_id = callback_query.from_user.id
+    
+    if data == "play_pvp":
+        # Create a PvP game
+        game_id = await create_game(user_id)
+        game = await get_game(game_id)
+        
+        # Send game invite
+        keyboard = InlineKeyboardMarkup([[
+            InlineKeyboardButton("🎮 Join Game", callback_data=f"join_{game_id}")
+        ]])
+        
+        await callback_query.message.edit_text(
+            f"🎮 {callback_query.from_user.first_name} started a new game!\n\n"
+            "Click the button below to join:",
+            reply_markup=keyboard
+        )
+    
+    elif data == "play_bot":
+        # Show bot difficulty options
+        keyboard = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("😊 Easy", callback_data="bot_easy"),
+                InlineKeyboardButton("😐 Medium", callback_data="bot_medium")
+            ],[
+                InlineKeyboardButton("😈 Hard", callback_data="bot_hard")
+            ]
+        ])
+        
+        await callback_query.message.edit_text(
+            "Choose bot difficulty:",
+            reply_markup=keyboard
+        )
+    
+    await callback_query.answer()
+
+@app.on_callback_query(filters.regex("^bot_"))
+async def bot_difficulty_callback(client, callback_query: CallbackQuery):
+    """Handle bot difficulty selection"""
+    difficulty_map = {
+        "bot_easy": Difficulty.EASY,
+        "bot_medium": Difficulty.MEDIUM,
+        "bot_hard": Difficulty.HARD
     }
-    await games_col.insert_one(newdoc)
-    kb = render_kb(new_gid)
-    try:
-        await app.send_message(g["chat_id"], f"🔁 Rematch started! Game `{new_gid}`", reply_markup=kb)
-    except:
-        pass
-    await query.answer("Rematch created.")
+    
+    difficulty = difficulty_map.get(callback_query.data)
+    if not difficulty:
+        await callback_query.answer("Invalid difficulty")
+        return
+    
+    # Create a bot game
+    game_id = await create_game(callback_query.from_user.id, is_bot=True, difficulty=difficulty)
+    game = await get_game(game_id)
+    
+    # Send game board
+    board_text = board_to_string(game["board"])
+    keyboard = create_game_keyboard(game_id, game["board"])
+    
+    await callback_query.message.edit_text(
+        f"🎮 Game Started!\n\n{callback_query.from_user.first_name} vs {BOT} Bot\n\n{board_text}",
+        reply_markup=keyboard
+    )
+    
+    await callback_query.answer()
 
-# ----------------- Theme commands -----------------
-@app.on_message(filters.command("c4theme") & (filters.group | filters.private))
-async def cmdhd_theme(_, message: Message):
-    # /theme ssset <empty> <p1> <p2>
-    if len(message.command) >= 2 and message.command[1] == "set":
-        if len(message.command) != 5:
-            return await message.reply("Usage: /theme set <empty> <p1> <p2>  (each is a single emoji/string)")
-        empty, p1, p2 = message.command[2], message.command[3], message.command[4]
-        await set_theme(message.chat.id, empty, p1, p2)
-        await message.reply(f"Theme set for this chat: {empty} {p1} {p2}")
+@app.on_callback_query(filters.regex("^join_"))
+async def join_game_callback(client, callback_query: CallbackQuery):
+    """Handle join game callback"""
+    game_id = callback_query.data.split("_")[1]
+    user_id = callback_query.from_user.id
+    
+    game = await get_game(game_id)
+    if not game:
+        await callback_query.answer("Game not found")
+        return
+    
+    if game["status"] != GameStatus.ACTIVE.value:
+        await callback_query.answer("Game is no longer available")
+        return
+    
+    if game["player2_id"] is not None:
+        await callback_query.answer("Game is already full")
+        return
+    
+    # Join the game
+    await update_game(game_id, {
+        "player2_id": user_id,
+        "current_player": game["player1_id"]  # Player 1 starts
+    })
+    
+    # Send game board
+    game = await get_game(game_id)
+    board_text = board_to_string(game["board"])
+    keyboard = create_game_keyboard(game_id, game["board"])
+    
+    player1 = await get_or_create_user(game["player1_id"])
+    player2 = await get_or_create_user(game["player2_id"])
+    
+    await callback_query.message.edit_text(
+        f"🎮 Game Started!\n\n{player1['first_name']} {PLAYER1} vs {PLAYER2} {player2['first_name']}\n\n{board_text}",
+        reply_markup=keyboard
+    )
+    
+    await callback_query.answer()
+
+@app.on_callback_query(filters.regex("^move_"))
+async def move_callback(client, callback_query: CallbackQuery):
+    """Handle move callback"""
+    data_parts = callback_query.data.split("_")
+    game_id = data_parts[1]
+    col = int(data_parts[2]) - 1  # Convert to 0-based index
+    
+    user_id = callback_query.from_user.id
+    game = await get_game(game_id)
+    
+    if not game:
+        await callback_query.answer("Game not found")
+        return
+    
+    if game["status"] != GameStatus.ACTIVE.value:
+        await callback_query.answer("Game is not active")
+        return
+    
+    if game["current_player"] != user_id:
+        await callback_query.answer("It's not your turn")
+        return
+    
+    # Make the move
+    success, new_board = make_move(game["board"], col, PLAYER1 if user_id == game["player1_id"] else PLAYER2)
+    if not success:
+        await callback_query.answer("Invalid move")
+        return
+    
+    # Update the game
+    await update_game(game_id, {
+        "board": new_board,
+        "moves": game["moves"] + [{"player": user_id, "col": col}]
+    })
+    
+    # Check for winner
+    player_symbol = PLAYER1 if user_id == game["player1_id"] else PLAYER2
+    if check_winner(new_board, player_symbol):
+        await update_game(game_id, {
+            "status": GameStatus.COMPLETED.value,
+            "winner_id": user_id
+        })
+        
+        # Update stats
+        await update_user_stats(user_id, True)
+        if game["is_bot"]:
+            await update_user_stats(0, False)  # Bot has user_id 0
+        else:
+            opponent_id = game["player1_id"] if user_id == game["player2_id"] else game["player2_id"]
+            await update_user_stats(opponent_id, False)
+        
+        # Send win message
+        board_text = board_to_string(new_board)
+        await callback_query.message.edit_text(
+            f"🎉 {callback_query.from_user.first_name} wins!\n\n{board_text}"
+        )
+        await callback_query.answer()
+        return
+    
+    # Check for draw
+    if is_board_full(new_board):
+        await update_game(game_id, {
+            "status": GameStatus.COMPLETED.value,
+            "winner_id": None  # Draw
+        })
+        
+        # Update stats (both players get a draw)
+        await update_user_stats(game["player1_id"], None)
+        if not game["is_bot"]:
+            await update_user_stats(game["player2_id"], None)
+        
+        # Send draw message
+        board_text = board_to_string(new_board)
+        await callback_query.message.edit_text(
+            f"🤝 It's a draw!\n\n{board_text}"
+        )
+        await callback_query.answer()
+        return
+    
+    # Switch player
+    if game["is_bot"]:
+        # Bot's turn
+        bot_difficulty = Difficulty(game["bot_difficulty"])
+        bot_move = get_bot_move(new_board, bot_difficulty)
+        
+        if bot_move != -1:
+            # Make bot move
+            success, new_board = make_move(new_board, bot_move, PLAYER2)
+            await update_game(game_id, {
+                "board": new_board,
+                "moves": game["moves"] + [{"player": 0, "col": bot_move}]  # Bot has user_id 0
+            })
+            
+            # Check if bot wins
+            if check_winner(new_board, PLAYER2):
+                await update_game(game_id, {
+                    "status": GameStatus.COMPLETED.value,
+                    "winner_id": 0  # Bot wins
+                })
+                
+                # Update stats
+                await update_user_stats(user_id, False)
+                await update_user_stats(0, True)  # Bot has user_id 0
+                
+                # Send win message
+                board_text = board_to_string(new_board)
+                await callback_query.message.edit_text(
+                    f"🤖 Bot wins!\n\n{board_text}"
+                )
+                await callback_query.answer()
+                return
+            
+            # Check for draw
+            if is_board_full(new_board):
+                await update_game(game_id, {
+                    "status": GameStatus.COMPLETED.value,
+                    "winner_id": None  # Draw
+                })
+                
+                # Update stats
+                await update_user_stats(user_id, None)
+                await update_user_stats(0, None)  # Bot has user_id 0
+                
+                # Send draw message
+                board_text = board_to_string(new_board)
+                await callback_query.message.edit_text(
+                    f"🤝 It's a draw!\n\n{board_text}"
+                )
+                await callback_query.answer()
+                return
+            
+            # Switch back to player
+            await update_game(game_id, {
+                "current_player": user_id
+            })
+            
+            # Update board display
+            board_text = board_to_string(new_board)
+            keyboard = create_game_keyboard(game_id, new_board)
+            
+            await callback_query.message.edit_text(
+                f"🎮 Your Turn!\n\n{board_text}",
+                reply_markup=keyboard
+            )
     else:
-        th = await get_theme(message.chat.id)
-        await message.reply(f"Current theme for this chat: {th['empty']} {th['p1']} {th['p2']}\nSet with: /theme set <empty> <p1> <p2>")
+        # Switch to other player
+        next_player = game["player1_id"] if user_id == game["player2_id"] else game["player2_id"]
+        await update_game(game_id, {
+            "current_player": next_player
+        })
+        
+        # Update board display
+        board_text = board_to_string(new_board)
+        keyboard = create_game_keyboard(game_id, new_board)
+        
+        next_player_user = await get_or_create_user(next_player)
+        await callback_query.message.edit_text(
+            f"🎮 {next_player_user['first_name']}'s Turn!\n\n{board_text}",
+            reply_markup=keyboard
+        )
+    
+    await callback_query.answer()
 
-# ----------------- Profile & Leaderboard -----------------
-@app.on_message(filters.command("profile"))
-async def cmd_profile(_, message: Message):
-    uid = message.from_user.id
-    p = await players_col.find_one({"_id": uid}) or {"wins":0,"losses":0,"draws":0,"elo":1200,"games":0}
-    await message.reply(f"👤 {message.from_user.mention}\nELO: {p.get('elo',1200)}\nW:{p.get('wins',0)} L:{p.get('losses',0)} D:{p.get('draws',0)} Games:{p.get('games',0)}")
+def create_game_keyboard(game_id: str, board: List[List[str]]) -> InlineKeyboardMarkup:
+    """Create game keyboard with column buttons"""
+    keyboard = []
+    
+    # Add column buttons
+    row_buttons = []
+    for col in range(COLS):
+        # Check if column is full
+        if board[0][col] == EMPTY:
+            row_buttons.append(InlineKeyboardButton(f"{col+1}", callback_data=f"move_{game_id}_{col+1}"))
+        else:
+            row_buttons.append(InlineKeyboardButton("❌", callback_data="full_column"))
+    
+    # Split into two rows if too many buttons
+    if len(row_buttons) > 5:
+        mid = len(row_buttons) // 2
+        keyboard.append(row_buttons[:mid])
+        keyboard.append(row_buttons[mid:])
+    else:
+        keyboard.append(row_buttons)
+    
+    # Add abandon button
+    keyboard.append([InlineKeyboardButton("🚫 Abandon Game", callback_data=f"abandon_{game_id}")])
+    
+    return InlineKeyboardMarkup(keyboard)
 
-@app.on_message(filters.command("c4leaderboard2"))
-async def cmd_c4rleaderboard(_, message: Message):
-    cur = players_col.find().sort("elo",-1).limit(10)
-    lines = ["🏆 Top Players by ELO:"]
-    async for p in cur:
+@app.on_callback_query(filters.regex("^abandon_"))
+async def abandon_callback(client, callback_query: CallbackQuery):
+    """Handle abandon game callback"""
+    game_id = callback_query.data.split("_")[1]
+    user_id = callback_query.from_user.id
+    
+    success = await abandon_game(game_id, user_id)
+    if success:
+        await callback_query.message.edit_text(
+            f"🚫 {callback_query.from_user.first_name} abandoned the game."
+        )
+    else:
+        await callback_query.answer("Failed to abandon game")
+    
+    await callback_query.answer()
+
+# Background tasks
+async def cleanup_task():
+    """Background task to clean up old games"""
+    while True:
         try:
-            u = await app.get_users(p["_id"])
-            name = u.first_name
-        except:
-            name = f"User({p['_id']})"
-        lines.append(f"{name} — ELO {p.get('elo',1200)} W:{p.get('wins',0)}")
-    await message.reply("\n".join(lines))
+            deleted_count = await cleanup_old_games()
+            if deleted_count > 0:
+                print(f"Cleaned up {deleted_count} old games")
+        except Exception as e:
+            print(f"Error in cleanup task: {e}")
+        
+        await asyncio.sleep(3600)  # Run every hour
 
-# ----------------- Tournament System -----------------
-# Simple bracketed tournament for groups: create -> join -> start -> bot pairs and posts matches
-@app.on_message(filters.command("tourney"))
-async def cmd_tourney(_, message: Message):
-    # /tourney create <name>
-    # /tourney join <id>
-    # /tourney start <id>
-    if len(message.command) < 2:
-        return await message.reply("Usage: /tourney create <name> | join <id> | start <id> | status <id>")
-    action = message.command[1]
-    if action == "create":
-        if len(message.command) < 3:
-            return await message.reply("Usage: /tourney create <name>")
-        name = " ".join(message.command[2:])
-        tid = str(uuid.uuid4())[:8]
-        doc = {"_id": tid, "name": name, "chat_id": message.chat.id, "owner": message.from_user.id, "players": [], "status":"open", "created_at": datetime.utcnow().timestamp(), "matches": []}
-        await tourn_col.insert_one(doc)
-        await message.reply(f"Tournament '{name}' created!\nID: {tid}\nPlayers join with: /tourney join {tid}")
-    elif action == "join":
-        if len(message.command) < 3:
-            return await message.reply("Usage: /tourney join <id>")
-        tid = message.command[2]
-        t = await tourn_col.find_one({"_id": tid})
-        if not t:
-            return await message.reply("Tournament not found.")
-        if t["status"] != "open":
-            return await message.reply("Tournament not open for joining.")
-        if message.from_user.id in t["players"]:
-            return await message.reply("You already joined.")
-        await tourn_col.update_one({"_id":tid}, {"$push": {"players": message.from_user.id}})
-        await message.reply("You joined the tournament!")
-    elif action == "start":
-        if len(message.command) < 3:
-            return await message.reply("Usage: /tourney start <id>")
-        tid = message.command[2]
-        t = await tourn_col.find_one({"_id": tid})
-        if not t:
-            return await message.reply("Tournament not found.")
-        if message.from_user.id != t["owner"]:
-            return await message.reply("Only the tournament owner can start.")
-        players = t.get("players",[])
-        if len(players) < 2:
-            return await message.reply("Need at least 2 players.")
-        # create random bracket pairing in rounds, best-effort single-elimination
-        random.shuffle(players)
-        matches = []
-        while len(players) >= 2:
-            a = players.pop(); b = players.pop()
-            gid = str(uuid.uuid4())
-            board = new_board()
-            gdoc = {"_id": gid, "chat_id": t["chat_id"], "players":[a,b], "board": board, "turn": a, "status":"pending", "created_at": datetime.utcnow().timestamp(), "history": [], "theme": await get_theme(t["chat_id"])}
-            await games_col.insert_one(gdoc)
-            matches.append(gid)
-            # notify group
-            try:
-                await app.send_message(t["chat_id"], f"Tournament match: <a href='tg://user?id={a}'>A</a> vs <a href='tg://user?id={b}'>B</a>\nGame ID: `{gid}`")
-            except:
-                pass
-        await tourn_col.update_one({"_id": tid}, {"$set": {"status":"running", "matches": matches}})
-        await message.reply(f"Tournament {t['name']} started with {len(matches)} matches. Matches posted in chat.")
-    elif action == "status":
-        if len(message.command) < 3:
-            return await message.reply("Usage: /tourney status <id>")
-        tid = message.command[2]
-        t = await tourn_col.find_one({"_id": tid})
-        if not t:
-            return await message.reply("Not found.")
-        await message.reply(f"Tournament {t['name']} status: {t['status']} Players: {len(t.get('players',[]))}")
-
-# ----------------- ADMIN / CLEANUP -----------------
-@app.on_message(filters.command("cleanup") & filters.user(123456789))  # replace id with admin
-async def cmd_cleanup(_, message: Message):
-    # remove old finished games older than X days (admin)
-    cutoff_ts = (datetime.utcnow() - timedelta(days=7)).timestamp()
-    res = await games_col.delete_many({"status": {"$in":["finished","forfeited","cancelled"]}, "ended_at": {"$lt": cutoff_ts}})
-    await message.reply(f"Cleanup done. Removed {res.deleted_count} games.")
-
-# ---------------- START BOT ----------------
-async def startup_tasks():
-    # spawn background worker that ensures pve games get bot moves if missed and other maintenance
-    async def pve_worker():
-        while True:
-            cursor = games_col.find({"status":"active", "players.1":0})
-            async for g in cursor:
-                # if it's bot's turn (turn == 0), do a move
-                if g["turn"] == 0:
-                    await do_bot_move(g["_id"])
-            await asyncio.sleep(2)
-    asyncio.create_task(pve_worker())
-
-@app.on_message(filters.command("run_worker") & filters.private)
-async def cmd_runworker(_, message: Message):
-    asyncio.create_task(startup_tasks())
-    await message.reply("Background workers started.")

@@ -110,7 +110,7 @@ def update_stats(user_id, result):
 
 def leaderboard_text():
     top = stats.find().sort([("wins", -1)]).limit(10)
-    text = "🏆 **Leaderboard** 🏆\n\n"
+    text = "🏆 **Leaderboard** 🏆\n\n❌ Lose\n✅ Win\n🤝 Drow\n\n"
     for i, u in enumerate(top, 1):
         wins = u.get("wins", 0)
         losses = u.get("losses", 0)

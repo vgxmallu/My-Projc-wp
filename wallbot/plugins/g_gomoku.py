@@ -1,13 +1,11 @@
 import pymongo
 from pymongo import MongoClient
 import os
-from dotenv import load_dotenv
 from config import DB_URL
 
-import os
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from dotenv import load_dotenv
+
 import uuid
 import random  # For simple AI
 from wallbot import wbot as app
@@ -124,7 +122,6 @@ class UserStats:
             if loser_id != 'AI':
                 self.update_user_stats(loser_id, loss=1)
         self.update_global_stats(game.winner)
-load_dotenv()
 
 # Store active games
 active_games = {}

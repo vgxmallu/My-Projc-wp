@@ -29,3 +29,5 @@ speedtest-cli
 gTTS
 wget
 imdbpy
+hachoir
+asgiref

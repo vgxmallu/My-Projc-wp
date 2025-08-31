@@ -50,13 +50,13 @@ def ai_move(board, level):
     elif level == "medium":
         # Try to win or block
         for i in empty:
-            board[i] = "O"
+            board[i] = "⭕"
             if check_winner(board) == "O":
                 board[i] = " "
                 return i
             board[i] = " "
         for i in empty:
-            board[i] = "X"
+            board[i] = "❌"
             if check_winner(board) == "X":
                 board[i] = " "
                 return i
@@ -66,15 +66,15 @@ def ai_move(board, level):
         # Minimax algorithm (simplified)
         def minimax(is_max):
             winner = check_winner(board)
-            if winner == "O": return 1
-            if winner == "X": return -1
+            if winner == "⭕": return 1
+            if winner == "❌": return -1
             if winner == "Draw": return 0
 
             if is_max:
                 best = -10
                 for i in empty:
                     if board[i] == " ":
-                        board[i] = "O"
+                        board[i] = "⭕"
                         score = minimax(False)
                         board[i] = " "
                         best = max(best, score)
@@ -83,7 +83,7 @@ def ai_move(board, level):
                 best = 10
                 for i in empty:
                     if board[i] == " ":
-                        board[i] = "X"
+                        board[i] = "❌"
                         score = minimax(True)
                         board[i] = " "
                         best = min(best, score)
@@ -91,7 +91,7 @@ def ai_move(board, level):
 
         best_score, move = -10, None
         for i in empty:
-            board[i] = "O"
+            board[i] = "⭕"
             score = minimax(False)
             board[i] = " "
             if score > best_score:
@@ -115,7 +115,7 @@ def leaderboard_text():
         wins = u.get("wins", 0)
         losses = u.get("losses", 0)
         draws = u.get("draws", 0)
-        text += f"{i}. `{u['user_id']}` → ✅ {wins} | ❌ {losses} | 🤝 {draws}\n"
+        text += f"{i}. {u['first_name']} - `{u['user_id']}` → ✅ {wins} | ❌ {losses} | 🤝 {draws}\n"
     return text
 
 
@@ -131,7 +131,7 @@ async def staxoxoxrt(_, msg: Message):
                     "`/leaderboard` → Show top players")
 
 
-@app.on_message(filters.command("pvp"))
+@app.on_message(filters.command("pvp_xoxo"))
 async def pvp(_, msg: Message):
     if not msg.reply_to_message and len(msg.command) < 2:
         return await msg.reply("Reply to someone or use `/pvp @username`")
@@ -148,14 +148,14 @@ async def pvp(_, msg: Message):
     game_id = f"pvp_{challenger}_{opponent}"
     games.update_one({"_id": game_id}, {"$set": {"board": board, "turn": challenger, "mode": "pvp"}}, upsert=True)
 
-    await msg.reply(f"🎮 PvP Game Started!\n\n{msg.from_user.mention} vs <a href='tg://user?id={opponent}'>Opponent</a>",
+    await msg.reply(f"🎮❌⭕❌⭕ PvP Tic Tac Toe Game is Started!\n\n{msg.from_user.mention} vs <a href='tg://user?id={opponent}'>Opponent</a>",
                     reply_markup=render_board(board))
 
 
-@app.on_message(filters.command("pve"))
+@app.on_message(filters.command("pve_xoxo"))
 async def pve(_, msg: Message):
     if len(msg.command) < 2:
-        return await msg.reply("Usage: `/pve easy|medium|hard`")
+        return await msg.reply("Now play with me not users. \nUsage: `/pve_xoxo easy|medium|hard`")
     level = msg.command[1].lower()
     if level not in ["easy", "medium", "hard"]:
         return await msg.reply("Choose: easy / medium / hard")
@@ -165,11 +165,11 @@ async def pve(_, msg: Message):
     game_id = f"pve_{user}"
     games.update_one({"_id": game_id}, {"$set": {"board": board, "turn": user, "mode": "pve", "level": level}}, upsert=True)
 
-    await msg.reply(f"🎮 PvE Game Started!\nDifficulty: **{level.title()}**",
+    await msg.reply(f"🎮 ❌⭕❌⭕ Tic Tac Toe PvE Game Started!\nDifficulty: **{level.title()}**",
                     reply_markup=render_board(board))
 
 
-@app.on_message(filters.command("leaderboard2"))
+@app.on_message(filters.command("xoleaderboard"))
 async def lshb(_, msg: Message):
     await msg.reply(leaderboard_text())
 
@@ -216,48 +216,48 @@ async def moves(_, cq: CallbackQuery):
 
         next_turn = opponent if turn == challenger else challenger
         games.update_one({"_id": game["_id"]}, {"$set": {"board": board, "turn": next_turn}})
-        await cq.message.edit(f"🎮 PvP Game\nNext turn: <a href='tg://user?id={next_turn}'>Player</a>",
+        await cq.message.edit(f"🎮❌⭕❌⭕ PvP Game\nNext turn: <a href='tg://user?id={next_turn}'>Player</a>",
                               reply_markup=render_board(board))
 
     elif mode == "pve":
         if cq.from_user.id != turn:
             return await cq.answer("Not your turn!", show_alert=True)
 
-        board[move] = "X"
+        board[move] = "❌"
         winner = check_winner(board)
         if winner:
             if winner == "Draw":
                 update_stats(cq.from_user.id, "draws")
                 text = "🤝 It's a draw!"
-            elif winner == "X":
+            elif winner == "❌":
                 update_stats(cq.from_user.id, "wins")
                 text = "🏆 You won!"
             else:
                 update_stats(cq.from_user.id, "losses")
-                text = "😢 You lost!"
+                text = "😢 You lost! Try next time ;)"
             games.delete_one({"_id": game["_id"]})
             return await cq.message.edit(text, reply_markup=render_board(board))
 
         # Bot move
         level = game["level"]
         bot_move = ai_move(board, level)
-        board[bot_move] = "O"
+        board[bot_move] = "⭕"
         winner = check_winner(board)
 
         if winner:
             if winner == "Draw":
                 update_stats(cq.from_user.id, "draws")
                 text = "🤝 It's a draw!"
-            elif winner == "X":
+            elif winner == "❌":
                 update_stats(cq.from_user.id, "wins")
                 text = "🏆 You won!"
             else:
                 update_stats(cq.from_user.id, "losses")
-                text = "😢 You lost!"
+                text = "😢 You lost! try next time ;)"
             games.delete_one({"_id": game["_id"]})
             return await cq.message.edit(text, reply_markup=render_board(board))
 
         games.update_one({"_id": game["_id"]}, {"$set": {"board": board}})
-        await cq.message.edit("🎮 PvE Game\nYour turn!", reply_markup=render_board(board))
+        await cq.message.edit("🎮❌⭕❌⭕ PvE Game\nYour turn!", reply_markup=render_board(board))
 
 

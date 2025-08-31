@@ -15,9 +15,10 @@ from pymongo.errors import DuplicateKeyError
 import aiohttp
 from config import DB_URL
 from wallbot import wbot as app
+# Initialize Pyrogram Client
+
 
 # Database Connection
-
 mongo_client = MongoClient(DB_URL)
 db = mongo_client.advanced_pvp_game
 
@@ -818,7 +819,7 @@ async def send_advanced_battle_message(client, chat_id, battle):
         pass
 
 # Command handlers for advanced features
-@app.on_message(filters.command("sgrt"))
+@app.on_message(filters.command("srt"))
 async def start_command(client, message: Message):
     user = message.from_user
     player = await get_player(user.id, user.username, user.first_name)
@@ -843,7 +844,7 @@ async def start_command(client, message: Message):
     
     await message.reply_text(welcome_text)
 
-@app.on_message(filters.command("profille"))
+@app.on_message(filters.command("bprofile"))
 async def profile_command(client, message: Message):
     user = message.from_user
     player = await get_player(user.id, user.username, user.first_name)
@@ -883,7 +884,7 @@ async def profile_command(client, message: Message):
     await message.reply_text(profile_text)
 
 @app.on_message(filters.command("battle"))
-async def battle_command(client, message: Message):
+async def battleg_command(client, message: Message):
     if not message.reply_to_message and len(message.command) < 2:
         await message.reply_text("Please mention a user to battle: /battle @username")
         return
@@ -1088,3 +1089,4 @@ async def rematch_callback_handler(client, callback_query: CallbackQuery):
     await send_advanced_battle_message(client, callback_query.message.chat.id, new_battle)
     await callback_query.answer()
 
+# Start the

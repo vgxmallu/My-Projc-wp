@@ -9,13 +9,7 @@ from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 from wallbot import wbot as app
 from config import DB_URL
-# Initialize Pyrogram Client
-app = Client(
-    "pvp_game_bot",
-    api_id=int(os.environ.get("API_ID")),
-    api_hash=os.environ.get("API_HASH"),
-    bot_token=os.environ.get("BOT_TOKEN")
-)
+
 
 # MongoDB Connection
 mongo_client = MongoClient(DB_URL)

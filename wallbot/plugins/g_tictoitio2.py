@@ -126,9 +126,9 @@ def leaderboard_text():
 async def staxoxoxrt(_, msg: Message):
     await msg.reply("🎮 Welcome to Tic Tac Toe Bot!\n\n"
                     "Commands:\n"
-                    "`/pvp @username` → Challenge someone\n"
-                    "`/pve easy|medium|hard` → Play vs Bot\n"
-                    "`/leaderboard` → Show top players")
+                    "`/pvp_xoxo @username` → Challenge someone\n"
+                    "`/pve_xoxo easy|medium|hard` → Play vs Bot\n"
+                    "`/xoleaderboard` → Show top players")
 
 
 @app.on_message(filters.command("pvp_xoxo"))

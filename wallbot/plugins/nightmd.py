@@ -11,7 +11,6 @@ from wallbot.database.nightdb import nightdb,nightmode_on,nightmode_off,get_nigh
 CLOSE_CHAT = ChatPermissions(
     can_send_messages=False,
     can_send_media_messages = False,
-    #can_send_other_messages = False,
     can_send_polls = False,
     can_change_info = False,
     can_add_web_page_previews = False,
@@ -22,7 +21,6 @@ CLOSE_CHAT = ChatPermissions(
 OPEN_CHAT = ChatPermissions(
     can_send_messages=True,
     can_send_media_messages = True,
-    #can_send_other_messages = True,
     can_send_polls = True,
     can_change_info = True,
     can_add_web_page_previews = True,

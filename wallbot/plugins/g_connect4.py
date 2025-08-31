@@ -242,7 +242,7 @@ scheduler.add_job(lambda: asyncio.create_task(check_timeouts()), "interval", min
 
 # ---------- Commands ----------
 @app.on_message(filters.command("c4sta") & filters.private)
-async def cmd_start(client: Client, message: Message):
+async def cmd_c4start(client: Client, message: Message):
     await message.reply(
         "🎮 Connect 4 — Advanced Bot\n\n"
         "Commands:\n"
@@ -299,7 +299,7 @@ async def cmd_c4challenge(_, message: Message):
         reply_markup=kb, parse_mode="markdown"
     )
 
-@app.on_message(filters.command("pve") & filters.private)
+@app.on_message(filters.command("c4pve") & filters.private)
 async def cmd_c4pve(_, message: Message):
     if len(message.command) < 2:
         return await message.reply("Usage: /pve easy|medium|hard")

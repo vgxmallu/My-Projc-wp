@@ -91,7 +91,7 @@ async def challengxoxe_cmd(_, message: Message):
     await message.reply_text(
         f"🎮 <b>TicTacToe Challenge</b>\n\n"
         f"{message.from_user.mention} challenged {target.mention}!",
-        reply_markup=kb, parse_mode="html"
+        reply_markup=kb
     )
 
 @app.on_callback_query(filters.regex(r"^ttt_accept\|"))

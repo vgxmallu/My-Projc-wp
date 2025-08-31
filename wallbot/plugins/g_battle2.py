@@ -179,7 +179,7 @@ async def accept_cb(_, query: CallbackQuery):
         f"{await mention(p1)} — HP: {hp1}\n"
         f"{await mention(p2)} — HP: {hp2}\n\n"
         f"Turn: {await mention(game['turn'])}",
-        reply_markup=kb, parse_mode="html"
+        reply_markup=kb
     )
     await query.answer("Battle started!")
 

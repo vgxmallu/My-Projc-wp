@@ -155,7 +155,7 @@ async def pvp(_, msg: Message):
 @app.on_message(filters.command("pve_xoxo"))
 async def pve(_, msg: Message):
     if len(msg.command) < 2:
-        return await msg.reply("Now play with me not users. \nUsage: `/pve_xoxo easy|medium|hard`")
+        return await msg.reply("Usage: `/pve_xoxo easy|medium|hard`\nExample: `/pve_xoxo easy`")
     level = msg.command[1].lower()
     if level not in ["easy", "medium", "hard"]:
         return await msg.reply("Choose: easy / medium / hard")

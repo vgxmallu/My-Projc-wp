@@ -9,7 +9,7 @@ from wallbot import wbot as app
 whisper_db = {}
 
 # Command handler for /whisper
-@app.on_message(filters.command("whisper"))
+@app.on_message(filters.command("whis"))
 async def whisper_command(client, message: Message):
     if len(message.command) < 3:
         await message.reply_text(

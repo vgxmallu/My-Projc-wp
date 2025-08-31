@@ -591,7 +591,7 @@ async def reply_whisper_callback(client, callback_query: CallbackQuery):
     )
     await callback_query.answer()
 
-@app.on_message(filters.private & ~filters.command)
+@app.on_message(filters.private & filters.command("wt"))
 async def handle_reply_message(client, message: Message):
     """Handle reply messages"""
     # Check if user is in reply mode

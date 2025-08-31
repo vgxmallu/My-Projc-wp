@@ -64,7 +64,7 @@ def ai_move(board):
     return random.choice(empty) if empty else None
 
 # ----------------- COMMANDS -----------------
-@app.on_message(filters.command("start"))
+@app.on_message(filters.command("gostt"))
 async def start_cmd(_, msg):
     await msg.reply(
         "🎮 Welcome to Gomoku Bot!\n\n"
@@ -75,7 +75,7 @@ async def start_cmd(_, msg):
         "/leaderboard – Show global leaderboard"
     )
 
-@app.on_message(filters.command("play"))
+@app.on_message(filters.command("goplay"))
 async def play_cmd(_, msg):
     args = msg.text.split()
     size = int(args[1]) if len(args) > 1 else 9

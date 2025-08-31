@@ -107,7 +107,7 @@ async def accept_cb(_, query: CallbackQuery):
         f"🎮 TicTacToe Started!\n\n"
         f"❌ {(await _.get_users(game['players'][0])).mention} vs ⭕ {(await _.get_users(game['players'][1])).mention}\n\n"
         f"Turn: {(await _.get_users(game['turn'])).mention}",
-        reply_markup=render_board(board, gid), parse_mode="html"
+        reply_markup=render_board(board, gid)
     )
     games.update_one({"_id": gid}, {"$set": {"status": "active", "msg_id": msg.id}})
 
@@ -142,7 +142,7 @@ async def play_cb(_, query: CallbackQuery):
         loser = [pid for pid, s in game["symbols"].items() if s != result][0]
         await query.message.edit_text(
             f"🎉 Winner: {(await _.get_users(int(winner))).mention}\n\nFinal board:",
-            reply_markup=render_board(board, gid), parse_mode="html")
+            reply_markup=render_board(board, gid))
         await update_stats(int(winner), int(loser))
         games.delete_one({"_id": gid})
         return
@@ -151,7 +151,7 @@ async def play_cb(_, query: CallbackQuery):
     games.update_one({"_id": gid}, {"$set": {"board": board, "turn": next_turn}})
     await query.message.edit_text(
         f"🎮 TicTacToe\n\nTurn: {(await _.get_users(next_turn)).mention}",
-        reply_markup=render_board(board, gid), parse_mode="html"
+        reply_markup=render_board(board, gid)
     )
     await query.answer("Move registered.")
 
@@ -183,5 +183,5 @@ async def leaderboard_cmd(_, message: Message):
         text += f"{rank}. {name} — {p.get('wins',0)}W/{p.get('losses',0)}L/{p.get('draws',0)}D\n"
         rank += 1
     if rank == 1: text += "No players yet!"
-    await message.reply_text(text, parse_mode="html")
+    await message.reply_text(text)
 

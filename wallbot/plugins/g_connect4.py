@@ -296,7 +296,7 @@ async def cmd_c4challenge(_, message: Message):
     await message.reply(
         f"🎮 Challenge: {challenger.mention} ➜ {opponent_user.mention}\nGame ID: `{gid}`\n\n"
         f"{opponent_user.mention} — press Accept to start.",
-        reply_markup=kb, parse_mode="markdown"
+        reply_markup=kb
     )
 
 @app.on_message(filters.command("c4pve") & filters.private)
@@ -330,8 +330,7 @@ async def cmd_c4pve(_, message: Message):
 
     await message.reply(
         f"🎮 PvE started ({level.title()})\nGame ID: `{gid}`\nYou are 🔴 (X).",
-        reply_markup=render_board_kb(gid),
-        parse_mode="markdown"
+        reply_markup=render_board_kb(gid)
     )
 
 @app.on_message(filters.command("c4profile"))
@@ -372,7 +371,7 @@ async def cmd_spectate(_, message: Message):
     # render board but disabled
     text = board_to_text(g["board"])
     kb = render_board_kb(gid, active=False)
-    await message.reply(f"👀 Spectating Game `{gid}`\n\n{text}", reply_markup=kb, parse_mode="markdown")
+    await message.reply(f"👀 Spectating Game `{gid}`\n\n{text}", reply_markup=kb)
 
 # ---------- Callback handlers ----------
 @app.on_callback_query(filters.regex(r"^accept\|"))
@@ -393,7 +392,7 @@ async def cb_accept(_, query: CallbackQuery):
     await games_col.update_one({"_id": gid}, {"$set": {"status": "active", "last_move_at": current_timestamp()}})
     text = board_to_text(game["board"])
     kb = render_board_kb(gid)
-    await query.message.edit(f"🎮 Game started! Game ID: `{gid}`\n\n{text}", reply_markup=kb, parse_mode="markdown")
+    await query.message.edit(f"🎮 Game started! Game ID: `{gid}`\n\n{text}", reply_markup=kb)
     await query.answer("Game accepted!")
 
 @app.on_callback_query(filters.regex(r"^decline\|"))
@@ -480,7 +479,7 @@ async def cb_move(_, query: CallbackQuery):
     await games_col.update_one({"_id": gid}, {"$set": {"board": board, "turn": next_turn, "last_move_at": game["last_move_at"], "log": game["log"]}})
     text = board_to_text(board)
     kb = render_board_kb(gid)
-    await query.message.edit(f"🎮 Game `{gid}`\nNext turn: <a href='tg://user?id={next_turn}'>Player</a>\n\n{text}", reply_markup=kb, parse_mode="html")
+    await query.message.edit(f"🎮 Game `{gid}`\nNext turn: <a href='tg://user?id={next_turn}'>Player</a>\n\n{text}", reply_markup=kb)
     await query.answer("Move registered.")
 
 @app.on_callback_query(filters.regex(r"^noop\|"))
@@ -513,7 +512,7 @@ async def cb_rematch(_, query: CallbackQuery):
     }
     await games_col.insert_one(new_game)
     kb = render_board_kb(new_gid)
-    await query.message.reply(f"🔁 Rematch started! Game ID: `{new_gid}`", reply_markup=kb, parse_mode="markdown")
+    await query.message.reply(f"🔁 Rematch started! Game ID: `{new_gid}`", reply_markup=kb)
     await query.answer("Rematch started!")
 
 # Bot PvE AI move handler: after player moves, if game is pve and still active, bot moves

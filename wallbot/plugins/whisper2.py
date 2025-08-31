@@ -265,7 +265,7 @@ def check_cooldown(user_id: int):
 
 # Handlers
 @app.on_message(filters.command("srt"))
-async def start_coddmmand(client, message: Message):
+async def staand(client, message: Message):
     """Handle /start command"""
     user = await get_or_create_user(
         message.from_user.id,
@@ -300,7 +300,7 @@ async def start_coddmmand(client, message: Message):
     )
 
 @app.on_message(filters.command("whisper"))
-async def whisper_command(client, message: Message):
+async def wper_command(client, message: Message):
     """Handle /whisper command"""
     # Check cooldown
     cooldown_ok, remaining = check_cooldown(message.from_user.id)
@@ -449,7 +449,7 @@ async def my_whispers_command(client, message: Message):
     await message.reply_text(response, reply_markup=InlineKeyboardMarkup(buttons))
 
 @app.on_message(filters.command("block"))
-async def block_command(client, message: Message):
+async def blocktyy_command(client, message: Message):
     """Handle /block command"""
     if len(message.command) < 2:
         await message.reply_text("Usage: `/block @username`")
@@ -471,7 +471,7 @@ async def block_command(client, message: Message):
     await message.reply_text(result)
 
 @app.on_message(filters.command("unblock"))
-async def unblock_command(client, message: Message):
+async def unblock_hcommand(client, message: Message):
     """Handle /unblock command"""
     if len(message.command) < 2:
         await message.reply_text("Usage: `/unblock @username`")
@@ -493,7 +493,7 @@ async def unblock_command(client, message: Message):
     await message.reply_text(result)
 
 @app.on_message(filters.command("sta"))
-async def stats_commssand(client, message: Message):
+async def statsgg_commssand(client, message: Message):
     """Handle /stats command"""
     stats = await get_user_stats(message.from_user.id)
     if not stats:

@@ -25,8 +25,7 @@ WHISPER_EXPIRY_DAYS = 30  # Days after which whispers are automatically deleted
 COOLDOWN_SECONDS = 30  # Seconds between sending whispers
 
 # Initialize MongoDB
-MONGO_URI = os.environ.get("DB_URL")
-mongo_client = MongoClient(MONGO_URI)
+mongo_client = MongoClient(DB_URL)
 db = mongo_client.whisper_bot
 
 # Collections

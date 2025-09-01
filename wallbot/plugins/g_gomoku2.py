@@ -306,4 +306,4 @@ async def profile_cb(client, cq: CallbackQuery):
 async def leaderboard_cb(client, cq: CallbackQuery):
     top=users_col.find().sort('wins',-1).limit(10)
     rows=[f"{i+1}. @{u.get('username','unknown')} — {u.get('wins',0)} wins" for i,u in enumerate(top)]
-    await cq.message.reply_text("Leaderboard:\n"+"\n".join(rows) if rows else No
+    await cq.message.reply_text("Leaderboard:\n"+"\n".join(rows) if rows else "No results")

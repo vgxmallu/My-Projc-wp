@@ -128,7 +128,7 @@ async def staxoxoxrt(_, msg: Message):
                     "Commands:\n"
                     "`/pvp_xoxo @username` → Challenge someone\n"
                     "`/pve_xoxo easy|medium|hard` → Play vs Bot\n"
-                    "`/xoleaderboard` → Show top players")
+                    "`/xo_leaderboard` → Show top players")
 
 
 @app.on_message(filters.command("pvp_xoxo"))
@@ -169,8 +169,8 @@ async def pve(_, msg: Message):
                     reply_markup=render_board(board))
 
 
-@app.on_message(filters.command("xoleaderboard"))
-async def lshb(_, msg: Message):
+@app.on_message(filters.command("xo_leaderboard"))
+async def leaderxo(_, msg: Message):
     await msg.reply(leaderboard_text())
 
 

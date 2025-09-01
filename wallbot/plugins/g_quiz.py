@@ -230,7 +230,7 @@ def next_markup(sess: Dict[str, Any]) -> InlineKeyboardMarkup:
 
 
 # ------------------- Commands -------------------
-@app.on_message(filters.private & filters.command("startqz"))
+@app.on_message(filters.private & filters.command("p_startqz"))
 async def starqzt_cmd(client: Client, m: Message):
     upsert_user(m.from_user.id, m.from_user.username)
     cats = ensure_categories()
@@ -246,7 +246,7 @@ async def starqzt_cmd(client: Client, m: Message):
     )
 
 
-@app.on_message(filters.private & filters.command(["qzprofile"]))
+@app.on_message(filters.private & filters.command(["p_qzprofile"]))
 async def profile_cmd(client: Client, m: Message):
     doc = users.find_one({"user_id": m.from_user.id}) or {}
     reset_weekly_if_needed(doc)
@@ -257,12 +257,12 @@ async def profile_cmd(client: Client, m: Message):
     await m.reply_text(text)
 
 
-@app.on_message(filters.private & filters.command(["qzleaderboard"]))
+@app.on_message(filters.private & filters.command(["p_qzleaderboard"]))
 async def leaderboard_cmd(client: Client, m: Message):
     await send_leaderboard(m.chat.id, scope="all")
 
 
-@app.on_message(filters.private & filters.command(["addq"]))
+@app.on_message(filters.private & filters.command(["p_addq"]))
 async def addq_cmd(client: Client, m: Message):
     if m.from_user.id not in ADMIN_IDS:
         await m.reply_text("Only admins can add questions.")
@@ -288,7 +288,7 @@ async def addq_cmd(client: Client, m: Message):
         await m.reply_text(f"Usage: /addq {{json}}\nExample: /addq {{\"q\":\"2+2?\", \"options\":[\"3\",\"4\"], \"answer\":1, \"category\":\"Math\", \"difficulty\":\"easy\"}}\nError: {e}")
 
 
-@app.on_message(filters.private & filters.command(["seed"]))
+@app.on_message(filters.private & filters.command(["p_seed"]))
 async def seed_cmd(client: Client, m: Message):
     if m.from_user.id not in ADMIN_IDS:
         await m.reply_text("Only admins can seed.")

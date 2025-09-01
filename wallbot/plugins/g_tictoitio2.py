@@ -196,7 +196,7 @@ async def moves(_, cq: CallbackQuery):
         if cq.from_user.id != turn:
             return await cq.answer("Not your turn!", show_alert=True)
 
-        board[move] = "X" if turn == challenger else "O"
+        board[move] = "❌" if turn == challenger else "⭕"
         winner = check_winner(board)
 
         if winner:
@@ -205,7 +205,7 @@ async def moves(_, cq: CallbackQuery):
                 update_stats(opponent, "draws")
                 text = "🤝 It's a draw!"
             else:
-                win_id = challenger if winner == "X" else opponent
+                win_id = challenger if winner == "❌" else opponent
                 lose_id = opponent if win_id == challenger else challenger
                 update_stats(win_id, "wins")
                 update_stats(lose_id, "losses")

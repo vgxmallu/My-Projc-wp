@@ -51,13 +51,13 @@ def ai_move(board, level):
         # Try to win or block
         for i in empty:
             board[i] = "⭕"
-            if check_winner(board) == "O":
+            if check_winner(board) == "⭕":
                 board[i] = " "
                 return i
             board[i] = " "
         for i in empty:
             board[i] = "❌"
-            if check_winner(board) == "X":
+            if check_winner(board) == "❌":
                 board[i] = " "
                 return i
             board[i] = " "

@@ -35,7 +35,7 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("adv_quiz_bot")
 
 
-DB_NAME = "quiz_bot"
+DB_NAME = "g_quiz_bot"
 ADMIN_IDS = {int(x) for x in os.getenv("ADMIN_IDS","784589736").split(",") if x.strip().isdigit()}
 
 

@@ -263,8 +263,6 @@ def record_group_score(chat_id: int, user_id: int, username: str, points: int):
     group_scores.update_one({"chat_id": chat_id, "user_id": user_id}, {"$inc": {"points": points}, "$set": {"username": username}}, upsert=True)
     users.update_one({"user_id": user_id}, {"$inc": {"points": points}}, upsert=True)
 
-# ---------- Bot app ----------
-app = Client("adv_quiz_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 # ---------- Commands ----------
 @app.on_message(filters.group & filters.command("gquiz"))

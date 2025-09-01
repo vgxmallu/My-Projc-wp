@@ -115,7 +115,7 @@ def leaderboard_text():
         wins = u.get("wins", 0)
         losses = u.get("losses", 0)
         draws = u.get("draws", 0)
-        text += f"{i}. {u['first_name']} - `{u['user_id']}` → ✅ {wins} | ❌ {losses} | 🤝 {draws}\n"
+        text += f"{i}. `{u['user_id']}` → ✅ {wins} | ❌ {losses} | 🤝 {draws}\n"
     return text
 
 

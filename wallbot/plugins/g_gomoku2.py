@@ -290,7 +290,7 @@ async def showtext_cb(client, cq: CallbackQuery):
     gs=load_game(gid)
     if not gs: await cq.answer('Game not found', show_alert=True); return
     txt=render_board_as_text(gs.board)
-    await cq.message.reply_text(f"Game {gid} — Text view:\n```\n{txt}\n```", parse_mode='markdown')
+    await cq.message.reply_text(f"Game {gid} — Text view:\n```\n{txt}\n```")
     await cq.answer()
 
 @app.on_callback_query(filters.regex(r"^profile\|"))

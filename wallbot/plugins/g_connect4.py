@@ -1,4 +1,4 @@
-# connect4_advanced.py
+# connect4_advanced Made with Girk_Ai
 import asyncio
 import time
 import uuid

@@ -45,7 +45,7 @@ from wallbot import wbot as app
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("quizbot")
 
-DB_NAME = os.getenv("quiz_bot")
+DB_NAME = "quiz_bot"
 ADMIN_IDS = {int(x) for x in os.getenv("ADMIN_IDS", "784589736").split(",") if x.strip().isdigit()}
 
 

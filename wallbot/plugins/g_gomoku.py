@@ -340,7 +340,7 @@ async def leadegogggrboard(client, message):
         return
     lb_text = "Leaderboard (Top 10 by Wins in this group):\n"
     for i, user in enumerate(top_users, 1):
-        lb_text += f"{i}. {user['username']} - Wins: {user['wins']}, Win Rate: {user['win_rate']:.2%}\n"
+        lb_text += f"{i}. {user['username']} - Wins: {user['wins']}, Win Rate: {user['win_rate']}\n"
     await message.reply_text(lb_text)
 
 @app.on_message(filters.command("sgots") & filters.group)

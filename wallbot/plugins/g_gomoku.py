@@ -121,9 +121,9 @@ class GomokuGame:
             row_display = [f"{row:2} "]
             for col in range(self.board_size):
                 if self.board[row][col] == 'X':
-                    row_display.append('❌')
+                    row_display.append('🔴')
                 elif self.board[row][col] == 'O':
-                    row_display.append('⭕')
+                    row_display.append('⚫')
                 else:
                     row_display.append('⬜')
             display.append(' '.join(row_display))
@@ -228,7 +228,7 @@ def create_board_buttons(chat_id, game_id, page=0):
     for row in range(start_row, end_row):
         row_buttons = []
         for col in range(page_size):  # First 8 columns
-            symbol = '❌' if game.board[row][col] == 'X' else '⭕' if game.board[row][col] == 'O' else '⬜'
+            symbol = '🔴' if game.board[row][col] == 'X' else '⚫' if game.board[row][col] == 'O' else '⬜'
             row_buttons.append(InlineKeyboardButton(
                 symbol, callback_data=f"move_{chat_id}_{game_id}_{row}_{col}"
             ))

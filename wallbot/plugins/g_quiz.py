@@ -216,7 +216,7 @@ def question_markup(sess: Dict[str, Any], cur: Dict[str, Any]) -> InlineKeyboard
     opts = cur["options"]
     buttons = []
     for i, text in enumerate(opts):
-        buttons.append([InlineKeyboardButton(f"{chr(65+i)}. {text}", callback_data=f"answer|{sess['session_id']}|{i}")])
+        buttons.append([InlineKeyboardButton(f"{chr(65+i)}. {text}", callback_data=f"answers|{sess['session_id']}|{i}")])
     controls = [
         InlineKeyboardButton("Skip", callback_data=f"skip|{sess['session_id']}"),
         InlineKeyboardButton("50-50", callback_data=f"lifeline|5050|{sess['session_id']}") if sess.get("lifeline_5050", False) and not cur.get("5050_applied") else InlineKeyboardButton("50-50 ✓", callback_data="noop") ,
@@ -342,7 +342,7 @@ async def choose_diff_cb(client: Client, cq: CallbackQuery):
 
 
 # ------------------ Gameplay Cbs ----------------
-@app.on_callback_query(filters.regex(r"^answer\|"))
+@app.on_callback_query(filters.regex(r"^answers\|"))
 async def answer_cb(client: Client, cq: CallbackQuery):
     _, sid, idx_s = cq.data.split("|")
     idx = int(idx_s)

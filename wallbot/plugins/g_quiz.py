@@ -39,7 +39,7 @@ from pymongo import MongoClient, ASCENDING, DESCENDING
 from pymongo.collection import Collection
 from config import DB_URL
 from wallbot import wbot as app
-
+from questions_p import sample
 
 
 logging.basicConfig(level=logging.INFO)
@@ -72,7 +72,7 @@ STREAK_BONUS = 2  # extra per consecutive correct after first
 MAX_OPTIONS = 4
 
 
-sample = [
+test = [
         {
             "q": "What is the capital of France?",
             "options": ["Berlin", "Madrid", "Paris", "Rome"],

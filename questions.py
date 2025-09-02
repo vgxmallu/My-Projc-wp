@@ -145,12 +145,6 @@ QUESTIONS = [
     {"q":"Which scientist is associated with radioactivity discovery?","options":["Marie Curie","Rosalind Franklin","Jane Goodall","Barbara McClintock"],"answer":0,"category":"Science","difficulty":"hard"},
     {"q":"What is the capital of Egypt?","options":["Cairo","Alexandria","Giza","Luxor"],"answer":0,"category":"Geography","difficulty":"easy"},
     {"q":"Which is the heaviest naturally occurring element?","options":["Lead","Uranium","Plutonium","Osmium"],"answer":1,"category":"Chemistry","difficulty":"hard"}
-    # 1000+ Quiz Questions and Answers
-
-Here's a comprehensive list of 1000+ quiz questions and answers in the requested JSON format:
-
-```json
-[
   {"q":"What is the capital of France?","options":["Paris","London","Berlin","Madrid"],"answer":0,"category":"Geography","difficulty":"easy"},
   {"q":"Who developed the theory of relativity?","options":["Newton","Einstein","Galileo","Tesla"],"answer":1,"category":"Science","difficulty":"medium"},
   {"q":"Which planet is known as the Red Planet?","options":["Venus","Mars","Jupiter","Saturn"],"answer":1,"category":"Space","difficulty":"easy"},

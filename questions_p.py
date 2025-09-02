@@ -1,9 +1,7 @@
-# 1000+ Quiz Questions and Answers
+# 700+ Quiz Questions and Answers
 
-Here's a comprehensive list of 1000+ quiz questions and answers in the requested JSON format:
 
-```json
-[
+sample = [
   {"q":"What is the capital of France?","options":["Paris","London","Berlin","Madrid"],"answer":0,"category":"Geography","difficulty":"easy"},
   {"q":"Who developed the theory of relativity?","options":["Newton","Einstein","Galileo","Tesla"],"answer":1,"category":"Science","difficulty":"medium"},
   {"q":"Which planet is known as the Red Planet?","options":["Venus","Mars","Jupiter","Saturn"],"answer":1,"category":"Space","difficulty":"easy"},
@@ -754,4 +752,4 @@ Here's a comprehensive list of 1000+ quiz questions and answers in the requested
   {"q":"What is the chemical symbol for manganese?","options":["M","Ma","Mn","Mg"],"answer":2,"category":"Chemistry","difficulty":"easy"},
   {"q":"Who painted 'The Luncheon on the Grass'?","options":["Édouard Manet","Claude Monet","Pierre-Auguste Renoir","Paul Cézanne"],"answer":0,"category":"Art","difficulty":"hard"},
   {"q":"What is the largest species of bird of prey?","options":["Bald Eagle","Golden Eagle","Philippine Eagle","Andean Condor"],"answer":3,"category":"Nature","difficulty":"hard"},
-  {"q":"Who was the first female Prime Minister of New Zealand?","options":["Jacinda Ardern","Helen Clark","Jenny Shipley","Julia Gillard"],"
+]

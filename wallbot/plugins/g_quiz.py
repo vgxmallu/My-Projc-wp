@@ -71,32 +71,8 @@ POINTS_WRONG = 0
 STREAK_BONUS = 2  # extra per consecutive correct after first
 MAX_OPTIONS = 4
 
-# ------------------ Helpers --------------------
 
-def upsert_user(user_id: int, username: Optional[str]):
-    users.update_one(
-        {"user_id": user_id},
-        {"$set": {"username": username, "last_seen": datetime.utcnow()},
-         "$setOnInsert": {"points": 0, "correct": 0, "wrong": 0, "streak": 0, "best_streak": 0,
-                           "weekly_points": 0, "weekly_reset": datetime.utcnow()}},
-        upsert=True,
-    )
-
-
-def reset_weekly_if_needed(doc: Dict[str, Any]):
-    if not doc:
-        return
-    wk = doc.get("weekly_reset")
-    if not wk or (datetime.utcnow() - wk) > timedelta(days=7):
-        users.update_one({"user_id": doc["user_id"]}, {"$set": {"weekly_points": 0, "weekly_reset": datetime.utcnow()}})
-
-
-def ensure_categories() -> List[str]:
-    return sorted(questions.distinct("category"))
-
-
-def seed_examples() -> int:
-    sample = [
+sample = [
         {
             "q": "What is the capital of France?",
             "options": ["Berlin", "Madrid", "Paris", "Rome"],
@@ -133,6 +109,33 @@ def seed_examples() -> int:
             "difficulty": "hard",
         },
     ]
+
+
+# ------------------ Helpers --------------------
+
+def upsert_user(user_id: int, username: Optional[str]):
+    users.update_one(
+        {"user_id": user_id},
+        {"$set": {"username": username, "last_seen": datetime.utcnow()},
+         "$setOnInsert": {"points": 0, "correct": 0, "wrong": 0, "streak": 0, "best_streak": 0,
+                           "weekly_points": 0, "weekly_reset": datetime.utcnow()}},
+        upsert=True,
+    )
+
+
+def reset_weekly_if_needed(doc: Dict[str, Any]):
+    if not doc:
+        return
+    wk = doc.get("weekly_reset")
+    if not wk or (datetime.utcnow() - wk) > timedelta(days=7):
+        users.update_one({"user_id": doc["user_id"]}, {"$set": {"weekly_points": 0, "weekly_reset": datetime.utcnow()}})
+
+
+def ensure_categories() -> List[str]:
+    return sorted(questions.distinct("category"))
+
+
+def seed_examples() -> int:
     inserted = 0
     for s in sample:
         if not questions.find_one({"q": s["q"]}):

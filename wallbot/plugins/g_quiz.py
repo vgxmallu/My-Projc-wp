@@ -55,6 +55,7 @@ db = mongo[DB_NAME]
 users: Collection = db.users
 questions: Collection = db.questions
 sessions: Collection = db.sessions
+questions_collection = db["questions"]
 
 # Indexes
 users.create_index([("user_id", ASCENDING)], unique=True)
@@ -110,6 +111,10 @@ test = [
         },
     ]
 
+@app.on_message(filters.command("qcount"))
+async def count_questions(client, message):
+    count = await questions_collection.count_documents({})
+    await message.reply_text(f"📊 Total questions in database: **{count}**")
 
 # ------------------ Helpers --------------------
 

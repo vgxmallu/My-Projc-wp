@@ -30,7 +30,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, 
 from pymongo import MongoClient, ASCENDING, DESCENDING
 from config import DB_URL
 from wallbot import wbot as app
-from questions3 import QUESTIONS
+from questions4 import QUESTIONS
 # ---------------- Config ----------------
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("adv_quiz_bot")

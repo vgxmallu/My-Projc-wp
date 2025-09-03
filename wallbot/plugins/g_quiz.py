@@ -113,7 +113,7 @@ test = [
 
 @app.on_message(filters.command("qcount"))
 async def count_questions(client, message):
-    count = await questions_collection.count_documents({})
+    count = await questions.count_documents({})
     await message.reply_text(f"📊 Total questions in database: **{count}**")
 
 # ------------------ Helpers --------------------

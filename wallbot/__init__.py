@@ -66,7 +66,7 @@ class wbot(Client):
         for chat in AUTH_CHATS:
             await self.send_photo(
                 chat,
-                "https://files.catbox.moe/endqeo.jpg",
+                "https://files.catbox.moe/80bcxh.jpg",
                 "**my Test Bot is started** ✅",
             )
         LOGGER.info(f"\nTest is ONLINE 🟢\n\n{BOT_INFO.username} Is Running 💨💥\n")

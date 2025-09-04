@@ -241,16 +241,16 @@ async def check_timeouts():
 scheduler.add_job(lambda: asyncio.create_task(check_timeouts()), "interval", minutes=1)
 
 # ---------- Commands ----------
-@app.on_message(filters.command("c4sta") & filters.private)
+@app.on_message(filters.command("connect4"))
 async def cmd_c4start(client: Client, message: Message):
     await message.reply(
-        "🎮 Connect 4 — Advanced Bot\n\n"
+        "🎮 Connect 4 🎮\n\n"
         "Commands:\n"
-        "`/challenge` (reply to a user) — challenge in group or private\n"
-        "`/pve easy|medium|hard` — play vs bot in private\n"
-        "`/profile` — show your stats & ELO\n"
-        "`/leaderboard` — top players by ELO\n"
-        "`/spectate <game_id>` — view a game's board\n\n"
+        "`/connect4_challenge` (reply to a user) — challenge in group or private\n"
+        "`/c4_pve easy|medium|hard` — play vs bot in private\n"
+        "`/c4_profile` — show your stats & ELO\n"
+        "`/c4_leaderboard` — top players by ELO\n"
+        "`/c4_spectate <game_id>` — view a game's board\n\n"
         "Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟡) is O."
     )
 @app.on_message(filters.command("connect4_challenge") & filters.private)
@@ -258,7 +258,7 @@ async def cmd_cg4challenge(_, message: Message):
     g = await message.reply("Use this Command on Group chats not here❌")
     await asyncio.sleep(60)
     await message.delete()
-    await g.delete()
+    await g.delete() 
     
 @app.on_message(filters.command("connect4_challenge") & filters.group)
 async def cmd_c4challenge(_, message: Message):

@@ -11,8 +11,8 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # User info
 
-@Client.on_message(filters.private & filters.command("info"))
-async def info(bot, hydrix):
+@Client.on_message(filters.private & filters.command("uinfo"))
+async def uinfo(bot, hydrix):
     text = f"""
 ╭─────[ɪɴғᴏ]─────〄
 ├⍟ **Fɪʀsᴛ ɴᴀᴍᴇ** : {hydrix.from_user.first_name}
@@ -48,26 +48,26 @@ async def ginfo(bot, hydrix):
 @Client.on_message(filters.private & filters.forwarded)
 async def forwarded(_, msg):
     if msg.forward_from:
-        text = "Fᴏʀᴡᴀʀᴅ ᴅᴇᴛᴇᴄᴛᴇᴅ! \n\n"
+        text = "Forwarded! \n\n"
         if msg.forward_from.is_bot:
             text += "**ʙᴏᴛ**"
         else:
-            text += "**ᴜsᴇʀ**"
+            text += "**User**"
         text += f'\n{msg.forward_from.first_name} \n'
         if msg.forward_from.username:
-            text += f'@{msg.forward_from.username} \nɪᴅ : `{msg.forward_from.id}`'
+            text += f'@{msg.forward_from.username} \nID : `{msg.forward_from.id}`'
         else:
-            text += f'ɪᴅ : `{msg.forward_from.id}`'
+            text += f'ID : `{msg.forward_from.id}`'
         await msg.reply(text, quote=True)
     else:
         hidden = msg.forward_sender_name
         if hidden:
             await msg.reply(
-                f"Fᴏʀᴡᴀʀᴅ ᴅᴇᴛᴇᴄᴛᴇᴅ ʙᴜᴛ ᴜɴғᴏʀᴛᴜɴᴀᴛᴇʟʏ, {hidden} ʜᴀs ᴇɴᴀʙʟᴇᴅ ғᴏʀᴡᴀʀᴅɪɴɢ ᴘʀɪᴠᴀᴄʏ, sᴏ I ᴄᴀɴ'ᴛ ɢᴇᴛ ᴛʜᴇɪʀ ɪᴅ",
+                f"Forward detected but, {hidden} Has enabled forward privacy, so i cant get there id.",
                 quote=True,
             )
         else:
-            text = f"Fᴏʀᴡᴀʀᴅ ᴅᴇᴛᴇᴄᴛᴇᴅ. \n\n"
+            text = f"Forward Detection. \n\n"
             if msg.forward_from_chat.type == "Channel":
                 text += "**Channel**"
             if msg.forward_from_chat.type == "supergroup":
@@ -79,19 +79,6 @@ async def forwarded(_, msg):
             else:
                 text += f'ɪᴅ : `{msg.forward_from_chat.id}`'
             await msg.reply(text, quote=True)
-
-# group id
-
-@Client.on_message(filters.new_chat_members)
-async def welcome(bot, msg):
-    bot_id = (await bot.get_me())["id"]
-    members = msg.new_chat_members
-    for member in members:
-        if member.id == bot_id:
-            await msg.reply(
-                f"Tʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ in {msg.chat.title}❣️! \n\nTʜɪs ɢʀᴏᴜᴘ ɪᴅ ɪs `{msg.chat.id}`"
-            )
-
 # private id
 
 @Client.on_message(filters.command("id"))
@@ -107,7 +94,7 @@ async def id_(bot: Client, msg: Message):
 		await msg.reply(main)
 	else:
 		if len(msg.command) == 1:
-			await msg.reply(f"Yᴏᴜʀ ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ɪs: `{msg.from_user.id}`", quote=True)
+			await msg.reply(f"Your id is `{msg.from_user.id}`", quote=True)
 		if len(msg.command) == 2:
 			try:
 				uname = msg.command[1]
@@ -130,13 +117,8 @@ async def id_(bot: Client, msg: Message):
 			except UsernameInvalid:
 				await msg.reply("Invalid Username.", quote=True)
 			except UsernameNotOccupied:
-				await msg.reply("Tʜɪs ᴜsᴇʀɴᴀᴍᴇ ɪs ɴᴏᴛ ᴏᴄᴄᴜᴘɪᴇᴅ ʙʏ ᴀɴʏᴏɴᴇ", quote=True)
+				await msg.reply("this username is not occupied by anyone.", quote=True)
 
-# Sticker id-------
-
-@Client.on_message(filters.private & filters.sticker)
-async def stickers(_, message):
-       await message.reply(f"Your Requested Sticker's ID is👇\n\n* `{message.sticker.file_id}` *", quote=True)
 
 # Dc finder
 
@@ -147,13 +129,7 @@ async def dc(bot, update):
     await update.reply_text(
         text=text,
         disable_web_page_preview=True,
-        reply_markup=reply_markup,
         quote=True
     )
 
-START_TEXT = "Yᴏᴜʀ ᴛᴇʟᴇɢʀᴀᴍ ᴅᴄ ɪs : `{}`"
-START_BUTTON = InlineKeyboardMarkup(
-             [[
-             InlineKeyboardButton('👥 Group', url=f"https://t.me/Music_Galaxy_Dl")
-             ]]
-        )
+START_TEXT = "Your  Data center [DC] is `{}`"

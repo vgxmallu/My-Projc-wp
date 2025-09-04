@@ -117,7 +117,14 @@ def record_group_score(chat_id: int, user_id: int, username: str, points: int):
 
 
 # ---------- Commands ----------
-@app.on_message(filters.group & filters.command("gquiz"))
+@app.on_message(filters.command("start_qz") & filters.group)
+async def cmd_cg4challenge(_, message: Message):
+    g = await message.reply("Use this Command on private chats not here❌")
+    await asyncio.sleep(60)
+    await message.delete()
+    await g.delete()
+
+@app.on_message(filters.group & filters.command("startquiz"))
 async def cmhd_quiz(client: Client, message: Message):
     chat_id = message.chat.id
     upsert_user(message.from_user.id, message.from_user.username)
@@ -142,7 +149,7 @@ async def cmd_stop_quiz(client: Client, message: Message):
     await message.reply_text("Quiz stopped.")
 
 
-@app.on_message(filters.group & filters.command("gleaderboard"))
+@app.on_message(filters.group & filters.command("qzg_leaderboard"))
 async def cmd_gleaderboard(client: Client, message: Message):
     chat_id = message.chat.id
     top = list(group_scores.find({"chat_id": chat_id}).sort("points", DESCENDING).limit(10))
@@ -155,7 +162,7 @@ async def cmd_gleaderboard(client: Client, message: Message):
     await message.reply_text(txt)
 
 
-@app.on_message(filters.private & filters.command("global_leaderboard"))
+@app.on_message(filters.private & filters.command("qz_global_leaderboard"))
 async def cmd_global_leaderboard(client: Client, message: Message):
     top = list(users.find().sort("points", DESCENDING).limit(10))
     if not top:
@@ -167,7 +174,7 @@ async def cmd_global_leaderboard(client: Client, message: Message):
     await message.reply_text(txt)
 
 
-@app.on_message(filters.command("gprofile"))
+@app.on_message(filters.command("qz_profile"))
 async def cmd_grrprofile(client: Client, message: Message):
     uid = message.from_user.id
     doc = users.find_one({"user_id": uid}) or {}
@@ -178,7 +185,7 @@ async def cmd_grrprofile(client: Client, message: Message):
     await message.reply_text(txt)
 
 
-@app.on_message(filters.command("gaddq"))
+@app.on_message(filters.command("gqzaddq"))
 async def cmd_gaddq(client: Client, message: Message):
     if message.from_user.id not in ADMIN_IDS:
         await message.reply_text("Only admins can add questions.")
@@ -197,7 +204,7 @@ async def cmd_gaddq(client: Client, message: Message):
         await message.reply_text(f"Usage: /addq {json.dumps({'q':'Q','options':['a','b'],'answer':0})}\nError: {e}")
 
 
-@app.on_message(filters.command("gseed"))
+@app.on_message(filters.command("gqzseed"))
 async def cmd_segged(client: Client, message: Message):
     if message.from_user.id not in ADMIN_IDS:
         await message.reply_text("Only admins can seed.")

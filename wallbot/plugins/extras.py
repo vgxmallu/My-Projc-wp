@@ -103,7 +103,7 @@ async def fffstart(client, message):
                 
  
 #id filter               
-@Client.on_message(filters.command('id') & filters.incoming)
+#@Client.on_message(filters.command('id') & filters.incoming)
 async def whois(client, message):
                 message = message.reply_to_message or message
                 first = message.from_user.first_name

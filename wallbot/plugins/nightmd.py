@@ -8,25 +8,7 @@ from wallbot.database.nightdb import nightdb,nightmode_on,nightmode_off,get_nigh
 
 
 
-CLOSE_CHAT = ChatPermissions(
-    can_send_messages=False,
-    can_send_media_messages = False,
-    can_send_polls = False,
-    can_change_info = False,
-    can_add_web_page_previews = False,
-    can_pin_messages = False,
-    can_invite_users = False )
 
-
-OPEN_CHAT = ChatPermissions(
-    can_send_messages=True,
-    can_send_media_messages = True,
-    can_send_polls = True,
-    can_change_info = True,
-    can_add_web_page_previews = True,
-    can_pin_messages = True,
-    can_invite_users = True )
-    
     
 buttons = InlineKeyboardMarkup([[InlineKeyboardButton("✓ On", callback_data="add_night"),InlineKeyboardButton("× Off", callback_data="rm_night")]])         
 
@@ -73,8 +55,6 @@ async def start_nightmode() :
                 add_chat,
                 photo="https://telegra.ph//file/06649d4d0bbf4285238ee.jpg",
                 caption= f"**ᴍᴀʏ ᴛʜᴇ ᴀɴɢᴇʟs ғʀᴏᴍ ʜᴇᴀᴠᴇɴ ʙʀɪɴɢ ᴛʜᴇ sᴡᴇᴇᴛᴇsᴛ ᴏғ ᴀʟʟ ᴅʀᴇᴀᴍs ғᴏʀ ʏᴏᴜ. ᴍᴀʏ ʏᴏᴜ ʜᴀᴠᴇ ʟᴏɴɢ ᴀɴᴅ ʙʟɪssғᴜʟ sʟᴇᴇᴘ ғᴜʟʟ ᴏғ ʜᴀᴘᴘʏ ᴅʀᴇᴀᴍs.\n\nɢʀᴏᴜᴘ ɪs ᴄʟᴏsɪɴɢ ɢᴏᴏᴅ ɴɪɢʜᴛ ᴇᴠᴇʀʏᴏɴᴇ  !**")
-            
-            await bot.set_chat_permissions(add_chat,CLOSE_CHAT)
 
         except Exception as e:
             print(f"[bold red] Unable To close Group {add_chat} - {e}")
@@ -97,8 +77,6 @@ async def close_nightmode():
                 photo="https://telegra.ph//file/14ec9c3ff42b59867040a.jpg",
                 caption= f"**ɢʀᴏᴜᴘ ɪs ᴏᴘᴇɴɪɴɢ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴇᴠᴇʀʏᴏɴᴇ !\n\nᴍᴀʏ ᴛʜɪs ᴅᴀʏ ᴄᴏᴍᴇ ᴡɪᴛʜ ᴀʟʟ ᴛʜᴇ ʟᴏᴠᴇ ʏᴏᴜʀ ʜᴇᴀʀᴛ ᴄᴀɴ ʜᴏʟᴅ ᴀɴᴅ ʙʀɪɴɢ ʏᴏᴜ ᴇᴠᴇʀʏ sᴜᴄᴄᴇss ʏᴏᴜ ᴅᴇsɪʀᴇ. Mᴀʏ ᴇᴀᴄʜ ᴏғ ʏᴏᴜʀ ғᴏᴏᴛsᴛᴇᴘs ʙʀɪɴɢ Jᴏʏ ᴛᴏ ᴛʜᴇ ᴇᴀʀᴛʜ ᴀɴᴅ ʏᴏᴜʀsᴇʟғ. ɪ ᴡɪsʜ ʏᴏᴜ ᴀ ᴍᴀɢɪᴄᴀʟ ᴅᴀʏ ᴀɴᴅ ᴀ ᴡᴏɴᴅᴇʀғᴜʟ ʟɪғᴇ ᴀʜᴇᴀᴅ.**")
             
-            await bot.set_chat_permissions(rm_chat,OPEN_CHAT)
-
         except Exception as e:
             print(f"[bold red] Unable To open Group {rm_chat} - {e}")
 

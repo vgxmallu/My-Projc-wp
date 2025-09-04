@@ -1,4 +1,4 @@
-
+ 
 from pyrogram import Client, filters
 from motor.motor_asyncio import AsyncIOMotorClient
 import asyncio
@@ -32,6 +32,14 @@ g_button = InlineKeyboardMarkup(
     ]
 ) 
 
+g_button = InlineKeyboardMarkup(
+    [[
+        InlineKeyboardButton("📣My Channel", url="https://t.me/xbots_x"),
+    ]]
+)
+    
+        
+
 # --- Save user on /start ---
 @app.on_message(filters.command("start"))
 async def start_cmd(client, message):
@@ -60,6 +68,14 @@ async def start_cmd(client, message):
             LOG_CHANNEL,
             f"🆕 New member started the bot!\n\n👤: {mention}\n⛓️‍💥: @{user_n}\n🆔: `{user_id}`"
         )
+
+@app.on_message(filters.command("help"))
+async def help_cmd(client, message):
+    await message.reply_photo(
+        photo="https://files.catbox.moe/80bcxh.jpg",
+        caption="📌 **General Commands:**\n/start → Start the bot & register yourself.\n/help → Show this help menu.\n/profile → View your profile, stats, and achievements.\n/leaderboard → Check who’s leading the game.\n/stats → See your gameplay statistics.",
+        reply_markup=h_button,
+    )
 
 # --- Status command ---
 @app.on_message(filters.command("status") & filters.user(OWNER_ID))

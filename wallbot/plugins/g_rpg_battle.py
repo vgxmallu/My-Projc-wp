@@ -218,7 +218,7 @@ async def shoprpg_cmd(_, m: Message):
 async def buy_rpgcmd(_, m: Message):
     args = m.command[1:]
     if not args:
-        return await m.reply("Usage: /buy <item> [qty]")
+        return await m.reply("Usage: /buy [item] [qty]")
     item = args[0].lower()
     qty = parse_amount(args[1], 1) if len(args) > 1 else 1
     if item not in SHOP:
@@ -235,7 +235,7 @@ async def buy_rpgcmd(_, m: Message):
 async def sellss_cmd(_, m: Message):
     args = m.command[1:]
     if not args:
-        return await m.reply("Usage: /sell <item> [qty]")
+        return await m.reply("Usage: /sell [item] [qty]")
     item = args[0].lower()
     qty = parse_amount(args[1], 1) if len(args) > 1 else 1
     if item not in SHOP:
@@ -251,7 +251,7 @@ async def traded_cmd(_, m: Message):
     # Simple flavor: trade mats 1:1 by value bracket
     args = m.command[1:]
     if len(args) < 2:
-        return await m.reply("Usage: /trade <give_item> <want_item>")
+        return await m.reply("Usage: /trade [give_item] [want_item]")
     give, want = args[0].lower(), args[1].lower()
     if give not in SHOP or want not in SHOP:
         return await m.reply("Only shop items can be traded.")
@@ -311,7 +311,7 @@ async def recipedsr_cmd(_, m: Message):
 async def craftrr_cmd(_, m: Message):
     args = m.command[1:]
     if not args:
-        return await m.reply("Usage: /craft <item>")
+        return await m.reply("Usage: /craft [item]")
     item = args[0].lower()
     if item not in RECIPES:
         return await m.reply("Unknown recipe.")
@@ -332,7 +332,7 @@ async def craftrr_cmd(_, m: Message):
 async def equddip_cmd(_, m: Message):
     args = m.command[1:]
     if not args:
-        return await m.reply("Usage: /equip <item>")
+        return await m.reply("Usage: /equip [item]")
     item = args[0].lower()
     if item not in SHOP:
         return await m.reply("Only shop/crafted gear can be equipped.")
@@ -417,7 +417,7 @@ async def timetravedl_cmd(_, m: Message):
 async def guildd_cmd(_, m: Message):
     args = m.command[1:]
     if not args:
-        return await m.reply("Guild commands: /guild create <name> | /guild join <name> | /guild leave")
+        return await m.reply("Guild commands: /guild create [name] | /guild join [name] | /guild leave")
     sub = args[0].lower()
     u = ensure_user(m.from_user.id, m.from_user.first_name)
 
@@ -425,7 +425,7 @@ async def guildd_cmd(_, m: Message):
         if u.get("guild"):
             return await m.reply("Leave current guild first.")
         if len(args) < 2:
-            return await m.reply("Usage: /guild create <name>")
+            return await m.reply("Usage: /guild create [name]")
         name = " ".join(args[1:])[:24]
         if guilds.find_one({"_id": name}):
             return await m.reply("Guild already exists.")
@@ -435,7 +435,7 @@ async def guildd_cmd(_, m: Message):
 
     elif sub == "join":
         if len(args) < 2:
-            return await m.reply("Usage: /guild join <name>")
+            return await m.reply("Usage: /guild join [name]")
         name = " ".join(args[1:])
         g = guilds.find_one({"_id": name})
         if not g:
@@ -460,7 +460,7 @@ async def guildd_cmd(_, m: Message):
 @app.on_message(filters.command("duel_rpg"))
 async def duel_cmd(_, m: Message):
     if not m.reply_to_message or len(m.command) < 2:
-        return await m.reply("Reply to an opponent: /duel <bet>")
+        return await m.reply("Reply to an opponent: /duel [bet]")
     bet = parse_amount(m.command[1], 1)
     me = ensure_user(m.from_user.id, m.from_user.first_name)
     opp = ensure_user(m.reply_to_message.from_user.id, m.reply_to_message.from_user.first_name)
@@ -572,7 +572,7 @@ def win_bet(uid: int, amount: int):
 async def coinflipdd_cmd(_, m: Message):
     args = m.command[1:]
     if len(args) < 2:
-        return await m.reply("Usage: /coinflip <bet> <heads|tails>")
+        return await m.reply("Usage: /coinflip [bet] [heads|tails]")
     bet = parse_amount(args[0], 1)
     pick = args[1].lower()
     if pick not in ("heads", "tails"):
@@ -589,7 +589,7 @@ async def coinflipdd_cmd(_, m: Message):
 async def dicdde_cmd(_, m: Message):
     args = m.command[1:]
     if not args:
-        return await m.reply("Usage: /dice <bet>")
+        return await m.reply("Usage: /dice [bet]")
     bet = parse_amount(args[0], 1)
     if not pay_bet(m.from_user.id, bet):
         return await m.reply("Not enough coins.")
@@ -603,7 +603,7 @@ async def dicdde_cmd(_, m: Message):
 async def multidicdde_cmd(_, m: Message):
     args = m.command[1:]
     if len(args) < 2:
-        return await m.reply("Usage: /multidice <bet> <count 2-5>")
+        return await m.reply("Usage: /multidice [bet] [count 2-5]")
     bet = parse_amount(args[0], 1)
     cnt = min(5, max(2, parse_amount(args[1], 2)))
     if not pay_bet(m.from_user.id, bet):
@@ -620,7 +620,7 @@ async def multidicdde_cmd(_, m: Message):
 async def wheeddl_cmd(_, m: Message):
     args = m.command[1:]
     if not args:
-        return await m.reply("Usage: /wheel <bet>")
+        return await m.reply("Usage: /wheel [bet]")
     bet = parse_amount(args[0], 1)
     if not pay_bet(m.from_user.id, bet):
         return await m.reply("Not enough coins.")
@@ -637,7 +637,7 @@ async def wheeddl_cmd(_, m: Message):
 async def slotsdd_cmd(_, m: Message):
     args = m.command[1:]
     if not args:
-        return await m.reply("Usage: /slots <bet>")
+        return await m.reply("Usage: /slots [bet]")
     bet = parse_amount(args[0], 1)
     if not pay_bet(m.from_user.id, bet):
         return await m.reply("Not enough coins.")
@@ -657,7 +657,7 @@ async def slotsdd_cmd(_, m: Message):
 async def bj_rpcmd(_, m: Message):
     args = m.command[1:]
     if not args:
-        return await m.reply("Usage: /blackjack <bet>")
+        return await m.reply("Usage: /blackjack [bet]")
     bet = parse_amount(args[0], 1)
     if not pay_bet(m.from_user.id, bet):
         return await m.reply("Not enough coins.")

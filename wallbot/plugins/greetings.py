@@ -136,8 +136,10 @@ async def ggbroadcast(client, message):
 #=======•=•==••=•=•=<pre>
 hlp_bt = InlineKeyboardMarkup(
         [[
-            InlineKeyboardButton("❌⭕Tic Tac Toe 🕹️", callback_data="tic"),
-            InlineKeyboardButton("🔴⚫Gomoku 🎮", callback_data="gmk"),
+            InlineKeyboardButton("❌⭕Tic Tac Toe 🕹️", callback_data="tic")
+        ],[
+            InlineKeyboardButton("🔴⚫Gomoku 🎮", callback_data="gmk")
+        ],[
             InlineKeyboardButton("🔴🟢Connect 4 🕹️", callback_data="cn4")
         ],[
             InlineKeyboardButton("🥇🥈Quiz ⤵️", callback_data="gg")

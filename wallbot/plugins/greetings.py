@@ -42,7 +42,7 @@ h_button = InlineKeyboardMarkup(
 
 # --- Save user on /start ---
 @app.on_message(filters.command("start"))
-async def start_cmd(client, message):
+async def start_game(client, message):
     user = message.from_user
     user_id = user.id
     user_n = user.username

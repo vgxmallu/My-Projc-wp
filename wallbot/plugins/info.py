@@ -120,12 +120,12 @@ async def handle_video(bot, message):
     # Handle video message
     await message.reply_text(f"Video file ID: {message.video.file_id}")
 
-@app.on_message(filters.sticker)
+#@app.on_message(filters.sticker)
 async def handle_sticker(bot, message):
     # Handle sticker message
     await message.reply_text(f"Sticker file ID: {message.sticker.file_id}")
 
-@app.on_message(filters.photo)
+#@app.on_message(filters.photo)
 async def handle_photo(bot, message):
     # Handle photo message
     await message.reply_text(f"Photo file ID: {message.photo.file_id}")

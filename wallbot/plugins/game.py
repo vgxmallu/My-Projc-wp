@@ -156,8 +156,8 @@ async def start_classic(client, message: Message):
     })
     await message.reply(f"{message.from_user.mention} joined the game!")
 
-@word.on_message(filters.command("join") & filters.group)
-async def join_game(client, message: Message):
+@word.on_message(filters.command("joinx") & filters.group)
+async def join_gaxme(client, message: Message):
     chat_id = message.chat.id
     if chat_id not in pending_games:
         return await message.reply("No pending game to join!")
@@ -172,8 +172,8 @@ async def join_game(client, message: Message):
     })
     await message.reply(f"{message.from_user.mention} joined the game!")
 
-@word.on_message(filters.command("flee") & filters.group)
-async def flee_game(client, message: Message):
+@word.on_message(filters.command("leavex") & filters.group)
+async def fleex_game(client, message: Message):
     chat_id = message.chat.id
     if chat_id not in pending_games:
         return await message.reply("No pending game to leave!")
@@ -182,8 +182,8 @@ async def flee_game(client, message: Message):
     game.players = [p for p in game.players if p['id'] != message.from_user.id]
     await message.reply("You left the game!")
 
-@word.on_message(filters.command("extend") & filters.group)
-async def extend_game(client, message: Message):
+@word.on_message(filters.command("extendx") & filters.group)
+async def extend_xgame(client, message: Message):
     chat_id = message.chat.id
     if chat_id not in pending_games:
         return await message.reply("No active game to extend!")
@@ -192,8 +192,8 @@ async def extend_game(client, message: Message):
     await game.start_countdown(30)
     await message.reply(f"Game start extended by 30 seconds!\n\nNew start time: {game.start_time + timedelta(seconds=30)}")
 
-@word.on_message(filters.command("stats"))
-async def show_stats(client, message: Message):
+@word.on_message(filters.command("statsx"))
+async def show_stdats(client, message: Message):
     stats = await get_stats(message.from_user.id)
     
     games_played = stats.get('games_played', 0)
@@ -208,7 +208,7 @@ async def show_stats(client, message: Message):
         f"• Longest word: {stats.get('longest_word', 'None')}"
     )
 
-@word.on_message(filters.command("forcestart") & filters.group)
+@word.on_message(filters.command("forcestartx") & filters.group)
 async def force_start(client, message: Message):
     chat_id = message.chat.id
     if chat_id not in pending_games:

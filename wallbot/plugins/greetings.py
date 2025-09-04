@@ -263,7 +263,7 @@ async def qz_callback(client, query):
     await query.answer("😎Gomez Games🎮")
 
 @app.on_callback_query(filters.regex("^rpgb$"))
-async def cn_callback(client, query):
+async def igigcallback(client, query):
     rpgb_tx="""
     🗡️ **Welcome to Mini Battles RPG game Menu!**
     
@@ -284,7 +284,7 @@ async def cn_callback(client, query):
     await query.answer("😎Gomez Games🎮")
 
 @app.on_callback_query(filters.regex("^rpga$"))
-async def cn_callback(client, query):
+async def arpgcallback(client, query):
     rpga_tx="""
     **🛡️Welcome to Advanced RPG Battle!!** ⚔️
     Collect stuff, craft gear, run dungeons, duel, gamble & more...

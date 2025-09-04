@@ -103,6 +103,13 @@ def compute_level(xp: int) -> int:
     return xp // 100 + 1
 
 # ---------- Game creation ----------
+@app.on_message(filters.command("battle") & filters.private)
+async def cmd_cg4challenge(_, message: Message):
+    g = await message.reply("Use this Command on Group chats not here❌")
+    await asyncio.sleep(60)
+    await message.delete()
+    await g.delete()
+
 @app.on_message(filters.command("battle") & filters.group)
 async def battle_cmd(_, message: Message):
     """Start a battle by replying to a user's message or /battle <@user>"""

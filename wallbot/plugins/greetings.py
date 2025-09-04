@@ -6,7 +6,7 @@ from pyrogram.errors import UserIsBlocked, PeerIdInvalid, ChatWriteForbidden
 from config import DB_URL
 from wallbot import wbot as app
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
+from Script import START_TEXT
 OWNER_ID = 784589736   # your Telegram ID
 LOG_CHANNEL = -1001997285269  # your log channel ID (bot must be admin here)
 
@@ -17,20 +17,6 @@ users_collection = db["users"]
 
 
 
-g_text="""
-👋 <b>Hey {}! Welcome to Gomez Games🎮.</b>
-
-<b>Here you can;)</b>
-⭐ `Play exciting games with friends`
-🏆 `Compete for the top spot on leaderboards`
-📊 `Track your profile & stats`
-🔥 `Join quizzes, puzzles, and more`
-
-💡 Tip: __Use the menu or type /help to explore commands.__
-⚡ __Stay active — new games and events are added regularly!__
-
-<b>;) Enjoy & have fun, gamerZzz!</b> 🚀")
-"""
 g_button = InlineKeyboardMarkup(
     [
         [
@@ -61,10 +47,10 @@ async def start_cmd(client, message):
     await message.reply_sticker("CAACAgUAAxkBAAM4aLkb-SpqkBslNYD-wcj0pnflt9gAAk4dAALZ5rhX3eybppGuZQceBA")    
     await message.reply_photo(
         photo="https://files.catbox.moe/80bcxh.jpg",
-        caption=g_text.format(message.from_user),
+        caption=START_TEXT.format(message.from_user),
         reply_markup=g_button,
-        message_effect_id=5104841245755180586,
     )
+    #message_effect_id=5104841245755180586,
     # If it's a new user, log them
     if result.upserted_id is not None:
         mention = f"[{user.first_name}](tg://user?id={user_id})"

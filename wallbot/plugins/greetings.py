@@ -171,21 +171,63 @@ bak_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("🔙 Back to Healp Menu", callback_data="tic")
         ],[
 @app.on_callback_query(filters.regex("^tic$"))
-async def hpo_callback(client, query):
+async def tic_callback(client, query):
     xo_tx="""
-    🎮 Welcome to Tic Tac Toe game Menu!❌⭕
-
-    Commands:
+    **🎮 Play Tic Tac Toe game Menu!❌⭕**
+    First to align three marks wins
+    
+    <blockquote>**Commands Usage:**
     • `/pvp_xoxo @username` or reply to group members to Challenge someone.
     • `/pve_xoxo easy|medium|hard` → Play with Bot.
     • `/xo_leaderboard` → Show top players on Tic Tac Toe.
-    Also use @TicTacToe_Xbot bot play inline mode to play. 
+    Also use @TicTacToe_Xbot bot play inline mode to play.</blockquote>
     """
     await query.message.edit_text(
         text=xo_tx,
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")
+
+@app.on_callback_query(filters.regex("^gmk$"))
+async def gok_callback(client, query):
+    gmk_tx="""
+    🎮 **Welcome to Gomoku game Menu!**🔴🟢
+    First to connect five marks wins
+    
+    <blockquote>**Commands Usage:**
+    • `/playgomoku` - Start a new PvP Gomoku game.
+    • `/join_gomoku` <game_id> - Join a game.
+    • `/go_profile` - View your profile on Gomoku.
+    • `/go_leaderboard` - View Top group Gomoku leaderboard.
+    • `/gomoku_stats` - View group statistics.</blockquote>
+    """
+    await query.message.edit_text(
+        text=gmk_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+@app.on_callback_query(filters.regex("^cn4$"))
+async def cn_callback(client, query):
+    cn4_tx="""
+    🎮 **Welcome to Connect 4 🎮 game Menu!**
+    First to connect four dots wins
+    
+    <blockquote>Commands Usage:
+    • /connect4_challenge` (reply to a user) — challenge in group.
+    • `/c4_pve easy|medium|hard` — play vs bot in private.
+    • `/c4_profile` — show your stats & ELO.
+    • `/c4_leaderboard` — top players by ELO.
+    • `/c4_spectate <game_id>` — view a game's board.</blockquote>
+
+    __Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟢) is O.__
+    """
+    await query.message.edit_text(
+        text=cn4_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+ 
 #======••=•=•==•=•=•==•=•=••=•=•=•=•=•=•=••=•=
 @app.on_callback_query(filters.regex("^close$"))
 async def colcallback(client, query):

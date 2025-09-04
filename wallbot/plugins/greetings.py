@@ -161,7 +161,7 @@ bak_bt = InlineKeyboardMarkup(
         ]]
 )
 @app.on_callback_query(filters.regex("^hlp$"))
-async def hpo_callback(client, query):
+async def hlp_callback(client, query):
     hlp_tx="""
     Gomez Games 🎮
     """
@@ -269,5 +269,5 @@ async def colcallback(client, query):
     await query.message.delete()
     await query.answer("Closed ❌")
 @app.on_callback_query(filters.regex("^gg$"))
-async def hpo_callback(client, query):
+async def gg_callback(client, query):
     await query.answer("😎Gomez Games🎮")

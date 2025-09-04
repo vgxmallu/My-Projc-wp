@@ -102,6 +102,19 @@ def compute_level(xp: int) -> int:
     # Simple level formula: 100 XP per level
     return xp // 100 + 1
 
+@app.on_message(filters.command("battle_g"))
+async def cmd_battltart(client: Client, message: Message):
+    await message.reply(
+        "🎮 Battle Game ⚔️\n\n"
+        "Commands:\n"
+        "`/battle` (reply to a user) — challenge in group\n"
+        "`/shop` Shop your inventory\n"
+        "`/buy` — buy inventory\n"
+        "`/b_leaderboard` — top players by Battle ELO\n"
+        "`/b_profile check your profile\n\n"
+        "`/inventory` Check your inventory: "
+    )
+
 # ---------- Game creation ----------
 @app.on_message(filters.command("battle") & filters.private)
 async def cmd_cg4challenge(_, message: Message):

@@ -5,7 +5,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import os
 
 buttons = InlineKeyboardMarkup([
-    [InlineKeyboardButton('Generate', callback_data='generate'),
+    [InlineKeyboardButton('Generate', callback_data='generatemail'),
      InlineKeyboardButton('Refresh', callback_data='refresh'),
      InlineKeyboardButton('Close', callback_data='close')]
 ])
@@ -28,8 +28,8 @@ async def start_msgsd(client, message):
         reply_markup=buttons
     )
 
-@app.on_callback_query(filters.regex("generate"))
-async def generate_email(client, callback_query):
+@app.on_callback_query(filters.regex("generatemail"))
+async def generatge_email(client, callback_query):
     chat_id = callback_query.message.chat.id
     email = re.get("https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=1").json()[0]
     user_data[chat_id]['email'] = email

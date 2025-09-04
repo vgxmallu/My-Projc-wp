@@ -52,7 +52,7 @@ async def start_cmd(client, message):
         {"$set": {"_id": user_id, "name": user.first_name}},
         upsert=True
     )
-    await message.reply_sticker("CAACAgUAAxkBAAM4aLkb-SpqkBslNYD-wcj0pnflt9gAAk4dAALZ5rhX3eybppGuZQceBA")    
+    await message.reply_sticker("CAACAgUAAxkBAANmaLk5MLScQyq443axCvBpaNASiJMAAusTAALPLMhV8eSTf4mvJD8eBA")    
     await message.reply_photo(
         photo="https://files.catbox.moe/80bcxh.jpg",
         caption="👋<b>Hey! Welcome to Gomez Games🎮.</b>\n\n<b>Here you can:</b>\n⭐ `Play exciting games with friends`\n🏆 `Compete for the top spot on leaderboards`\n📊 `Track your profile & stats`\n🔥 `Join quizzes, puzzles, and more`\n\n💡 Use the menu or type /help to explore commands.\n⚡ Stay active new games and events are added regularly!",

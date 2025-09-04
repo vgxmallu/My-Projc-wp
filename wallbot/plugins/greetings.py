@@ -34,7 +34,7 @@ g_button = InlineKeyboardMarkup(
 
 h_button = InlineKeyboardMarkup(
     [[
-        InlineKeyboardButton("📣My Channel", url="https://t.me/xbots_x"),
+        InlineKeyboardButton("📚Commands & Helps⚔️", callback_data="hlp"),
     ]]
 )
 

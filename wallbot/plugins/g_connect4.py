@@ -254,7 +254,7 @@ async def cmd_c4start(client: Client, message: Message):
         "Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟡) is O."
     )
 @app.on_message(filters.command("connect4_challenge") & filters.private)
-async def cmd_cg4challenge(_, message: Message):
+async def cmd_cg4challenge(_, message):
     g = await message.reply("Use this Command on Group chats not here❌")
     await asyncio.sleep(60)
     await message.delete()

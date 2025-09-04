@@ -5,7 +5,7 @@ import asyncio
 from pyrogram.errors import UserIsBlocked, PeerIdInvalid, ChatWriteForbidden
 from config import DB_URL
 from wallbot import wbot as app
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 OWNER_ID = 784589736   # your Telegram ID
 LOG_CHANNEL = -1001997285269  # your log channel ID (bot must be admin here)
@@ -132,3 +132,23 @@ async def ggbroadcast(client, message):
         f"🗑️ Removed from DB: {removed}\n"
         f"📊 Active Users Now: {await users_collection.count_documents({})}"
     )
+
+
+hlp_bt = InlineKeyboardMarkup(
+        [[
+                InlineKeyboardButton("Spotify ⤵️", callback_data="spw")
+            ],[
+                InlineKeyboardButton("❌", callback_data="close")
+        ]]
+)
+@app.on_callback_query(filters.regex("^hlp$"))
+async def hpo_callback(client, query):
+    hlp_tx="""
+    help 
+    """
+    await query.message.edit_text(
+        text=hlp_tx,
+        reply_markup=hlp_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+

@@ -47,6 +47,7 @@ async def notify_when_added(client, message):
             text = (
                 "🤖 **Bot Added to New Group**\n\n"
                 f"🏠 Group: {chat.title}\n"
+                f"🪬 G User name: @{chat.username}"
                 f"🆔 Group ID: `{chat.id}`\n"
                 f"👥 Members Count: {chat.members_count if hasattr(chat, 'members_count') else 'Unknown'}"
             )

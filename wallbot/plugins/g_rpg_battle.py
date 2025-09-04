@@ -288,7 +288,7 @@ async def fisdh_cmd(_, m: Message):
     await do_work(m, "fish", ["fish"], (1+bonus, 3+bonus))
 
 @app.on_message(filters.command("pickup_rpg"))
-async def pickupr_$cmd(_, m: Message):
+async def pickupr_cmd(_, m: Message):
     await do_work(m, "pickup", ["wood", "stone"])
 
 @app.on_message(filters.command("mine_rpg"))

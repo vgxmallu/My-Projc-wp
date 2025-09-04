@@ -214,7 +214,7 @@ async def cn_callback(client, query):
     🎮 **Welcome to Connect 4 🎮 game Menu!**
     First to connect four dots wins
     
-    <blockquote>Commands Usage:
+    <blockquote>**Commands Usage:**
     • /connect4_challenge` (reply to a user) — challenge in group.
     • `/c4_pve easy|medium|hard` — play vs bot in private.
     • `/c4_profile` — show your stats & ELO.
@@ -235,14 +235,14 @@ async def qz_callback(client, query):
     🎮 **Welcome to QuizMaster Bot! 🧠✨!**
     Get ready to test your knowledge across tons of fun and serious topics!  
 
-    <blockquote>📚Quiz for Private chat: 
+    <blockquote>📚**Quiz for Private chat:**
     1️⃣ Use `/start_qz` to begin a quiz.
     2️⃣ Choose your category.
     3️⃣ Answer the questions and earn points! 🏆
     • `/qzprofile` - To find your profile on Quiz.
     • `/qzleaderboard` - To get Top player on quiz.</blockquote>
 
-    <blockquote>📊 Quiz For Group chats:
+    <blockquote>📊 **Quiz For Group chats:**
     • `/startquiz` - To begin a quiz in group.
     • `/stopquiz` - To stop quiz in group 
     • `/qzg_leaderboard` - view Group top players.
@@ -262,7 +262,52 @@ async def qz_callback(client, query):
     )
     await query.answer("😎Gomez Games🎮")
 
+@app.on_callback_query(filters.regex("^rpgb$"))
+async def cn_callback(client, query):
+    rpgb_tx="""
+    🗡️ **Welcome to Mini Battles RPG game Menu!**
+    
+    <blockquote>**Commands Usage:**
+    • `/battle` (reply to a user) — challenge in group.
+    • `/rbshop` Shop your inventory.
+    • `/rbbuy` — buy inventory.
+    • `/rb_leaderboard` — top players by Battle ELO.
+    • `/rb_profile check your profile.
+    • `/rbinventory` Check your inventory.</blockquote>
+    
+    __Perfect ⚔️🐉 Let’s level this up into a full simple RPG__
+    """
+    await query.message.edit_text(
+        text=rpgb_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
 
+@app.on_callback_query(filters.regex("^rpga$"))
+async def cn_callback(client, query):
+    rpga_tx="""
+    **🛡️Welcome to Advanced RPG Battle!!** ⚔️
+    Collect stuff, craft gear, run dungeons, duel, gamble & more...
+    
+    <blockquote>💰**Basics Usage:**
+    • `/rpgprofile` `/me` — your stats.
+    • `/rpgshop` — buyable items.
+    • `/rpginventory` — your bag.
+    • `/recipes_rpg` — crafting list.</blockquote>
+
+    <blockquote>🧰**Work**: /chop_rpg /fish_rpg /pickup_rpg /mine_rpg.
+    🏦**Economy**: /buy_rpg /sell_rpg /trade_rpg.
+    ⛏️**Crafting**: /craft_rpg [item].
+    👥**PvP**: /duel_rpg @user [bet].
+    🐲**Dungeon**: /dungeon.
+    🎰**Gamble**: /coinflip /dice_rpg /blackjack /slots_rpg /wheel_rpg /multidice_rpg.
+    📜**Other**: /daily_rpg /enchant_rpg /pet_rpg /guild_rpg /memerpg /rpgleaderboard.</blockquote>
+    """
+    await query.message.edit_text(
+        text=rpga_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
 #======••=•=•==•=•=•==•=•=••=•=•=•=•=•=•=••=•=
 @app.on_callback_query(filters.regex("^close$"))
 async def colcallback(client, query):

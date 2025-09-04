@@ -143,8 +143,6 @@ hlp_bt = InlineKeyboardMarkup(
         ],[
             InlineKeyboardButton("🔴🟢Connect 4 🕹️", callback_data="cn4")
         ],[
-            InlineKeyboardButton("🥇📊Quiz ⤵️", callback_data="gg")
-        ],[
             InlineKeyboardButton("📊QuizMaster [P]🤖&[G]👥", callback_data="qz")
         ],[
             InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg")

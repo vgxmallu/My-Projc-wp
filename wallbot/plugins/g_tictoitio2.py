@@ -126,13 +126,13 @@ def leaderboard_text():
 async def staxoxoxrt(_, msg: Message):
     await msg.reply("🎮 Welcome to Tic Tac Toe Bot!\n\n"
                     "Commands:\n"
-                    "`/pvp_xoxo @username` → Challenge someone\n"
+                    "`/pvp_xoxo @username` or reply to members to Challenge someone\n"
                     "`/pve_xoxo easy|medium|hard` → Play vs Bot\n"
                     "`/xo_leaderboard` → Show top players")
 
 
 @app.on_message(filters.command("pvp_xoxo"))
-async def pvp(_, msg: Message):
+async def pvpxo(_, msg: Message):
     if not msg.reply_to_message and len(msg.command) < 2:
         return await msg.reply("Reply to someone or use `/pvp @username`")
     if msg.reply_to_message:
@@ -153,7 +153,7 @@ async def pvp(_, msg: Message):
 
 
 @app.on_message(filters.command("pve_xoxo"))
-async def pve(_, msg: Message):
+async def pvexo(_, msg: Message):
     if len(msg.command) < 2:
         return await msg.reply("Usage: `/pve_xoxo easy|medium|hard`\nExample: `/pve_xoxo easy`")
     level = msg.command[1].lower()

@@ -38,7 +38,25 @@ h_button = InlineKeyboardMarkup(
     ]]
 )
     
-        
+@app.on_message(filters.new_chat_members)
+async def log_new_member(client: Client, message: Message):
+    for member in message.new_chat_members:
+        user_id = member.id
+        first_name = member.first_name or ""
+        last_name = member.last_name or ""
+        username = f"@{member.username}" if member.username else "❌ No username"
+
+        text = (
+            "👤 **New Member Joined**\n\n"
+            f"🆔 ID: `{user_id}`\n"
+            f"👤 Name: {first_name} {last_name}\n"
+            f"🔗 Username: {username}\n"
+            f"🏠 Group: {message.chat.title} (`{message.chat.id}`)"
+        )
+
+        # Send log to your private channel
+        await client.send_message(LOG_CHANNEL, text)
+
 
 # --- Save user on /start ---
 @app.on_message(filters.command("start"))

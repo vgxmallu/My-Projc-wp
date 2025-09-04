@@ -256,7 +256,7 @@ async def starnd(client, message):
     )
 
 @app.on_message(filters.command("playgomoku") & filters.private)
-async def cmd_gomokchallenge(_, message: Message):
+async def cmd_gomokchallenge(_, message):
     g = await message.reply("Use this Command on Group chats not here❌")
     await asyncio.sleep(60)
     await message.delete()

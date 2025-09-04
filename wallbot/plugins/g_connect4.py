@@ -246,7 +246,7 @@ async def cmd_c4start(client: Client, message: Message):
     await message.reply(
         "🎮 Connect 4 🎮\n\n"
         "Commands:\n"
-        "`/connect4_challenge` (reply to a user) — challenge in group or private\n"
+        "`/connect4_challenge` (reply to a user) — challenge in group\n"
         "`/c4_pve easy|medium|hard` — play vs bot in private\n"
         "`/c4_profile` — show your stats & ELO\n"
         "`/c4_leaderboard` — top players by ELO\n"

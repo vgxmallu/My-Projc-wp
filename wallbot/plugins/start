@@ -1,37 +1,88 @@
+
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-#from wallbot.database.db import add_user, get_user, add_group, get_group
-from wallbot import wbot as word
+from motor.motor_asyncio import AsyncIOMotorClient
+import asyncio
+from pyrogram.errors import UserIsBlocked, PeerIdInvalid, ChatWriteForbidden
 
-START_TEXT = """**👋 Hey {user}!
+# --- Config ---
+API_ID = 123456        # your API_ID
+API_HASH = "your_api_hash"
+BOT_TOKEN = "your_bot_token"
+MONGO_URI = "mongodb://localhost:27017"
+OWNER_ID = 123456789   # your Telegram ID
+LOG_CHANNEL = -1001234567890  # your log channel ID (bot must be admin here)
 
- Hi! My name is {bot}I i have somany futurs!
-**"""
+# --- Init ---
+app = Client("broadcast_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+mongo_client = AsyncIOMotorClient(MONGO_URI)
+db = mongo_client["broadcast_db"]
+users_collection = db["users"]
 
-@word.on_message(filters.command(["start", "help"]) & filters.private)
-async def start(client: Client, message: Message):
-    await message.reply_photo(
-        photo="https://files.catbox.moe/wpxnj9.jpg",
-        caption=START_TEXT.format(
-            user=message.from_user.mention,
-            bot=(await client.get_me()).first_name
-        ),
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("My Channel", url="https://t.me/XBOTS_X"),
-                ]
-            ]
-        )
+# --- Save user on /start ---
+@app.on_message(filters.command("start"))
+async def start(client, message):
+    user = message.from_user
+    user_id = user.id
+
+    # Insert if not exists
+    result = await users_collection.update_one(
+        {"_id": user_id},
+        {"$set": {"_id": user_id, "name": user.first_name}},
+        upsert=True
     )
 
-@word.on_message(filters.command("start") & filters.group)
-async def start_group(client: Client, message: Message):
-    
-    await message.reply_photo(
-        photo="https://files.catbox.moe/wpxnj9.jpg",
-        caption=START_TEXT.format(
-            user=message.from_user.mention,
-            bot=(await client.get_me()).first_name
+    await message.reply_text("👋 Hello! You are now registered in the bot database.")
+
+    # If it's a new user, log them
+    if result.upserted_id is not None:
+        mention = f"[{user.first_name}](tg://user?id={user_id})"
+        await client.send_message(
+            LOG_CHANNEL,
+            f"🆕 New member started the bot!\n\n👤 {mention}\n🆔 ID: `{user_id}`"
         )
+
+# --- Status command ---
+@app.on_message(filters.command("status") & filters.user(OWNER_ID))
+async def status(client, message):
+    total = await users_collection.count_documents({})
+    await message.reply_text(f"📊 Total registered users: **{total}**")
+
+# --- Broadcast command ---
+@app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
+async def broadcast(client, message):
+    if not message.reply_to_message:
+        await message.reply_text("❌ Reply to a message (text/photo/video/document) with `/broadcast`")
+        return
+
+    total = await users_collection.count_documents({})
+    sent = 0
+    failed = 0
+    removed = 0
+
+    status_msg = await message.reply_text(f"📢 Broadcasting to {total} users...")
+
+    async for user in users_collection.find({}):
+        user_id = user["_id"]
+        try:
+            await message.reply_to_message.copy(chat_id=user_id)
+            sent += 1
+            await asyncio.sleep(0.05)  # prevent flood
+        except (UserIsBlocked, PeerIdInvalid, ChatWriteForbidden):
+            # Remove dead/blocked users
+            await users_collection.delete_one({"_id": user_id})
+            removed += 1
+            failed += 1
+        except Exception:
+            failed += 1
+
+    await status_msg.edit_text(
+        f"✅ Broadcast finished!\n\n"
+        f"👥 Total Users Before: {total}\n"
+        f"📩 Sent: {sent}\n"
+        f"⚠️ Failed: {failed}\n"
+        f"🗑️ Removed from DB: {removed}\n"
+        f"📊 Active Users Now: {await users_collection.count_documents({})}"
     )
+
+print("🚀 Broadcast Bot with cleaning is running...")
+app.run()

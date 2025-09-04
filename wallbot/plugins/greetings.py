@@ -144,8 +144,7 @@ hlp_bt = InlineKeyboardMarkup(
         ],[
             InlineKeyboardButton("🥇📊Quiz ⤵️", callback_data="gg")
         ],[
-            InlineKeyboardButton("📊Quiz for Private✒️", callback_data="qzp"),
-            InlineKeyboardButton("✒️Quiz for Group📊", callback_data="qzg")
+            InlineKeyboardButton("📊QuizMaster [P]🤖&[G]👥", callback_data="qz")
         ],[
             InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg")
         ],[
@@ -227,7 +226,41 @@ async def cn_callback(client, query):
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")
- 
+
+@app.on_callback_query(filters.regex("^qz$"))
+async def qz_callback(client, query):
+    qz_tx="""
+    🎮 **Welcome to QuizMaster Bot! 🧠✨!**
+    Get ready to test your knowledge across tons of fun and serious topics!  
+
+    <blockquote>📚Quiz for Private chat: 
+    1️⃣ Use `/start_qz` to begin a quiz.
+    2️⃣ Choose your category.
+    3️⃣ Answer the questions and earn points! 🏆
+    • `/qzprofile` - To find your profile on Quiz.
+    • `/qzleaderboard` - To get Top player on quiz.</blockquote>
+
+    <blockquote>📊 Quiz For Group chats:
+    • `/startquiz` - To begin a quiz in group.
+    • `/stopquiz` - To stop quiz in group 
+    • `/qzg_leaderboard` - view Group top players.
+    • `/qz_global_leaderboard` - View global Top players.
+    • `/qz_profile` - To see your Profile on Quiz</blockquote>
+    
+    **This commands for Admin**
+    private:
+    • `/p_seed` - seed the QnA, • `/p_addq` to add more questions.
+    group:
+    • `/gqzaddq` - to add more questions on group DB, `/gqzseed` seed Qz, `/gimport` import Qz
+    💡 Tip: The faster you answer correctly, the more points you score!
+    """
+    await query.message.edit_text(
+        text=qz_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+
 #======••=•=•==•=•=•==•=•=••=•=•=•=•=•=•=••=•=
 @app.on_callback_query(filters.regex("^close$"))
 async def colcallback(client, query):

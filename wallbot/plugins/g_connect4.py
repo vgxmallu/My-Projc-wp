@@ -17,7 +17,7 @@ from pyrogram.types import (
 )
 from config import DB_URL
 from wallbot import wbot as app
-# ---------------- CONFIG ----------------
+import asyncio
 
 
 
@@ -253,8 +253,14 @@ async def cmd_c4start(client: Client, message: Message):
         "`/spectate <game_id>` — view a game's board\n\n"
         "Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟡) is O."
     )
-
-@app.on_message(filters.command("c4challenge") & (filters.group | filters.private))
+@app.on_message(filters.command("c4challenge") & filters.private)
+async def cmd_cg4challenge(_, message: Message):
+    g = await message.reply("Use this Command on Group chats not here❌")
+    await asyncio.sleep(60)
+    await message.delete()
+    await g.delete()
+    
+@app.on_message(filters.command("c4challenge") & filters.group)
 async def cmd_c4challenge(_, message: Message):
     # must be a reply or provide username/id
     if not message.reply_to_message and len(message.command) < 2:

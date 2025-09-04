@@ -63,6 +63,7 @@ async def start_cmd(client, message):
         photo="https://files.catbox.moe/80bcxh.jpg",
         caption=g_text.format(message.from_user),
         reply_markup=g_button,
+        message_effect_id=5104841245755180586,
     )
     # If it's a new user, log them
     if result.upserted_id is not None:

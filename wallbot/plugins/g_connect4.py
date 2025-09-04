@@ -47,7 +47,7 @@ def new_board() -> List[List[str]]:
 
 def board_to_text(board: List[List[str]]) -> str:
     # top row first
-    symbol = {EMPTY: "⚪", "X": "🔴", "O": "🟡"}
+    symbol = {EMPTY: "⚪", "X": "🔴", "O": "🟢"}
     lines = ["".join(symbol[cell] for cell in row) for row in board]
     # show column numbers on top
     header = " ".join(str(i+1) for i in range(COLS))
@@ -251,7 +251,7 @@ async def cmd_c4start(client: Client, message: Message):
         "`/c4_profile` — show your stats & ELO\n"
         "`/c4_leaderboard` — top players by ELO\n"
         "`/c4_spectate <game_id>` — view a game's board\n\n"
-        "Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟡) is O."
+        "Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟢) is O."
     )
 @app.on_message(filters.command("connect4_challenge") & filters.private)
 async def cmd_cg4challenge(_, message):

@@ -192,7 +192,7 @@ async def tic_callback(client, query):
 @app.on_callback_query(filters.regex("^gmk$"))
 async def gok_callback(client, query):
     gmk_tx="""
-    🎮 **Welcome to Gomoku game Menu!**🔴🟢
+    🎮 **Welcome to Gomoku game Menu!**
     First to connect five marks wins
     
     <blockquote>**Commands Usage:**
@@ -221,7 +221,7 @@ async def cn_callback(client, query):
     • `/c4_leaderboard` — top players by ELO.
     • `/c4_spectate <game_id>` — view a game's board.</blockquote>
 
-    __Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟢) is O.__
+    Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟢) is O.
     """
     await query.message.edit_text(
         text=cn4_tx,
@@ -229,80 +229,79 @@ async def cn_callback(client, query):
     )
     await query.answer("😎Gomez Games🎮")
 
+qz_tx="""
+🎮 **Welcome to QuizMaster Bot! 🧠✨!**
+Get ready to test your knowledge across tons of fun and serious topics!  
+
+<blockquote>📚**Quiz for Private chat:**
+1️⃣ Use `/start_qz` to begin a quiz.
+2️⃣ Choose your category.
+3️⃣ Answer the questions and earn points! 🏆
+• `/qzprofile` - To find your profile on Quiz.
+• `/qzleaderboard` - To get Top player on quiz.</blockquote>
+
+<blockquote>📊 **Quiz For Group chats:**
+• `/startquiz` - To begin a quiz in group.
+• `/stopquiz` - To stop quiz in group 
+• `/qzg_leaderboard` - view Group top players.
+• `/qz_global_leaderboard` - View global Top players.
+• `/qz_profile` - To see your Profile on Quiz</blockquote>
+    
+**This commands for Admin**
+
+• [P]`/p_seed` - seed the QnA, • `/p_addq` to add more questions.
+• [G]`/gqzaddq` - to add more questions on group DB, `/gqzseed` seed Qz, `/gimport` import Qz
+💡 Tip: The faster you answer correctly, the more points you score!
+"""
 @app.on_callback_query(filters.regex("^qz$"))
 async def qz_callback(client, query):
-    qz_tx="""
-    🎮 **Welcome to QuizMaster Bot! 🧠✨!**
-    Get ready to test your knowledge across tons of fun and serious topics!  
-
-    <blockquote>📚**Quiz for Private chat:**
-    1️⃣ Use `/start_qz` to begin a quiz.
-    2️⃣ Choose your category.
-    3️⃣ Answer the questions and earn points! 🏆
-    • `/qzprofile` - To find your profile on Quiz.
-    • `/qzleaderboard` - To get Top player on quiz.</blockquote>
-
-    <blockquote>📊 **Quiz For Group chats:**
-    • `/startquiz` - To begin a quiz in group.
-    • `/stopquiz` - To stop quiz in group 
-    • `/qzg_leaderboard` - view Group top players.
-    • `/qz_global_leaderboard` - View global Top players.
-    • `/qz_profile` - To see your Profile on Quiz</blockquote>
-    
-    **This commands for Admin**
-    private:
-    • `/p_seed` - seed the QnA, • `/p_addq` to add more questions.
-    group:
-    • `/gqzaddq` - to add more questions on group DB, `/gqzseed` seed Qz, `/gimport` import Qz
-    💡 Tip: The faster you answer correctly, the more points you score!
-    """
     await query.message.edit_text(
         text=qz_tx,
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")
 
+rpgb_tx="""
+🗡️ **Welcome to Mini Battles RPG game Menu!**
+    
+<blockquote>**Commands Usage:**
+• `/battle` (reply to a user) — challenge in group.
+• `/rbshop` Shop your inventory.
+• `/rbbuy` — buy inventory.
+• `/rb_leaderboard` — top players by Battle ELO.
+• `/rb_profile check your profile.
+• `/rbinventory` Check your inventory.</blockquote>
+    
+Perfect ⚔️🐉 Let’s level this up into a full simple RPG__
+    """
 @app.on_callback_query(filters.regex("^rpgb$"))
 async def igigcallback(client, query):
-    rpgb_tx="""
-    🗡️ **Welcome to Mini Battles RPG game Menu!**
-    
-    <blockquote>**Commands Usage:**
-    • `/battle` (reply to a user) — challenge in group.
-    • `/rbshop` Shop your inventory.
-    • `/rbbuy` — buy inventory.
-    • `/rb_leaderboard` — top players by Battle ELO.
-    • `/rb_profile check your profile.
-    • `/rbinventory` Check your inventory.</blockquote>
-    
-    __Perfect ⚔️🐉 Let’s level this up into a full simple RPG__
-    """
     await query.message.edit_text(
         text=rpgb_tx,
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")
 
+rpga_tx="""
+**🛡️Welcome to Advanced RPG Battle!!** ⚔️
+Collect stuff, craft gear, run dungeons, duel, gamble & more...
+    
+<blockquote>💰**Basics Usage:**
+• `/rpgprofile` `/me` — your stats.
+• `/rpgshop` — buyable items.
+• `/rpginventory` — your bag.
+• `/recipes_rpg` — crafting list.</blockquote>
+
+<blockquote>🧰**Work**: `/chop_rpg` `/fish_rpg` `/pickup_rpg` `/mine_rpg`
+🏦**Economy**: `/buy_rpg` `/sell_rpg` `/trade_rpg`
+⛏️**Crafting**: `/craft_rpg` [item].
+👥**PvP**: `/duel_rpg @user [bet]`.
+🐲**Dungeon**: `/dungeon`
+🎰**Gamble**: `/coinflip` `/dice_rpg` `/blackjack` `/slots_rpg` `/wheel_rpg` `/multidice_rpg`
+📜**Other**: `/daily_rpg` `/enchant_rpg` `/pet_rpg` `/guild_rpg` `/memerpg` `/rpgleaderboard`.</blockquote>
+"""
 @app.on_callback_query(filters.regex("^rpga$"))
 async def arpgcallback(client, query):
-    rpga_tx="""
-    **🛡️Welcome to Advanced RPG Battle!!** ⚔️
-    Collect stuff, craft gear, run dungeons, duel, gamble & more...
-    
-    <blockquote>💰**Basics Usage:**
-    • `/rpgprofile` `/me` — your stats.
-    • `/rpgshop` — buyable items.
-    • `/rpginventory` — your bag.
-    • `/recipes_rpg` — crafting list.</blockquote>
-
-    <blockquote>🧰**Work**: /chop_rpg /fish_rpg /pickup_rpg /mine_rpg.
-    🏦**Economy**: /buy_rpg /sell_rpg /trade_rpg.
-    ⛏️**Crafting**: /craft_rpg [item].
-    👥**PvP**: /duel_rpg @user [bet].
-    🐲**Dungeon**: /dungeon.
-    🎰**Gamble**: /coinflip /dice_rpg /blackjack /slots_rpg /wheel_rpg /multidice_rpg.
-    📜**Other**: /daily_rpg /enchant_rpg /pet_rpg /guild_rpg /memerpg /rpgleaderboard.</blockquote>
-    """
     await query.message.edit_text(
         text=rpga_tx,
         reply_markup=bak_bt,
@@ -311,8 +310,9 @@ async def arpgcallback(client, query):
 #======••=•=•==•=•=•==•=•=••=•=•=•=•=•=•=••=•=
 @app.on_callback_query(filters.regex("^close$"))
 async def colcallback(client, query):
-    await query.message.delete()
     await query.answer("Closed ❌")
+    await asyncio.sleep(5)
+    await query.message.delete()
 @app.on_callback_query(filters.regex("^gg$"))
 async def gg_callback(client, query):
     await query.answer("😎Gomez Games🎮")

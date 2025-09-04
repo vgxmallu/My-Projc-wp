@@ -17,7 +17,7 @@ from pyrogram.types import (
 )
 from config import DB_URL
 from wallbot import wbot as app
-import asyncio
+
 
 
 

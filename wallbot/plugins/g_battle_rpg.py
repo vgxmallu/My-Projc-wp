@@ -108,11 +108,11 @@ async def cmd_battltart(client: Client, message: Message):
         "🎮 Battle Game ⚔️\n\n"
         "Commands:\n"
         "`/battle` (reply to a user) — challenge in group\n"
-        "`/shop` Shop your inventory\n"
-        "`/buy` — buy inventory\n"
-        "`/b_leaderboard` — top players by Battle ELO\n"
-        "`/b_profile check your profile\n\n"
-        "`/inventory` Check your inventory: "
+        "`/rbshop` Shop your inventory\n"
+        "`/rbbuy` — buy inventory\n"
+        "`/rb_leaderboard` — top players by Battle ELO\n"
+        "`/rb_profile check your profile\n\n"
+        "`/rbinventory` Check your inventory: "
     )
 
 # ---------- Game creation ----------
@@ -484,16 +484,16 @@ async def useitem_cb(_, query: CallbackQuery):
     return await query.answer("Item used.")
 
 # ---------- Shop Commands ----------
-@app.on_message(filters.command("shop"))
-async def shop_cmd(_, message: Message):
+@app.on_message(filters.command("rbshop"))
+async def shoprp_cmd(_, message: Message):
     text = "<b>🛒 Shop</b>\n\n"
     for key, meta in SHOP_CATALOG.items():
         text += f"{key} — {meta['price']}💰 — {meta['desc']}\n"
     text += "\nBuy with: /buy <item_key>\nCheck your inventory: /inventory"
     await message.reply_text(text)
 
-@app.on_message(filters.command("buy"))
-async def buy_cmd(_, message: Message):
+@app.on_message(filters.command("rbbuy"))
+async def buyrb_cmd(_, message: Message):
     parts = message.text.split(None, 1)
     if len(parts) < 2:
         return await message.reply_text("Usage: /buy <item_key>")
@@ -510,8 +510,8 @@ async def buy_cmd(_, message: Message):
     await players.update_one({"_id": uid}, {"$inc": {"coins": -cost, f"items.{item}": 1}})
     await message.reply_text(f"✅ Purchased 1 {item} for {cost}💰. Use in-battle with Use Item button.")
 
-@app.on_message(filters.command("inventory"))
-async def inventory_cmd(_, message: Message):
+@app.on_message(filters.command("rbinventory"))
+async def invenrbtory_cmd(_, message: Message):
     uid = message.from_user.id
     p = await ensure_player(uid)
     items = p.get("items", {})
@@ -524,7 +524,7 @@ async def inventory_cmd(_, message: Message):
     await message.reply_text(text)
 
 # ---------- Profile & Leaderboard ----------
-@app.on_message(filters.command("b_profile"))
+@app.on_message(filters.command("rb_profile"))
 async def profile_bcmd(_, message: Message):
     uid = message.from_user.id
     p = await ensure_player(uid)
@@ -539,7 +539,7 @@ async def profile_bcmd(_, message: Message):
     )
     await message.reply_text(text)
 
-@app.on_message(filters.command("b_leaderboard")) # & (filters.group | filters.private)
+@app.on_message(filters.command("rb_leaderboard")) # & (filters.group | filters.private)
 async def leaderboard_bcmd(_, message: Message):
     # global leaderboard sorted by wins
     cursor = players.find().sort("wins", -1).limit(10)

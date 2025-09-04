@@ -37,25 +37,20 @@ h_button = InlineKeyboardMarkup(
         InlineKeyboardButton("📣My Channel", url="https://t.me/xbots_x"),
     ]]
 )
-    
+
+
 @app.on_message(filters.new_chat_members)
-async def log_new_member(client: Client, message: Message):
+async def notify_when_added(client: Client, message: Message):
     for member in message.new_chat_members:
-        user_id = member.id
-        first_name = member.first_name or ""
-        last_name = member.last_name or ""
-        username = f"@{member.username}" if member.username else "❌ No username"
-
-        text = (
-            "👤 **New Member Joined**\n\n"
-            f"🆔 ID: `{user_id}`\n"
-            f"👤 Name: {first_name} {last_name}\n"
-            f"🔗 Username: {username}\n"
-            f"🏠 Group: {message.chat.title} (`{message.chat.id}`)"
-        )
-
-        # Send log to your private channel
-        await client.send_message(LOG_CHANNEL, text)
+        if member.id == (await client.get_me()).id:  # Check if it's the bot itself
+            chat = message.chat
+            text = (
+                "🤖 **Bot Added to New Group**\n\n"
+                f"🏠 Group: {chat.title}\n"
+                f"🆔 Group ID: `{chat.id}`\n"
+                f"👥 Members Count: {chat.members_count if hasattr(chat, 'members_count') else 'Unknown'}"
+            )
+            await client.send_message(LOG_CHANNEL, text)
 
 
 # --- Save user on /start ---

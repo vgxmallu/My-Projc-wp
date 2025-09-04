@@ -1,178 +1,82 @@
+import uuid
 from pyrogram import Client, filters
-from pyrogram.types import (
-    Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-)
-from pyrogram.errors import Unauthorized
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
+from pymongo import MongoClient
+from datetime import datetime, timedelta
+from config import DB_URL
 from wallbot import wbot as app
+DB_NAME = "whisper_db"
+EXPIRE_MINUTES = 30  # whispers auto-delete after 30 minutes
+# ----------------------------------------
 
-# Database to store whispers (in production, use a proper database)
-whisper_db = {}
 
-# Command handler for /whisper
-@app.on_message(filters.command("whis"))
-async def whisper_command(client, message: Message):
-    if len(message.command) < 3:
-        await message.reply_text(
-            "**💒 Whisper Usage:**\n\n"
-            "`/whisper [USERNAME|ID] [TEXT]`\n\n"
-            "**Example:**\n"
-            "`/whisper @username I have a secret for you!`"
-        )
-        return
-    
-    try:
-        # Extract target user and message
-        target = message.command[1]
-        whisper_text = " ".join(message.command[2:])
-        
-        # Try to resolve the target user
-        try:
-            if target.startswith("@"):
-                target_user = await client.get_users(target)
-            else:
-                target_user = await client.get_users(int(target))
-        except Exception:
-            await message.reply_text("❌ Invalid username or ID!")
-            return
-        
-        # Store the whisper in database
-        key = f"{message.from_user.id}_{target_user.id}"
-        whisper_db[key] = whisper_text
-        
-        # Create buttons
-        whisper_btn = InlineKeyboardMarkup([[
-            InlineKeyboardButton(
-                "💒 Show Whisper", 
-                callback_data=f"whisper_{message.from_user.id}_{target_user.id}"
-            )
-        ]])
-        
-        one_time_btn = InlineKeyboardMarkup([[
-            InlineKeyboardButton(
-                "🔩 One-Time Whisper", 
-                callback_data=f"whisper_{message.from_user.id}_{target_user.id}_one"
-            )
-        ]])
-        
-        # Send confirmation to sender
-        await message.reply_text(
-            f"✅ Whisper prepared for {target_user.mention}!\n\n"
-            "Choose the type of whisper:",
-            reply_markup=InlineKeyboardMarkup([
-                [
-                    InlineKeyboardButton(
-                        "💒 Normal Whisper", 
-                        callback_data=f"send_whisper_normal_{key}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        "🔩 One-Time Whisper", 
-                        callback_data=f"send_whisper_one_{key}"
-                    )
-                ]
-            ])
-        )
-        
-    except Exception as e:
-        await message.reply_text(f"❌ Error: {str(e)}")
+mongo = MongoClient(DB_URL)
+db = mongo[DB_NAME]
+whispers_col = db["whispers"]
 
-# Handler for sending the whisper
-@app.on_callback_query(filters.regex("^send_whisper_"))
-async def send_whisper(client, callback_query: CallbackQuery):
-    data = callback_query.data
-    key = data.split("_")[3]
-    whisper_type = data.split("_")[2]  # normal or one
-    
-    if key not in whisper_db:
-        await callback_query.answer("Whisper not found or expired!", show_alert=True)
-        return
-    
-    from_user_id, to_user_id = key.split("_")
-    from_user_id = int(from_user_id)
-    to_user_id = int(to_user_id)
-    
-    try:
-        # Get the target user
-        target_user = await client.get_users(to_user_id)
-        
-        # Prepare the message with button
-        if whisper_type == "normal":
-            btn = InlineKeyboardMarkup([[
-                InlineKeyboardButton(
-                    "💒 Show Whisper", 
-                    callback_data=f"whisper_{from_user_id}_{to_user_id}"
-                )
-            ]])
-        else:
-            btn = InlineKeyboardMarkup([[
-                InlineKeyboardButton(
-                    "🔩 One-Time Whisper", 
-                    callback_data=f"whisper_{from_user_id}_{to_user_id}_one"
-                )
-            ]])
-        
-        # Send the whisper to the target user
-        await client.send_message(
-            target_user.id,
-            f"🔒 You have a whisper from {callback_query.from_user.mention}!",
-            reply_markup=btn
-        )
-        
-        # Confirm to the sender
-        await callback_query.edit_message_text(
-            f"✅ Whisper sent to {target_user.mention}!"
-        )
-        
-    except Exception as e:
-        await callback_query.answer(f"Error: {str(e)}", show_alert=True)
+# ---------------- HELPERS ----------------
+def make_whisper(sender_id, receiver_id, text):
+    whisper_id = str(uuid.uuid4())
+    whispers_col.insert_one({
+        "_id": whisper_id,
+        "sender": sender_id,
+        "receiver": receiver_id,
+        "text": text,
+        "created": datetime.utcnow(),
+        "seen": False
+    })
+    return whisper_id
 
-# Handler for showing the whisper
-@app.on_callback_query(filters.regex("^whisper_"))
-async def show_whisper(client, callback_query: CallbackQuery):
-    data = callback_query.data.split("_")
-    from_user = int(data[1])
-    to_user = int(data[2])
-    user_id = callback_query.from_user.id
+def get_whisper(whisper_id, user_id):
+    whisper = whispers_col.find_one({"_id": whisper_id})
+    if not whisper:
+        return None, "❌ Whisper expired or invalid!"
+    if whisper["receiver"] != user_id and whisper["sender"] != user_id:
+        return None, "❌ This whisper is not for you!"
+    if datetime.utcnow() - whisper["created"] > timedelta(minutes=EXPIRE_MINUTES):
+        whispers_col.delete_one({"_id": whisper_id})
+        return None, "⌛ Whisper expired!"
+    if not whisper["seen"] and user_id == whisper["receiver"]:
+        whispers_col.update_one({"_id": whisper_id}, {"$set": {"seen": True}})
+    return whisper, None
+
+# ---------------- COMMAND ----------------
+@app.on_message(filters.command("whisper"))
+async def whisper_cmd(_, msg: Message):
+    if not msg.reply_to_message or len(msg.command) < 2:
+        return await msg.reply("Usage:\nReply to someone → `/whisper your secret text`")
     
-    # Check if one-time whisper
-    is_one_time = len(data) > 3 and data[3] == "one"
+    receiver = msg.reply_to_message.from_user
+    sender = msg.from_user
+    text = " ".join(msg.command[1:])
     
-    # Check permissions
-    if user_id not in [from_user, to_user, 6691393517]:  # Replace 6691393517 with your admin ID
-        try:
-            await client.send_message(
-                from_user, 
-                f"{callback_query.from_user.mention} is trying to open your whisper."
-            )
-        except Unauthorized:
-            pass
-        
-        await callback_query.answer("This whisper is not for you 🚧", show_alert=True)
-        return
+    whisper_id = make_whisper(sender.id, receiver.id, text)
     
-    # Get the whisper
-    search_msg = f"{from_user}_{to_user}"
-    if search_msg not in whisper_db:
-        await callback_query.answer("🚫 Whisper not found or expired!", show_alert=True)
-        return
+    buttons = InlineKeyboardMarkup([[
+        InlineKeyboardButton("🔒 View Whisper", callback_data=f"whisper_{whisper_id}")
+    ]])
     
-    msg = whisper_db[search_msg]
+    await msg.reply(
+        f"🤫 {sender.mention} sent a secret whisper to {receiver.mention}!",
+        reply_markup=buttons
+    )
+
+# ---------------- CALLBACK ----------------
+@app.on_callback_query(filters.regex(r"^whisper_(.*)"))
+async def whisper_cb(_, cq: CallbackQuery):
+    whisper_id = cq.data.split("_", 1)[1]
+    whisper, error = get_whisper(whisper_id, cq.from_user.id)
     
-    # Show the whisper
-    await callback_query.answer(msg, show_alert=True)
+    if error:
+        return await cq.answer(error, show_alert=True)
     
-    # If it's a one-time whisper and the target user is reading it, delete it
-    if is_one_time and user_id == to_user:
-        del whisper_db[search_msg]
-        await callback_query.edit_message_text(
-            "📬 Whisper has been read and deleted!\n\n"
-            "It was a one-time whisper.",
-            reply_markup=InlineKeyboardMarkup([[
-                InlineKeyboardButton(
-                    "💒 Send a Whisper", 
-                    callback_data="send_whisper_help"
-                )
-            ]])
-        )
-      
+    sender = whisper["sender"]
+    text = whisper["text"]
+    seen = whisper["seen"]
+    
+    if cq.from_user.id == whisper["receiver"]:
+        await cq.answer(f"📩 Whisper from {sender}: {text}", show_alert=True)
+    elif cq.from_user.id == whisper["sender"]:
+        status = "✅ Seen" if seen else "⌛ Not seen yet"
+        await cq.answer(f"📤 Your whisper to receiver\n\nText: {text}\nStatus: {status}", show_alert=True)
+

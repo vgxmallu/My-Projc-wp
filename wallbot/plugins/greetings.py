@@ -68,7 +68,7 @@ async def start_game(client, message):
     await message.reply_sticker("CAACAgUAAxkBAANmaLk5MLScQyq443axCvBpaNASiJMAAusTAALPLMhV8eSTf4mvJD8eBA")    
     await message.reply_photo(
         photo="https://files.catbox.moe/80bcxh.jpg",
-        caption="👋<b>Hey! Welcome to Gomez Games🎮.</b>\n\n<b>Here you can:</b>\n⭐ `Play exciting games with friends`\n🏆 `Compete for the top spot on leaderboards`\n📊 `Track your profile & stats`\n🔥 `Join quizzes, puzzles, and more`\n\n💡 Use the menu or type /help to explore commands.\n⚡ Stay active new games and events are added regularly!",
+        caption="👋<b>Hey! Welcome to Gomez Games🎮.</b>\n\n<blockquote><b>Here you can:</b>\n⭐ `Play exciting games with friends`\n🏆 `Compete for the top spot on leaderboards`\n📊 `Track your profile & stats`\n🔥 `Join quizzes, puzzles, and more`</blockquote>\n\n💡 Use the menu or type /help to explore commands.\n⚡ Stay active new games and events are added regularly!",
         reply_markup=g_button,
     )
     #await message.reply_audio("AwACAgUAAxkBAANYaLk0cu3EU-vGP2_ZTn2T9-E9ajQAAtcXAAK8T8hVy8L_8RGZVXoeBA")
@@ -133,18 +133,31 @@ async def ggbroadcast(client, message):
         f"📊 Active Users Now: {await users_collection.count_documents({})}"
     )
 
-
+#=======•=•==••=•=•=<pre>
 hlp_bt = InlineKeyboardMarkup(
         [[
-                InlineKeyboardButton("Spotify ⤵️", callback_data="spw")
-            ],[
-                InlineKeyboardButton("❌", callback_data="close")
+            InlineKeyboardButton("❌⭕Tic Tac Toe 🕹️", callback_data="tic"),
+            InlineKeyboardButton("🔴⚫Gomoku 🎮", callback_data="gmk"),
+            InlineKeyboardButton("🔴🟢Connect 4 🕹️", callback_data="cn4")
+        ],[
+            InlineKeyboardButton("🥇🥈Quiz ⤵️", callback_data="gg")
+        ],[
+            InlineKeyboardButton("📊Quiz for Private✒️", callback_data="qzp"),
+            InlineKeyboardButton("✒️Quiz for Group📊", callback_data="qzg")
+        ],[
+            InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg")
+        ],[
+            InlineKeyboardButton("⚔️RPG Battle🛡️", callback_data="rpgb"),
+            InlineKeyboardButton("🔥RPG Battle Advanced 🛡️⚔️", callback_data="rpga")
+        ],[
+            InlineKeyboardButton("❌", callback_data="close")
         ]]
 )
 @app.on_callback_query(filters.regex("^hlp$"))
 async def hpo_callback(client, query):
     hlp_tx="""
-    help 
+    Gomez Games 🎮
+    
     """
     await query.message.edit_text(
         text=hlp_tx,

@@ -7,7 +7,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQ
 import uuid
 from config import DB_URL
 from wallbot import wbot as app
-
+import asyncio
 
 load_dotenv()
 
@@ -244,18 +244,25 @@ def create_board_buttons(chat_id, game_id, page=0):
     buttons.append([InlineKeyboardButton("Resign", callback_data=f"resign_{chat_id}_{game_id}")])
     return InlineKeyboardMarkup(buttons)
 
-@app.on_message(filters.command("gort") & filters.group)
+@app.on_message(filters.command("gomoku"))
 async def starnd(client, message):
     await message.reply_text(
-        "Welcome to Gomoku in this group! Commands:\n"
-        "/newgame - Start a new PvP game\n"
-        "/joingame <game_id> - Join a game\n"
-        "/profile - View your profile\n"
-        "/leaderboard - View group leaderboard\n"
-        "/stats - View group statistics"
+        "Welcome to Gomoku in this group! \nCommands:\n"
+        "`/playgomoku` - Start a new PvP Gomoku game\n"
+        "`/join_gomoku` <game_id> - Join a game\n"
+        "`/go_profile` - View your profile\n"
+        "`/go_leaderboard` - View group leaderboard\n"
+        "`/gomoku_stats` - View group statistics"
     )
 
-@app.on_message(filters.command("gnewgame") & filters.group)
+@app.on_message(filters.command("playgomoku") & filters.private)
+async def cmd_gomokchallenge(_, message: Message):
+    g = await message.reply("Use this Command on Group chats not here❌")
+    await asyncio.sleep(60)
+    await message.delete()
+    await g.delete()
+    
+@app.on_message(filters.command("playgomoku") & filters.group)
 async def newgogame(client, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
@@ -284,7 +291,7 @@ async def newgogame(client, message):
         reply_markup=reply_markup
     )
 
-@app.on_message(filters.command("joingogame") & filters.group)
+@app.on_message(filters.command("join_gomoku") & filters.group)
 async def joingogame(client, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
@@ -313,7 +320,7 @@ async def joingogame(client, message):
     except ValueError:
         await message.reply_text("Please provide a valid game ID: /joingame <game_id>")
 
-@app.on_message(filters.command("goprofile") & filters.group)
+@app.on_message(filters.command("go_profile") & filters.group)
 async def profgogoile(client, message):
     user_id = message.from_user.id
     chat_id = message.chat.id
@@ -331,7 +338,7 @@ async def profgogoile(client, message):
     )
     await message.reply_text(profile_text)
 
-@app.on_message(filters.command("goleaderboard") & filters.group)
+@app.on_message(filters.command("go_leaderboard") & filters.group)
 async def leadegogggrboard(client, message):
     chat_id = message.chat.id
     top_users = UserStats().get_leaderboard(chat_id)
@@ -343,8 +350,8 @@ async def leadegogggrboard(client, message):
         lb_text += f"{i}. {user['username']} - Wins: {user['wins']}, Win Rate: {user['win_rate']}\n"
     await message.reply_text(lb_text)
 
-@app.on_message(filters.command("sgots") & filters.group)
-async def global_stats(client, message):
+@app.on_message(filters.command("gomoku_stats") & filters.group)
+async def goglobal_stats(client, message):
     chat_id = message.chat.id
     stats = UserStats().get_global_stats(chat_id)
     stats_text = (

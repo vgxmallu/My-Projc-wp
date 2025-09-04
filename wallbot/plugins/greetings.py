@@ -5,6 +5,7 @@ import asyncio
 from pyrogram.errors import UserIsBlocked, PeerIdInvalid, ChatWriteForbidden
 from config import DB_URL
 from wallbot import wbot as app
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 OWNER_ID = 784589736   # your Telegram ID
 LOG_CHANNEL = -1001997285269  # your log channel ID (bot must be admin here)
@@ -13,6 +14,37 @@ LOG_CHANNEL = -1001997285269  # your log channel ID (bot must be admin here)
 mongo_client = AsyncIOMotorClient(DB_URL)
 db = mongo_client["broadcast_db"]
 users_collection = db["users"]
+
+
+
+g_text="""
+👋 <b>Hey {}! Welcome to Gomez Games🎮.</b>
+
+<b>Here you can;)</b>
+⭐ `Play exciting games with friends`
+🏆 `Compete for the top spot on leaderboards`
+📊 `Track your profile & stats`
+🔥 `Join quizzes, puzzles, and more`
+
+💡 Tip: __Use the menu or type /help to explore commands.__
+⚡ __Stay active — new games and events are added regularly!__
+
+<b>;) Enjoy & have fun, gamerZzz!</b> 🚀")
+"""
+g_button = InlineKeyboardMarkup(
+    [
+        [
+            
+            InlineKeyboardButton("📣My Channel", url="https://t.me/xbots_x"),
+        ],
+        [
+            InlineKeyboardButton(
+                text="➕Add Me To Your Chat➕",
+                url=f"http://t.me/GomezGamesbot?startgroup=new",
+            )
+        ],
+    ]
+) 
 
 # --- Save user on /start ---
 @app.on_message(filters.command("start"))
@@ -26,9 +58,12 @@ async def start_cmd(client, message):
         {"$set": {"_id": user_id, "name": user.first_name}},
         upsert=True
     )
-
-    await message.reply_text("👋 <b>Hey! Welcome to Gomez Games🎮.</b>\n\n<b>Here you can;)</b>\n⭐ `Play exciting games with friends`\n🏆 `Compete for the top spot on leaderboards`\n📊 `Track your profile & stats`\n🔥 `Join quizzes, puzzles, and more`\n\n💡 Tip: __Use the menu or type /help to explore commands.__\n⚡ __Stay active — new games and events are added regularly!__\n\n<b>;) Enjoy & have fun, gamerZzz!</b> 🚀")
-
+    await message.reply_sticker("CAACAgUAAxkBAAM4aLkb-SpqkBslNYD-wcj0pnflt9gAAk4dAALZ5rhX3eybppGuZQceBA")    
+    await message.reply_photo(
+        photo="https://files.catbox.moe/80bcxh.jpg",
+        caption=g_text.format(message.from_user),
+        reply_markup=g_button,
+    )
     # If it's a new user, log them
     if result.upserted_id is not None:
         mention = f"[{user.first_name}](tg://user?id={user_id})"

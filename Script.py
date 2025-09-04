@@ -10,7 +10,7 @@ START_TEXT = """
 💡 Tip: __Use the menu or type /help to explore commands.
 ⚡ Stay active new games and events are added regularly!__
 
-<b>Enjoy & have fun gamerZzz!</b> 🚀")
+<b>Enjoy & have fun gamerZzz!</b> 🚀
 """
 
 ID_TEXT = """

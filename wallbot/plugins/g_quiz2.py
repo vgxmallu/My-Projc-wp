@@ -117,7 +117,7 @@ def record_group_score(chat_id: int, user_id: int, username: str, points: int):
 
 
 # ---------- Commands ----------
-@app.on_message(filters.command("start_qz") & filters.group)
+@app.on_message(filters.command("start_qz") & filters.private)
 async def cmd_cg4challenge(_, message: Message):
     g = await message.reply("Use this Command on private chats not here❌")
     await asyncio.sleep(60)

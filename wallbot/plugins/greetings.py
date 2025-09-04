@@ -34,7 +34,7 @@ g_button = InlineKeyboardMarkup(
 
 h_button = InlineKeyboardMarkup(
     [[
-        InlineKeyboardButton("📚Commands & Helps⚔️", callback_data="hlp"),
+        InlineKeyboardButton("📔 Helps Menu🕹️", callback_data="hlp"),
     ]]
 )
 
@@ -142,7 +142,7 @@ hlp_bt = InlineKeyboardMarkup(
         ],[
             InlineKeyboardButton("🔴🟢Connect 4 🕹️", callback_data="cn4")
         ],[
-            InlineKeyboardButton("🥇🥈Quiz ⤵️", callback_data="gg")
+            InlineKeyboardButton("🥇📊Quiz ⤵️", callback_data="gg")
         ],[
             InlineKeyboardButton("📊Quiz for Private✒️", callback_data="qzp"),
             InlineKeyboardButton("✒️Quiz for Group📊", callback_data="qzg")
@@ -159,7 +159,6 @@ hlp_bt = InlineKeyboardMarkup(
 async def hpo_callback(client, query):
     hlp_tx="""
     Gomez Games 🎮
-    
     """
     await query.message.edit_text(
         text=hlp_tx,
@@ -167,3 +166,31 @@ async def hpo_callback(client, query):
     )
     await query.answer("😎Gomez Games🎮")
 
+bak_bt = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("🔙 Back to Healp Menu", callback_data="tic")
+        ],[
+@app.on_callback_query(filters.regex("^tic$"))
+async def hpo_callback(client, query):
+    xo_tx="""
+    🎮 Welcome to Tic Tac Toe game Menu!❌⭕
+
+    Commands:
+    • `/pvp_xoxo @username` or reply to group members to Challenge someone.
+    • `/pve_xoxo easy|medium|hard` → Play with Bot.
+    • `/xo_leaderboard` → Show top players on Tic Tac Toe.
+    Also use @TicTacToe_Xbot bot play inline mode to play. 
+    """
+    await query.message.edit_text(
+        text=xo_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+#======••=•=•==•=•=•==•=•=••=•=•=•=•=•=•=••=•=
+@app.on_callback_query(filters.regex("^close$"))
+async def colcallback(client, query):
+    await query.message.delete()
+    await query.answer("Closed ❌")
+@app.on_callback_query(filters.regex("^gg$"))
+async def hpo_callback(client, query):
+    await query.answer("😎Gomez Games🎮")

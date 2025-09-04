@@ -103,7 +103,7 @@ def compute_level(xp: int) -> int:
     return xp // 100 + 1
 
 # ---------- Game creation ----------
-@app.on_message(filters.command("battle") & (filters.group | filters.private))
+@app.on_message(filters.command("battle") & filters.group)
 async def battle_cmd(_, message: Message):
     """Start a battle by replying to a user's message or /battle <@user>"""
     # Determine opponent
@@ -145,7 +145,7 @@ async def battle_cmd(_, message: Message):
     await games.insert_one(game)
 
     kb = InlineKeyboardMarkup([
-        [InlineKeyboardButton("✅ Accept", callback_data=f"pvp_accept|{gid}|{opponent.id}"),
+        [InlineKeyboardButton("⚔️Accept the Battle⚔️", callback_data=f"pvp_accept|{gid}|{opponent.id}"),
          InlineKeyboardButton("❌ Decline", callback_data=f"pvp_decline|{gid}|{opponent.id}")]
     ])
 
@@ -450,7 +450,7 @@ async def useitem_cb(_, query: CallbackQuery):
         await add_coins(owner, 50)
         await grant_xp(owner, 20)
         await query.message.edit_text(f"{msg}\n\n🏆 {await mention(owner)} wins! (+50💰 +20XP)")
-        return await query.answer("You won!")
+        return await query.answer("⚔️You won!")
 
     # After using an item, switch turn to opponent
     next_turn = opponent
@@ -504,8 +504,8 @@ async def inventory_cmd(_, message: Message):
     await message.reply_text(text)
 
 # ---------- Profile & Leaderboard ----------
-@app.on_message(filters.command("profile"))
-async def profile_cmd(_, message: Message):
+@app.on_message(filters.command("b_profile"))
+async def profile_bcmd(_, message: Message):
     uid = message.from_user.id
     p = await ensure_player(uid)
     total = p["wins"] + p["losses"] + p["draws"]
@@ -519,8 +519,8 @@ async def profile_cmd(_, message: Message):
     )
     await message.reply_text(text)
 
-@app.on_message(filters.command("leaderboard")) # & (filters.group | filters.private)
-async def leaderboard_cmd(_, message: Message):
+@app.on_message(filters.command("b_leaderboard")) # & (filters.group | filters.private)
+async def leaderboard_bcmd(_, message: Message):
     # global leaderboard sorted by wins
     cursor = players.find().sort("wins", -1).limit(10)
     text = "🏆 <b>Leaderboard — Top players (by wins)</b>\n\n"

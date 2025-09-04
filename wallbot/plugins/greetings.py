@@ -19,7 +19,7 @@ users_collection = db["users"]
 async def start_cmd(client, message):
     user = message.from_user
     user_id = user.id
-    user_n = message.username
+    user_n = user.username
     # Insert if not exists
     result = await users_collection.update_one(
         {"_id": user_id},

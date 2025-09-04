@@ -253,14 +253,14 @@ async def cmd_c4start(client: Client, message: Message):
         "`/spectate <game_id>` — view a game's board\n\n"
         "Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟡) is O."
     )
-@app.on_message(filters.command("c4challenge") & filters.private)
+@app.on_message(filters.command("connect4_challenge") & filters.private)
 async def cmd_cg4challenge(_, message: Message):
     g = await message.reply("Use this Command on Group chats not here❌")
     await asyncio.sleep(60)
     await message.delete()
     await g.delete()
     
-@app.on_message(filters.command("c4challenge") & filters.group)
+@app.on_message(filters.command("connect4_challenge") & filters.group)
 async def cmd_c4challenge(_, message: Message):
     # must be a reply or provide username/id
     if not message.reply_to_message and len(message.command) < 2:
@@ -305,7 +305,7 @@ async def cmd_c4challenge(_, message: Message):
         reply_markup=kb
     )
 
-@app.on_message(filters.command("c4pve") & filters.private)
+@app.on_message(filters.command("c4_pve") & filters.private)
 async def cmd_c4pve(_, message: Message):
     if len(message.command) < 2:
         return await message.reply("Usage: /pve easy|medium|hard")
@@ -339,7 +339,7 @@ async def cmd_c4pve(_, message: Message):
         reply_markup=render_board_kb(gid)
     )
 
-@app.on_message(filters.command("c4profile"))
+@app.on_message(filters.command("c4_profile"))
 async def cmd_c4profile(_, message: Message):
     uid = message.from_user.id
     p = await ensure_player(uid)
@@ -350,7 +350,7 @@ async def cmd_c4profile(_, message: Message):
     )
     await message.reply(text)
 
-@app.on_message(filters.command("c4leaderboard"))
+@app.on_message(filters.command("c4_leaderboard"))
 async def cmd_c4leaderboard(_, message: Message):
     # global top by elo
     cursor = players_col.find().sort("elo", -1).limit(10)
@@ -366,7 +366,7 @@ async def cmd_c4leaderboard(_, message: Message):
         lines.append("No players yet.")
     await message.reply("\n".join(lines))
 
-@app.on_message(filters.command("spectate"))
+@app.on_message(filters.command("c4_spectate"))
 async def cmd_spectate(_, message: Message):
     if len(message.command) < 2:
         return await message.reply("Usage: /spectate <game_id>")

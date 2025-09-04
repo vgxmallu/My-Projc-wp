@@ -1,8 +1,16 @@
 START_TEXT = """
-👋 Hey!
+👋 <b>Hey {}! Welcome to Gomez Games🎮.</b>
 
- My name is 𝐺𝑜𝑗𝑜 𝑆𝑎𝑡𝑜𝑟𝑢 𝕏 | 𝐵𝑜𝑡𓆪😉 I i have somany futurs.😱
- just /help to find out 🤗my All commands!
+<b>Here you can:</b>
+⭐ `Play exciting games with friends`
+🏆 `Compete for the top spot on leaderboards`
+📊 `Track your profile & stats`
+🔥 `Join quizzes, puzzles, and more`
+
+💡 Tip: __Use the menu or type /help to explore commands.
+⚡ Stay active new games and events are added regularly!__
+
+<b>Enjoy & have fun gamerZzz!</b> 🚀")
 """
 
 ID_TEXT = """

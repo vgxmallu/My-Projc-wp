@@ -236,9 +236,14 @@ def next_markup(sess: Dict[str, Any]) -> InlineKeyboardMarkup:
                                  [InlineKeyboardButton("Quit", callback_data=f"quit|{sess['session_id']}")]])
 
 
-
+@app.on_message(filters.command("start_qz") & filters.group)
+async def cmd_cg4challenge(_, message: Message):
+    g = await message.reply("Use this Command on Private not Group❌, If u want to play use /startquiz to play here ;)")
+    await asyncio.sleep(60)
+    await message.delete()
+    await g.delete()
 # ------------------- Commands -------------------
-@app.on_message(filters.private & filters.command("p_startqz"))
+@app.on_message(filters.private & filters.command("start_qz"))
 async def starqzt_cmd(client: Client, m: Message):
     upsert_user(m.from_user.id, m.from_user.username)
     cats = ensure_categories()
@@ -254,7 +259,7 @@ async def starqzt_cmd(client: Client, m: Message):
     )
 
 
-@app.on_message(filters.private & filters.command(["p_qzprofile"]))
+@app.on_message(filters.private & filters.command(["qzprofile"]))
 async def profile_cmd(client: Client, m: Message):
     doc = users.find_one({"user_id": m.from_user.id}) or {}
     reset_weekly_if_needed(doc)
@@ -265,7 +270,7 @@ async def profile_cmd(client: Client, m: Message):
     await m.reply_text(text)
 
 
-@app.on_message(filters.private & filters.command(["p_qzleaderboard"]))
+@app.on_message(filters.private & filters.command(["qzleaderboard"]))
 async def leaderboard_cmd(client: Client, m: Message):
     await send_leaderboard(m.chat.id, scope="all")
 

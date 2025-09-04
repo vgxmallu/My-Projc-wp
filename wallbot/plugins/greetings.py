@@ -168,7 +168,8 @@ async def hpo_callback(client, query):
 bak_bt = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("🔙 Back to Healp Menu", callback_data="tic")
-        ],[
+        ]]
+)
 @app.on_callback_query(filters.regex("^tic$"))
 async def tic_callback(client, query):
     xo_tx="""

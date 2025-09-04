@@ -55,7 +55,7 @@ async def ping(client, message):
                 await m.edit(f'Pong!\n{elapsed_time:.3f}ms')
                 
 #start
-@Client.on_message(filters.command('start'))
+#@Client.on_message(filters.command('start'))
 async def fffstart(client, message):
     if len(message.command) > 1 and message.command[1].startswith("upload_"):
         k = await message.reply("Fetching Download link...")
@@ -101,11 +101,6 @@ async def fffstart(client, message):
         reply_markup = InlineKeyboardMarkup(button)
         await message.reply(Script.START_TEXT, reply_markup=reply_markup, quote=True, parse_mode=enums.ParseMode.HTML)
                 
-
-                
-@Client.on_message(filters.command('stats') & filters.incoming)
-async def stats(client, message):
-                await message.reply(Script.STATUS_TXT)
  
 #id filter               
 @Client.on_message(filters.command('id') & filters.incoming)

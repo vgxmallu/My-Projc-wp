@@ -40,7 +40,7 @@ h_button = InlineKeyboardMarkup(
 
 
 @app.on_message(filters.new_chat_members)
-async def notify_when_added(client: Client, message: Message):
+async def notify_when_added(client, message):
     for member in message.new_chat_members:
         if member.id == (await client.get_me()).id:  # Check if it's the bot itself
             chat = message.chat

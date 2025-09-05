@@ -244,7 +244,39 @@ ext1_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("Next 🔜", callback_data="ext2")
         ]]
 )
+ 
+extone_tx="""
+**Some Extras Things.**
 
+<blockquote>**AFK:**
+`/afk` [Reason Optional] - Tell others that you are AFK, so that your boyfriend or girlfriend wont look for you 💔.
+**All Repos:**
+`/allrepo` [github_username] - To get all repos from GitHub.
+**Anime:**
+`/anime` [anime_name] - To search your favourite animes.
+`/airinfo` [anime_name] - airings info
+`/charinfo` [anime_characters] - To get info about Anime Characters.
+`/mangainfo` [anime_name] - To get info about Mangas.
+**Remove Background:**
+`/rmbg` [replyTo_photo] - To Remove background from given images.</blockquote>
+
+**To go Next Page 📄.**
+"""
+@app.on_callback_query(filters.regex("^ext$"))
+async def gomz_callback(client, query):
+    await query.message.edit_text(
+        text=extone_tx,   # <-- fixed here
+        reply_markup=ext1_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+@app.on_callback_query(filters.regex("^help$"))
+async def hlp_callback(client, query):
+    await query.message.edit_text(
+        text=help_txt,
+        reply_markup=h_button,
+    )
+    await query.answer("😎Gomez Games🎮")
 
 @app.on_callback_query(filters.regex("^hlp$"))
 async def hlpsk_callback(client, query):

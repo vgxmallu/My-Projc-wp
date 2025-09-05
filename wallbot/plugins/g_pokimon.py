@@ -155,7 +155,7 @@ async def cmd_spawn(client, message: Message):
     if existing:
         return await message.reply(f"A wild {existing['species']} is already here! Use /catch.")
     spawn = await spawn_wild(message.chat.id)
-    await message.reply(f"🦊 A wild *{spawn['species']}* (Lv {spawn['level']}) appeared! Use /catch to try and capture it.", parse_mode="markdown")
+    await message.reply(f"🦊 A wild *{spawn['species']}* (Lv {spawn['level']}) appeared! Use /catch to try and capture it.")
 
 @app.on_message(filters.command("catch_poki") & filters.group)
 async def cmd_catch(client, message: Message):
@@ -181,7 +181,7 @@ async def cmd_catch(client, message: Message):
         await users_col.update_one({"user_id": message.from_user.id}, {"$inc": {"trainer_xp": 10}})
         # maybe level up trainer
         await maybe_trainer_levelup(message.from_user.id)
-        await message.reply(f"🎉 Congratulations! {message.from_user.mention} caught a *{spawn['species']}* (Lv {spawn['level']})!\n\n{format_pokemon_doc(new_poke)}", parse_mode="markdown")
+        await message.reply(f"🎉 Congratulations! {message.from_user.mention} caught a *{spawn['species']}* (Lv {spawn['level']})!\n\n{format_pokemon_doc(new_poke)}")
     else:
         # fail - decrease spawn time or escape chance
         # 30% chance it runs away immediately
@@ -258,7 +258,7 @@ async def maybe_pokemon_levelup_and_evolve(poke: dict):
 async def cmd_battle(client, message: Message):
     # Usage: /battle @target <your_poke_id>
     if len(message.command) < 3:
-        return await message.reply("Usage: /battle @opponent <your_poke_id>")
+        return await message.reply("Usage: /battle @opponent [your_poke_id]")
     if not message.entities:
         return await message.reply("Please mention an opponent to battle.")
     # find mentioned user
@@ -341,7 +341,7 @@ async def cmd_acceptbattle(client, message: Message):
         await maybe_trainer_levelup(winner_id)
         # finalize
         await battles_col.update_one({"_id": battle["_id"]}, {"$set": {"status": "finished", "winner": winner_id}})
-        await client.send_message(battle["chat_id"], f"⚔️ Battle finished!\nWinner: <a href='tg://user?id={winner_id}'>player</a>\nChallenge power: {ch_power}\nOpponent power: {op_power}", parse_mode="html")
+        await client.send_message(battle["chat_id"], f"⚔️ Battle finished!\nWinner: <a href='tg://user?id={winner_id}'>player</a>\nChallenge power: {ch_power}\nOpponent power: {op_power}")
     except Exception as e:
         await message.reply(f"Error handling battle: {e}")
 
@@ -437,7 +437,7 @@ async def group_auto_spawner():
                 if not existing:
                     spawn = await spawn_wild(chat_id)
                     try:
-                        await app.send_message(chat_id, f"🦊 A wild *{spawn['species']}* (Lv {spawn['level']}) appeared! Use /catch to try and capture it.", parse_mode="markdown")
+                        await app.send_message(chat_id, f"🦊 A wild *{spawn['species']}* (Lv {spawn['level']}) appeared! Use /catch to try and capture it.")
                     except Exception:
                         pass
         except Exception:

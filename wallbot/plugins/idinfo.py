@@ -27,20 +27,6 @@ async def uinfo(bot, hydrix):
 
 # Group info
 
-@Client.on_message(filters.group & filters.command("ginfo"))
-async def ginfo(bot, hydrix):
-    text = f"""
-╭─────[ɢ-ɪɴғᴏ]────〄
-├⍟ **Fɪʀsᴛ ɴᴀᴍᴇ** : {hydrix.from_user.first_name}
-├⍟ **Usᴇʀɴᴀᴍᴇ** : @{hydrix.from_user.username}
-├⍟ **Usᴇʀ ɪᴅ** : `{hydrix.from_user.id}`
-├⍟ **Gʀᴏᴜᴘ ɴᴀᴍᴇ** : {hydrix.chat.title}
-├⍟ **Gʀᴏᴜᴘ ᴜsᴇʀNᴀᴍᴇ** : @{hydrix.chat.username}
-├⍟ **Gʀᴏᴜᴘ ɪᴅ** : `{hydrix.chat.id}`
-├⍟ **Scam** : {hydrix.chat.description}
-╰───────────〄
-"""
-    await hydrix.reply_text(text=text)
 
 
 # id finder

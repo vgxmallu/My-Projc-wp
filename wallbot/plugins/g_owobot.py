@@ -38,11 +38,45 @@ groups_col = db["groups"]    # group settings if needed
 # Optional: other collections for lotteries, ledger etc.
 
 # ---------------- DATA ----------------
-ANIMALS = ["Dog", "Cat", "Fox", "Panda", "Tiger", "Monkey", "Penguin", "Rabbit", "Lion"]
+#ANIMALS = ["Dog", "Cat", "Rabbit", "Panda", "Tiger", "Monkey", "Penguin", "Rabbit", "Lion"]
+#ANIMAL_EMOJI = {
+#    "Dog": "🐶", "Cat": "🐱", "Fox": "🦊", "Panda": "🐼", "Tiger": "🐯",
+#    "Monkey": "🐵", "Penguin": "🐧", "Rabbit": "🐰", "Lion": "🦁"
+#}
+
+ANIMALS = [
+    # Common
+    "Dog", "Cat", "Rabbit", "Fox", "Mouse", "Horse", "Sheep", "Cow", "Pig", "Chicken",
+    # Wild
+    "Wolf", "Bear", "Tiger", "Lion", "Elephant", "Giraffe", "Kangaroo", "Panda", "Monkey", "Deer", "Camel",
+    # Birds
+    "Owl", "Eagle", "Penguin", "Duck", "Peacock", "Parrot", "Turkey", "Swan", "Flamingo",
+    # Aquatic
+    "Dolphin", "Shark", "Whale", "Seal", "Octopus", "Crab", "Lobster", "Turtle", "Frog", "Fish", "Blowfish",
+    # Rare / Mythical
+    "Dragon", "Unicorn", "Phoenix", "Griffin", "Kraken", "Cerberus"
+]
+
 ANIMAL_EMOJI = {
-    "Dog": "🐶", "Cat": "🐱", "Fox": "🦊", "Panda": "🐼", "Tiger": "🐯",
-    "Monkey": "🐵", "Penguin": "🐧", "Rabbit": "🐰", "Lion": "🦁"
+    # Common
+    "Dog": "🐶", "Cat": "🐱", "Rabbit": "🐰", "Fox": "🦊", "Mouse": "🐭",
+    "Horse": "🐴", "Sheep": "🐑", "Cow": "🐮", "Pig": "🐷", "Chicken": "🐔",
+    # Wild
+    "Wolf": "🐺", "Bear": "🐻", "Tiger": "🐯", "Lion": "🦁", "Elephant": "🐘",
+    "Giraffe": "🦒", "Kangaroo": "🦘", "Panda": "🐼", "Monkey": "🐵", "Deer": "🦌", "Camel": "🐫",
+    # Birds
+    "Owl": "🦉", "Eagle": "🦅", "Penguin": "🐧", "Duck": "🦆", "Peacock": "🦚",
+    "Parrot": "🦜", "Turkey": "🦃", "Swan": "🦢", "Flamingo": "🦩",
+    # Aquatic
+    "Dolphin": "🐬", "Shark": "🦈", "Whale": "🐋", "Seal": "🦭",
+    "Octopus": "🐙", "Crab": "🦀", "Lobster": "🦞", "Turtle": "🐢",
+    "Frog": "🐸", "Fish": "🐟", "Blowfish": "🐡",
+    # Rare / Mythical
+    "Dragon": "🐉", "Unicorn": "🦄", "Phoenix": "🔥", "Griffin": "🪽",
+    "Kraken": "🌊", "Cerberus": "👹"
 }
+
+
 
 SHOP = {
     "pokeball": {"name": "Poké Ball", "price": 50, "type": "item"},

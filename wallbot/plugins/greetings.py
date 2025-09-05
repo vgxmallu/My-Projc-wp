@@ -203,7 +203,7 @@ async def eur_callback(client, query):
 
 ext2_bt = InlineKeyboardMarkup(
         [[
-            InlineKeyboardButton("🔙 Back menu", callback_data="ext2"),
+            InlineKeyboardButton("🔙 Back menu", callback_data="ext"),
             InlineKeyboardButton("❌", callback_data="close"),
             InlineKeyboardButton("Next 🔜", callback_data="ext3")
         ]]

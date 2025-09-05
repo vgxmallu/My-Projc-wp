@@ -243,7 +243,7 @@ ext1_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("❌", callback_data="close"),
             InlineKeyboardButton("Next 🔜", callback_data="ext2")
         ]]
-
+)
 
 
 @app.on_callback_query(filters.regex("^hlp$"))

@@ -165,43 +165,89 @@ hlp_bt = InlineKeyboardMarkup(
         ]]
 )
 
-bak_bt = InlineKeyboardMarkup(
+ext3_bt = InlineKeyboardMarkup(
         [[
-            InlineKeyboardButton("🔙 Back to Help Menu", callback_data="hlp")
+            InlineKeyboardButton("🔙 Back menu", callback_data="ext2"),
+            InlineKeyboardButton("❌", callback_data="close")
         ]]
-)
-nxt_bt = InlineKeyboardMarkup(
-        [[
-            InlineKeyboardButton("🔙 Main menu", callback_data="help"),
-            InlineKeyboardButton("❌", callback_data="close"),
-            InlineKeyboardButton("Next 🔜", callback_data="nxt")
-        ]]
-)
-nxt_tx = """
-Page 2️⃣📄
 
-**Information:**
-`/groupdata` [send_group], `/uinfo` [user_info], `/id`  [user_id], `/dc` .
+)
+ext3 = """
+**Page: 3️⃣📄**
+
+<blockquote expandable>**Math Commands:**
+`/simplify` - simplify a mathematical expression
+`/factor` - factor a mathematical expression
+`/derive` - find the derivative of a mathematical expression
+`/integrate` - find the integral of a mathematical expression
+`/zeroes` - find the zeroes of a mathematical expression
+`/tangent` - find the tangent line of a mathematical expression at a given point
+`/area` - find the area under a mathematical expression between two points
+`/cos` - find the cosine of a number
+`/sin` - find the sine of a number
+`/tan` - find the tangent of a number
+`/arccos` - find the arccosine of a number
+`/arcsin` - find the arcsine of a number
+`/arctan` - find the arctangent of a number
+`/abs` - find the absolute value of a number
+`/log` - find the logarithm of a number</blockquote>
+"""
+@app.on_callback_query(filters.regex("^ext3$"))
+async def hlp_callback(client, query):
+    await query.message.edit_text(
+        text=ext3_tx,
+        reply_markup=ext3_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+ext2_bt = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("🔙 Back menu", callback_data="ext2"),
+            InlineKeyboardButton("❌", callback_data="close"),
+            InlineKeyboardButton("Next 🔜", callback_data="nxt3")
+        ]]
+
+)
+ext2_tx = """
+Page: 2️⃣📄
+
+<blockquote>**Information:**
+`/groupdata` [send_group], `/uinfo` [user_info], `/id`  [user_id], `/dc` `/cinfo`.
 `/whois` [user_or_bots_Id], [reply to user or bot], [usernames]
 `/jason` - get Jason format.
 `/paste` Reply To File / Give Me Text To Paste.
 **Sangmata**:
 `/sangmata_set` [on/off] - Enable/disable sangmata in groups.
-/telegraph [reply to photos]
+`/telegraph` [reply to photos]
+`/imdb` `/tmdb` to get Moves infos.
+`/msone` - to get the subtitle file from msone
+`/github` - Returns info about a GitHub user or organization.
+`/lyrics` - returns the lyrics of that song.
+`/ud` - Get the definition of a word from urbandictionary
+`/urban` - Same as ud
+`/tts` - Convert text to speech
+`/getsticker` - <code>Get a sticker png by replying it</blockquote>
 """
 
-@app.on_callback_query(filters.regex("^ext$"))
+@app.on_callback_query(filters.regex("^ext2$"))
 async def hlp_callback(client, query):
     await query.message.edit_text(
-        text=nxt_tx,
-        reply_markup=nxt_bt,
+        text=ext2_tx,
+        reply_markup=ext2_bt,
     )
     await query.answer("😎Gomez Games🎮")
- 
-ext_tx = """
+
+
+ext1_bt = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("🔙 Main menu", callback_data="help"),
+            InlineKeyboardButton("❌", callback_data="close"),
+            InlineKeyboardButton("Next 🔜", callback_data="ext2")
+        ]]
+ext1_tx = """
 Some eExtras+ Things.
 
-**AFK:**
+<blockquote>**AFK:**
 `/afk` [Reason > Optional] - Tell others that you are AFK (Away From Keyboard), so that your boyfriend or girlfriend won't look for you 💔.
 **All Repos:**
 `/allrepo` [github_username] - To get all repos from GitHub.
@@ -211,16 +257,14 @@ Some eExtras+ Things.
 '/charinfo` [anime_carectors] - To get info about Anime Carecters.
 `/mangainfo` [anime_name] - To get info about Mangas.
 **Remove Background:**
-/rmbg [replyTo_photo] - To Remove background from given images.
-
+/rmbg [replyTo_photo] - To Remove background from given images.</blockquote>
 **To go Next Page 📄.**
 """
-
 @app.on_callback_query(filters.regex("^ext$"))
 async def hlp_callback(client, query):
     await query.message.edit_text(
-        text=ext_tx,
-        reply_markup=ext_bt,
+        text=ext1_tx,
+        reply_markup=ext1_bt,
     )
     await query.answer("😎Gomez Games🎮")
 

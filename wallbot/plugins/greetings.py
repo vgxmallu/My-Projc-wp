@@ -193,7 +193,7 @@ ext3_tx="""
 `/log` - find the logarithm of a number</blockquote>
 """
 @app.on_callback_query(filters.regex("^ext3$"))
-async def hlp_callback(client, query):
+async def eur_callback(client, query):
     await query.message.edit_text(
         text=ext3_tx,
         reply_markup=ext3_bt,
@@ -230,7 +230,7 @@ Page: 2️⃣📄
 """
 
 @app.on_callback_query(filters.regex("^ext2$"))
-async def hlp_callback(client, query):
+async def exx_callback(client, query):
     await query.message.edit_text(
         text=ext2_tx,
         reply_markup=ext2_bt,
@@ -245,11 +245,11 @@ ext1_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("Next 🔜", callback_data="ext2")
         ]]
  
-ext1_tx="""
-Some eExtras+ Things.
+ex_tx="""
+**Some eExtras+ Things.**
 
 <blockquote>**AFK:**
-`/afk` [Reason > Optional] - Tell others that you are AFK (Away From Keyboard), so that your boyfriend or girlfriend won't look for you 💔.
+`/afk` [Reason > Optional] - Tell others that you are AFK (Away From Keyboard), so that your boyfriend or girlfriend wont look for you 💔.
 **All Repos:**
 `/allrepo` [github_username] - To get all repos from GitHub.
 **Anime:**
@@ -262,9 +262,9 @@ Some eExtras+ Things.
 **To go Next Page 📄.**
 """
 @app.on_callback_query(filters.regex("^ext$"))
-async def hlp_callback(client, query):
+async def ex1_callback(client, query):
     await query.message.edit_text(
-        text=ext1_tx,
+        text=ex_tx,
         reply_markup=ext1_bt,
     )
     await query.answer("😎Gomez Games🎮")
@@ -278,7 +278,7 @@ async def hlp_callback(client, query):
     await query.answer("😎Gomez Games🎮")
  
 @app.on_callback_query(filters.regex("^hlp$"))
-async def hlp_callback(client, query):
+async def hlpsk_callback(client, query):
     hlp_tx="""
     Gomez Games 🎮
     """

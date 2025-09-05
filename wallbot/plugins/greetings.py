@@ -34,7 +34,9 @@ g_button = InlineKeyboardMarkup(
 
 h_button = InlineKeyboardMarkup(
     [[
-        InlineKeyboardButton("📔 Helps Menu🕹️", callback_data="hlp"),
+        InlineKeyboardButton("Games Menu🕹️", callback_data="hlp"),
+        InlineKeyboardButton("➕ Extra Menu", callback_data="ext"),
+        InlineKeyboardButton("About Me ℹ️", callback_data="ab")
     ]]
 )
 
@@ -83,11 +85,19 @@ async def start_game(client, message):
             f"🆕 New member started the bot!\n\n👤: {mention}\n⛓️‍💥: @{user_n}\n🆔: `{user_id}`"
         )
 
+help_txt = """
+📌 **General Commands:**
+•/start → Start the bot & register yourself.
+•/help → Show this help menu.
+•/profile → View your profile, stats, and achievements.
+•/leaderboard → Check who’s leading the game.
+•/stats → See your gameplay statistics.
+"""
 @app.on_message(filters.command("help"))
 async def help_cmd(client, message):
     await message.reply_photo(
         photo="https://files.catbox.moe/80bcxh.jpg",
-        caption="📌 **General Commands:**\n/start → Start the bot & register yourself.\n/help → Show this help menu.\n/profile → View your profile, stats, and achievements.\n/leaderboard → Check who’s leading the game.\n/stats → See your gameplay statistics.",
+        caption=help_txt,
         reply_markup=h_button,
     )
 
@@ -150,15 +160,72 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("⚔️RPG Battle🛡️", callback_data="rpgb"),
             InlineKeyboardButton("🔥RPG Battle Advanced 🛡️⚔️", callback_data="rpga")
         ],[
+            InlineKeyboardButton("🔙 Main Menu", callback_data="help"),
             InlineKeyboardButton("❌", callback_data="close")
         ]]
 )
 
 bak_bt = InlineKeyboardMarkup(
         [[
-            InlineKeyboardButton("🔙 Back to Healp Menu", callback_data="hlp")
+            InlineKeyboardButton("🔙 Back to Help Menu", callback_data="hlp")
         ]]
 )
+nxt_bt = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("🔙 Main menu", callback_data="help"),
+            InlineKeyboardButton("❌", callback_data="close"),
+            InlineKeyboardButton("Next 🔜", callback_data="nxt")
+        ]]
+)
+nxt_tx = """
+Page 2️⃣📄
+
+/groupdata [send_group]
+/uinfo [user_info]
+"""
+
+@app.on_callback_query(filters.regex("^ext$"))
+async def hlp_callback(client, query):
+    await query.message.edit_text(
+        text=nxt_tx,
+        reply_markup=nxt_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+ 
+ext_tx = """
+Some eExtras+ Things.
+
+**AFK:**
+`/afk` [Reason > Optional] - Tell others that you are AFK (Away From Keyboard), so that your boyfriend or girlfriend won't look for you 💔.
+**All Repos:**
+`/allrepo` [github_username] - To get all repos from GitHub.
+**Anime:**
+`/anime` [anime_name] - To search your favourite animes.
+`/airinfo` [anime_name] - arings info
+'/charinfo` [anime_carectors] - To get info about Anime Carecters.
+`/mangainfo` [anime_name] - To get info about Mangas.
+**Remove Background:**
+/rmbg [replyTo_photo] - To Remove background from given images.
+
+**To go Next Page 📄.**
+"""
+
+@app.on_callback_query(filters.regex("^ext$"))
+async def hlp_callback(client, query):
+    await query.message.edit_text(
+        text=ext_tx,
+        reply_markup=ext_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+@app.on_callback_query(filters.regex("^help$"))
+async def hlp_callback(client, query):
+    await query.message.edit_text(
+        text=help_txt,
+        reply_markup=h_button,
+    )
+    await query.answer("😎Gomez Games🎮")
+ 
 @app.on_callback_query(filters.regex("^hlp$"))
 async def hlp_callback(client, query):
     hlp_tx="""
@@ -170,58 +237,59 @@ async def hlp_callback(client, query):
     )
     await query.answer("😎Gomez Games🎮")
 
+xo_tx="""
+**🎮 Play Tic Tac Toe game Menu!❌⭕**
+First to align three marks wins
+    
+<blockquote>**Commands Usage:**
+• `/pvp_xoxo @username` or reply to group members to Challenge someone.
+• `/pve_xoxo easy|medium|hard` → Play with Bot.
+• `/xo_leaderboard` → Show top players on Tic Tac Toe.
+Also use @TicTacToe_Xbot bot play inline mode to play.</blockquote>
+"""
 @app.on_callback_query(filters.regex("^tic$"))
 async def tic_callback(client, query):
-    xo_tx="""
-    **🎮 Play Tic Tac Toe game Menu!❌⭕**
-    First to align three marks wins
     
-    <blockquote>**Commands Usage:**
-    • `/pvp_xoxo @username` or reply to group members to Challenge someone.
-    • `/pve_xoxo easy|medium|hard` → Play with Bot.
-    • `/xo_leaderboard` → Show top players on Tic Tac Toe.
-    Also use @TicTacToe_Xbot bot play inline mode to play.</blockquote>
-    """
     await query.message.edit_text(
         text=xo_tx,
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")
 
-@app.on_callback_query(filters.regex("^gmk$"))
-async def gok_callback(client, query):
-    gmk_tx="""
-    🎮 **Welcome to Gomoku game Menu!**
-    First to connect five marks wins
+gmk_tx="""
+🎮 **Welcome to Gomoku game Menu!**
+First to connect five marks wins
     
-    <blockquote>**Commands Usage:**
-    • `/playgomoku` - Start a new PvP Gomoku game.
-    • `/join_gomoku` <game_id> - Join a game.
-    • `/go_profile` - View your profile on Gomoku.
-    • `/go_leaderboard` - View Top group Gomoku leaderboard.
-    • `/gomoku_stats` - View group statistics.</blockquote>
-    """
+<blockquote>**Commands Usage:**
+• `/playgomoku` - Start a new PvP Gomoku game.
+• `/join_gomoku` <game_id> - Join a game.
+• `/go_profile` - View your profile on Gomoku.
+• `/go_leaderboard` - View Top group Gomoku leaderboard.
+• `/gomoku_stats` - View group statistics.</blockquote>
+"""
+@app.on_callback_query(filters.regex("^gmk$"))
+async def gok_callback(client, query):  
     await query.message.edit_text(
         text=gmk_tx,
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")
 
+cn4_tx="""
+🎮 **Welcome to Connect 4 🎮 game Menu!**
+First to connect four dots wins
+    
+<blockquote>**Commands Usage:**
+• /connect4_challenge` (reply to a user) — challenge in group.
+• `/c4_pve easy|medium|hard` — play vs bot in private.
+• `/c4_profile` — show your stats & ELO.
+• `/c4_leaderboard` — top players by ELO.
+• `/c4_spectate <game_id>` — view a game's board.</blockquote>
+
+Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟢) is O.
+"""
 @app.on_callback_query(filters.regex("^cn4$"))
 async def cn_callback(client, query):
-    cn4_tx="""
-    🎮 **Welcome to Connect 4 🎮 game Menu!**
-    First to connect four dots wins
-    
-    <blockquote>**Commands Usage:**
-    • /connect4_challenge` (reply to a user) — challenge in group.
-    • `/c4_pve easy|medium|hard` — play vs bot in private.
-    • `/c4_profile` — show your stats & ELO.
-    • `/c4_leaderboard` — top players by ELO.
-    • `/c4_spectate <game_id>` — view a game's board.</blockquote>
-
-    Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟢) is O.
-    """
     await query.message.edit_text(
         text=cn4_tx,
         reply_markup=bak_bt,

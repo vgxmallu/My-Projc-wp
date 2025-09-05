@@ -264,7 +264,7 @@ extx="""
 @app.on_callback_query(filters.regex("^ext$"))
 async def ebx1_callback(client, query):
     await query.message.edit_text(
-        text=ex_tx,
+        text=extx,
         reply_markup=ext1_bt,
     )
     await query.answer("😎Gomez Games🎮")

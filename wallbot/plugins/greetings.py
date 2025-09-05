@@ -244,11 +244,11 @@ ext1_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("Next 🔜", callback_data="ext2")
         ]]
  
-extx = """
+extone_tx="""
 **Some Extras Things.**
 
 <blockquote>**AFK:**
-`/afk` [Reason Optional] - Tell others that you are AFK (Away From Keyboard), so that your boyfriend or girlfriend wont look for you 💔.
+`/afk` [Reason Optional] - Tell others that you are AFK, so that your boyfriend or girlfriend wont look for you 💔.
 **All Repos:**
 `/allrepo` [github_username] - To get all repos from GitHub.
 **Anime:**
@@ -265,7 +265,7 @@ extx = """
 @app.on_callback_query(filters.regex("^ext$"))
 async def ebx1_callback(client, query):
     await query.message.edit_text(
-        text=extx,   # <-- fixed here
+        text=extone_tx,   # <-- fixed here
         reply_markup=ext1_bt,
     )
     await query.answer("😎Gomez Games🎮")

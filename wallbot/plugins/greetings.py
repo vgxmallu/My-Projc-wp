@@ -245,6 +245,7 @@ ext1_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("Next 🔜", callback_data="ext2")
         ]]
  
+
 ex_tx="""
 **Some eExtras+ Things.**
 
@@ -261,6 +262,7 @@ ex_tx="""
 /rmbg [replyTo_photo] - To Remove background from given images.</blockquote>
 **To go Next Page 📄.**
 """
+
 @app.on_callback_query(filters.regex("^ext$"))
 async def ex1_callback(client, query):
     await query.message.edit_text(

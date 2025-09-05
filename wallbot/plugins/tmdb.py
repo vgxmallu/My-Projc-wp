@@ -6,7 +6,7 @@ from wallbot import wbot as app
 TMDB_API_KEY = "23c3b139c6d59ebb608fe6d5b974d888"
 
 
-@app.on_message(filters.command("movie"))
+@app.on_message(filters.command("tmdb"))
 async def movie_command(client, message):
     try:
         # Check if the user provided a movie name after the /movie command

@@ -307,7 +307,7 @@ async def cmd_battle(client, message: Message):
 async def cmd_acceptbattle(client, message: Message):
     # Usage: /acceptbattle <battle_id> <your_poke_id>
     if len(message.command) < 3:
-        return await message.reply("Usage: /acceptbattle <battle_id> <your_poke_id>")
+        return await message.reply("Usage: /acceptbattle [battle_id] [your_poke_id]")
     battle_id = message.command[1]
     your_poke_id = message.command[2]
     try:
@@ -396,7 +396,7 @@ async def cmd_trade(client, message: Message):
 async def cmd_accepttrade(client, message: Message):
     # /accepttrade <trade_id>
     if len(message.command) < 2:
-        return await message.reply("Usage: /accepttrade <trade_id>")
+        return await message.reply("Usage: /accepttrade [trade_id]")
     trade_id = message.command[1]
     from bson import ObjectId
     try:

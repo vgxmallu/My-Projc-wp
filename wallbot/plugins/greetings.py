@@ -205,7 +205,7 @@ ext2_bt = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("🔙 Back menu", callback_data="ext2"),
             InlineKeyboardButton("❌", callback_data="close"),
-            InlineKeyboardButton("Next 🔜", callback_data="nxt3")
+            InlineKeyboardButton("Next 🔜", callback_data="ext3")
         ]]
 
 )

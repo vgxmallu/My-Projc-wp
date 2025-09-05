@@ -15,7 +15,7 @@ async def instatus(app, message):
         enums.ChatMemberStatus.ADMINISTRATOR,
         enums.ChatMemberStatus.OWNER,
     ):
-        sent_message = await message.reply_text("GETTING INFORMATION...")
+        sent_message = await message.reply_text("Analyzing...")
         deleted_acc = 0
         premium_acc = 0
         banned = 0
@@ -36,17 +36,15 @@ async def instatus(app, message):
         end_time = time.perf_counter()
         timelog = "{:.2f}".format(end_time - start_time)
         await sent_message.edit(f"""
-**➖➖➖➖➖➖➖
-➲ NAME : {message.chat.title} ✅
-➲ MEMBERS : [ {count} ]🫂
-➖➖➖➖➖➖➖
-➲ BOTS : {bot}💡
-➲ ZOMBIES : {deleted_acc}🧟
-➲ BANNED : {banned}🚫
-➲ PREMIUM USERS : {premium_acc}🎁
-➖➖➖➖➖➖➖
-TIME TAKEN : {timelog} S**""")
+• G Name: {message.chat.title} ✅
+• Members: [ {count} ]🫂
+• Bots : {bot}💡
+• Deleted Ac: {deleted_acc}🧟
+• Banned: {banned}🚫
+• Premium uses: {premium_acc}🎁
+
+Time taken: {timelog}s **""")
     else:
-        sent_message = await message.reply_text("ONLY ADMINS CAN USE THIS !")
+        sent_message = await message.reply_text("Only admins!")
         await sleep(5)
         await sent_message.delete()

@@ -261,6 +261,7 @@ extx="""
 /rmbg [replyTo_photo] - To Remove background from given images.</blockquote>
 **To go Next Page 📄.**
 """
+
 @app.on_callback_query(filters.regex("^ext$"))
 async def ebx1_callback(client, query):
     await query.message.edit_text(

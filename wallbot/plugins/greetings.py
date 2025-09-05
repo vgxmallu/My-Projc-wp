@@ -172,7 +172,7 @@ ext3_bt = InlineKeyboardMarkup(
         ]]
 
 )
-ext3 = """
+ext3_tx="""
 **Page: 3️⃣📄**
 
 <blockquote expandable>**Math Commands:**
@@ -208,7 +208,7 @@ ext2_bt = InlineKeyboardMarkup(
         ]]
 
 )
-ext2_tx = """
+ext2_tx="""
 Page: 2️⃣📄
 
 <blockquote>**Information:**
@@ -244,7 +244,8 @@ ext1_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("❌", callback_data="close"),
             InlineKeyboardButton("Next 🔜", callback_data="ext2")
         ]]
-ext1_tx = """
+ 
+ext1_tx="""
 Some eExtras+ Things.
 
 <blockquote>**AFK:**
@@ -428,7 +429,7 @@ async def arpgcallback(client, query):
 @app.on_callback_query(filters.regex("^close$"))
 async def colcallback(client, query):
     await query.answer("Closed ❌")
-    await asyncio.sleep(5)
+    await asyncio.sleep(3)
     await query.message.delete()
 @app.on_callback_query(filters.regex("^gg$"))
 async def gg_callback(client, query):

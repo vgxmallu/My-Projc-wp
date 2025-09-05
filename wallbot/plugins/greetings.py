@@ -89,9 +89,13 @@ help_txt="""
 📌 **General Commands:**
 •/start → Start the bot & register yourself.
 •/help → Show this help menu.
+
 •/profile → View your profile, stats, and achievements.
 •/leaderboard → Check who’s leading the game.
-•/stats → See your gameplay statistics.
+
+**Feedback:** give me the Idea about new games, and i will do my best.
+gives about full discription about your thinked game.
+feedback me here /feedback [text] or [reply_to_messag]
 """
 @app.on_message(filters.command("help"))
 async def help_cmd(client, message):

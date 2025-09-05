@@ -262,14 +262,6 @@ extone_tx="""
 **To go Next Page 📄.**
 """
 
-@app.on_callback_query(filters.regex("^ext$"))
-async def gomz_callback(client, query):
-    await query.message.edit_text(
-        text=extone_tx,   # <-- fixed here
-        reply_markup=ext1_bt,
-    )
-    await query.answer("😎Gomez Games🎮")
-
 @app.on_callback_query(filters.regex("^help$"))
 async def hlp_callback(client, query):
     await query.message.edit_text(

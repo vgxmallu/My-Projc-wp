@@ -36,14 +36,17 @@ async def instatus(app, message):
         end_time = time.perf_counter()
         timelog = "{:.2f}".format(end_time - start_time)
         await sent_message.edit(f"""
-• G Name: {message.chat.title} ✅
+<blockquote>• G Name: {message.chat.title} ✅
+• G Username: @{message.chat.username}
+• G Id: {message.chat.id}
+• Discription: {message.chat.description}
 • Members: [ {count} ]🫂
 • Bots : {bot}💡
 • Deleted Ac: {deleted_acc}🧟
 • Banned: {banned}🚫
-• Premium uses: {premium_acc}🎁
+• Premium uses: {premium_acc}🎁</blockquote>
 
-Time taken: {timelog}s **""")
+**Time taken: {timelog}s **""")
     else:
         sent_message = await message.reply_text("Only admins!")
         await sleep(5)

@@ -245,14 +245,7 @@ ext1_bt = InlineKeyboardMarkup(
         ]]
 
 
-@app.on_callback_query(filters.regex("^help$"))
-async def hlp_callback(client, query):
-    await query.message.edit_text(
-        text=help_txt,
-        reply_markup=h_button,
-    )
-    await query.answer("😎Gomez Games🎮")
- 
+
 @app.on_callback_query(filters.regex("^hlp$"))
 async def hlpsk_callback(client, query):
     hlp_tx="""

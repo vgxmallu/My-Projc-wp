@@ -214,7 +214,7 @@ async def cmd_profidle(_, message: Message):
         found = True
         text += f"- ID:{p['_id']} {p['nickname']} ({p['species']}) Lv{p['level']} XP{p['xp']}\n"
     if not found:
-        text += "You have no Pokémon yet. Catch some with /catch!"
+        text += "You have no Pokémon yet. Catch some with /catch_poki!"
     await message.reply(text)
 
 # SPAWN (admin)
@@ -223,14 +223,14 @@ async def cmd_spfawn(client, message: Message):
     try:
         member = await client.get_chat_member(message.chat.id, message.from_user.id)
         if member.status not in ("administrator", "creator"):
-            return await message.reply("Only group admins can use /spawn.")
+            return await message.reply("Only group admins can use /spawn_poki.")
     except Exception:
         return await message.reply("Unable to verify admin status.")
     existing = await get_active_spawn(message.chat.id)
     if existing:
-        return await message.reply(f"A wild {existing['species']} (Lv{existing['level']}) is already present. Use /catch.")
+        return await message.reply(f"A wild {existing['species']} (Lv{existing['level']}) is already present. Use /catch_poki.")
     spawn = await spawn_wild_in_chat(message.chat.id)
-    await message.reply(f"🦊 A wild *{spawn['species']}* (Lv{spawn['level']}) appeared! Use /catch to try and capture it.")
+    await message.reply(f"🦊 A wild *{spawn['species']}* (Lv{spawn['level']}) appeared! Use /catch_poki to try and capture it.")
 
 # CATCH
 @app.on_message(filters.command("catch_poki") & filters.group)
@@ -251,7 +251,7 @@ async def cmd_cadtch(client, message: Message):
     # check inventory
     inv = user.get("inventory", {})
     if inv.get(ball_key, 0) <= 0:
-        return await message.reply(f"You don't have any {ITEMS.get(ball_key, {}).get('name', ball_key)}. Buy from /shop.")
+        return await message.reply(f"You don't have any {ITEMS.get(ball_key, {}).get('name', ball_key)}. Buy from /shop_poki.")
     # compute chance
     chance = compute_catch_chance(spawn["level"], user.get("trainer_level", 1), ITEMS.get(ball_key, {}).get("catch_bonus", 0))
     roll = random.randint(1, 100)
@@ -281,14 +281,14 @@ async def cmd_shdop(_, message: Message):
     text = "🛒 Shop:\n"
     for key, item in ITEMS.items():
         text += f"- {item['name']} (`{key}`) — Price: {item['price']} coins\n"
-    text += "\nBuy: /buy [item_key] [qty]"
+    text += "\nBuy: /buy_poki [item_key] [qty]"
     await message.reply(text)
 
 @app.on_message(filters.command("buy_poki"))
 async def cmd_bduy(_, message: Message):
     user = await ensure_user(message.from_user)
     if len(message.command) < 2:
-        return await message.reply("Usage: /buy [item_key] [qty]")
+        return await message.reply("Usage: /buy_poki [item_key] [qty]")
     item_key = message.command[1].lower()
     qty = int(message.command[2]) if len(message.command) > 2 else 1
     if item_key not in ITEMS:
@@ -316,7 +316,7 @@ async def cmd_leadergboard(_, message: Message):
 async def cmd_traffde(client, message: Message):
     # /trade @user <your_poke_id> for <their_poke_id>
     if len(message.command) < 5:
-        return await message.reply("Usage: /trade @user [your_poke_id] for [their_poke_id]")
+        return await message.reply("Usage: /trade_poki @user [your_poke_id] for [their_poke_id]")
     # resolve mentioned user
     mentioned = None
     for ent in message.entities or []:
@@ -336,7 +336,7 @@ async def cmd_traffde(client, message: Message):
     try:
         your_id = ObjectId(message.command[2])
         if message.command[3].lower() != "for":
-            return await message.reply("Usage: /trade @user [your_poke_id] for [their_poke_id]")
+            return await message.reply("Usage: /trade_poki @user [your_poke_id] for [their_poke_id]")
         their_id = ObjectId(message.command[4])
     except Exception:
         return await message.reply("Invalid Pokémon IDs.")
@@ -355,12 +355,12 @@ async def cmd_traffde(client, message: Message):
         "created_at": datetime.utcnow(),
     }
     res = await trades_col.insert_one(trade)
-    await message.reply(f"Trade request sent to {mentioned.mention}. They can accept with /accepttrade {res.inserted_id}")
+    await message.reply(f"Trade request sent to {mentioned.mention}. They can accept with /accepttrade_poki {res.inserted_id}")
 
 @app.on_message(filters.command("accepttrade_poki") & filters.group)
 async def cmd_accepttddrade(_, message: Message):
     if len(message.command) < 2:
-        return await message.reply("Usage: /accepttrade [trade_id]")
+        return await message.reply("Usage: /accepttrade_poki [trade_id]")
     try:
         trade = await trades_col.find_one({"_id": ObjectId(message.command[1])})
         if not trade:
@@ -380,7 +380,7 @@ async def cmd_accepttddrade(_, message: Message):
 async def cmd_pdvp(client, message: Message):
     # /pvp @user <your_poke_id>
     if len(message.command) < 3:
-        return await message.reply("Usage: /pvp @user [your_poke_id]")
+        return await message.reply("Usage: /pvp_poki @user [your_poke_id]")
     # resolve opponent
     opp = None
     for ent in message.entities or []:
@@ -413,13 +413,13 @@ async def cmd_pdvp(client, message: Message):
         "created_at": datetime.utcnow(),
     }
     res = await battles_col.insert_one(battle)
-    await message.reply(f"{opp.mention}, you have a battle request! Accept with /acceptpvp {res.inserted_id} [your_poke_id]")
+    await message.reply(f"{opp.mention}, you have a battle request! Accept with /acceptpvp_poki {res.inserted_id} [your_poke_id]")
 
 @app.on_message(filters.command("acceptpvp_poki") & filters.group)
 async def cmd_acdceptpvp(client, message: Message):
     # /acceptpvp <battle_id> <your_poke_id>
     if len(message.command) < 3:
-        return await message.reply("Usage: /acceptpvp [battle_id] [your_poke_id]")
+        return await message.reply("Usage: /acceptpvp_poki [battle_id] [your_poke_id]")
     try:
         battle = await battles_col.find_one({"_id": ObjectId(message.command[1])})
         if not battle:
@@ -511,7 +511,7 @@ async def auto_spawner():
                 if not existing:
                     spawn = await spawn_wild_in_chat(chat_id, level_min=1, level_max=10)
                     try:
-                        await app.send_message(chat_id, f"🦊 Wild *{spawn['species']}* appeared! Lv{spawn['level']}. Use /catch")
+                        await app.send_message(chat_id, f"🦊 Wild *{spawn['species']}* appeared! Lv{spawn['level']}. Use /catch_poki")
                     except Exception:
                         pass
         except Exception:
@@ -539,4 +539,4 @@ async def cmd_togglesdpawn(client, message: Message):
 @app.on_message(filters.command("startpokigame") & filters.private)
 async def cmd_starhtgame(_, message: Message):
     await ensure_user(message.from_user)
-    await message.reply("Game initialized for your trainer. Use /profile to view stats.")
+    await message.reply("Game initialized for your trainer. Use /profile_poki to view stats.")

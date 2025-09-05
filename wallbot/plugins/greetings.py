@@ -263,7 +263,7 @@ extone_tx="""
 """
 
 @app.on_callback_query(filters.regex("^ext$"))
-async def ebx1_callback(client, query):
+async def gomz_callback(client, query):
     await query.message.edit_text(
         text=extone_tx,   # <-- fixed here
         reply_markup=ext1_bt,

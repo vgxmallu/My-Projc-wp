@@ -180,8 +180,14 @@ nxt_bt = InlineKeyboardMarkup(
 nxt_tx = """
 Page 2️⃣📄
 
-/groupdata [send_group]
-/uinfo [user_info]
+**Information:**
+`/groupdata` [send_group], `/uinfo` [user_info], `/id`  [user_id], `/dc` .
+`/whois` [user_or_bots_Id], [reply to user or bot], [usernames]
+`/jason` - get Jason format.
+`/paste` Reply To File / Give Me Text To Paste.
+**Sangmata**:
+`/sangmata_set` [on/off] - Enable/disable sangmata in groups.
+/telegraph [reply to photos]
 """
 
 @app.on_callback_query(filters.regex("^ext$"))

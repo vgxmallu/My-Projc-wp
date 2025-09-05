@@ -85,7 +85,7 @@ async def start_game(client, message):
             f"🆕 New member started the bot!\n\n👤: {mention}\n⛓️‍💥: @{user_n}\n🆔: `{user_id}`"
         )
 
-help_txt = """
+help_txt="""
 📌 **General Commands:**
 •/start → Start the bot & register yourself.
 •/help → Show this help menu.
@@ -172,6 +172,7 @@ ext3_bt = InlineKeyboardMarkup(
         ]]
 
 )
+
 ext3_tx="""
 **Page: 3️⃣📄**
 
@@ -209,14 +210,12 @@ ext2_bt = InlineKeyboardMarkup(
 
 )
 ext2_tx="""
-Page: 2️⃣📄
+**Page: 2️⃣📄**
 
-<blockquote>**Information:**
-`/groupdata` [send_group], `/uinfo` [user_info], `/id`  [user_id], `/dc` `/cinfo`.
+<blockquote>`/groupdata` [send_group], `/uinfo` [user_info], `/id`  [user_id], `/dc` `/cinfo`.
 `/whois` [user_or_bots_Id], [reply to user or bot], [usernames]
 `/jason` - get Jason format.
 `/paste` Reply To File / Give Me Text To Paste.
-**Sangmata**:
 `/sangmata_set` [on/off] - Enable/disable sangmata in groups.
 `/telegraph` [reply to photos]
 `/imdb` `/tmdb` to get Moves infos.

@@ -280,7 +280,7 @@ async def cmhdd_seloel(_, m: Message):
 async def cmdje_equip(_, m: Message):
     # /equip <animal> will set it as active pet if you own it
     if len(m.command) < 2:
-        return await m.reply("Usage: `/equip [animal]`", quote=True)
+        return await m.reply("Usage: `/equip_owo [animal]`", quote=True)
     animal = m.command[1]
     u = await ensure_user(m.from_user)
     inv = u.get("inventory", {})

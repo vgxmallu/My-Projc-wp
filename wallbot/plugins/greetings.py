@@ -212,7 +212,7 @@ ext2_bt = InlineKeyboardMarkup(
 ext2_tx="""
 **Page: 2️⃣📄**
 
-<blockquote>`/groupdata` [send_group], `/uinfo` [user_info], `/id`  [user_id], `/dc` `/cinfo`.
+<blockquote expandable>`/groupdata` [send_group], `/uinfo` [user_info], `/id`  [user_id], `/dc` `/cinfo`.
 `/whois` [user_or_bots_Id], [reply to user or bot], [usernames]
 `/jason` - get Jason format.
 `/paste` Reply To File / Give Me Text To Paste.
@@ -248,7 +248,7 @@ ext1_bt = InlineKeyboardMarkup(
 extone_tx="""
 **Some Extras Things.**
 
-<blockquote>**AFK:**
+<blockquote expandable>**AFK:**
 `/afk` [Reason Optional] - Tell others that you are AFK, so that your boyfriend or girlfriend wont look for you 💔.
 **All Repos:**
 `/allrepo` [github_username] - To get all repos from GitHub.

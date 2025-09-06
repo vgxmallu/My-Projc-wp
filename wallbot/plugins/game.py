@@ -147,7 +147,7 @@ async def start_classic(client, message: Message):
     game = Game(chat_id)
     pending_games[chat_id] = game
     game.starter = message.from_user.id
-    await message.reply("Classic game started! Type /join to participate!")
+    await message.reply("Classic game started! Type /joinx to participate!")
     asyncio.create_task(game.start_countdown())
     gamee = pending_games[chat_id]
     gamee.players.append({

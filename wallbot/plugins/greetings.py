@@ -86,16 +86,15 @@ async def start_game(client, message):
         )
 
 help_txt="""
-📌 **General Commands:**
+<blockquote>📌 **General Commands:**
 •/start → Start the bot & register yourself.
 •/help → Show this help menu.
-
 •/profile → View your profile, stats, and achievements.
 •/leaderboard → Check who’s leading the game.
 
 **Feedback:** give me the Idea about new games, and i will do my best.
 gives about full discription about your thinked game.
-feedback me here /feedback [text] or [reply_to_messag]
+feedback me here /feedback [text] or [reply_to_messag]<blockquote>
 """
 @app.on_message(filters.command("help"))
 async def helpg_cmd(client, message):
@@ -158,7 +157,6 @@ ext3_bt = InlineKeyboardMarkup(
         ]]
 
 )
-
 ext3_tx="""
 **Page: 3️⃣📄**
 
@@ -187,6 +185,7 @@ async def ext3_callback(client, query):
     )
     await query.answer("😎Gomez Games🎮")
 
+
 ext2_bt = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("🔙 Back menu", callback_data="ext"),
@@ -213,7 +212,6 @@ ext2_tx="""
 `/tts` - Convert text to speech
 `/getsticker` - <code>Get a sticker png by replying it</blockquote>
 """
-
 @app.on_callback_query(filters.regex("^ext2$"))
 async def ext2_callback(client, query):
     await query.message.edit_text(
@@ -230,7 +228,6 @@ ext1_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("Next 🔜", callback_data="ext2")
         ]]
 )
- 
 extone_tx="""
 **Some Extras Things.**
 
@@ -245,8 +242,6 @@ extone_tx="""
 `/mangainfo` [anime_name] - To get info about Mangas.
 **Remove Background:**
 `/rmbg` [replyTo_photo] - To Remove background from given images.</blockquote>
-
-**To go Next Page 📄.**
 """
 @app.on_callback_query(filters.regex("^ext$"))
 async def ext1_callback(client, query):
@@ -264,8 +259,38 @@ async def hlpx_callback(client, query):
     )
     await query.answer("😎Gomez Games🎮")
 
+bak_bt = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("🔙 Back Menu", callback_data="hlp"),
+            InlineKeyboardButton("❌", callback_data="close")
+        ]]
+
+)
+
+hlp_bt = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("❌⭕Tic Tac Toe 🕹️", callback_data="tic_gg")
+        ],[
+            InlineKeyboardButton("🔴⚫Gomoku 🎮", callback_data="gomk_gg")
+        ],[
+            InlineKeyboardButton("🔴🟢Connect 4 🕹️", callback_data="cn4_gg")
+        ],[
+            InlineKeyboardButton("📊QuizMaster [P]🤖&[G]👥", callback_data="qz_gg")
+        ],[
+            InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg")
+        ],[
+            InlineKeyboardButton("⚔️RPG Battle🛡️", callback_data="rpgb_gg"),
+            InlineKeyboardButton("🔥RPG Battle Advanced 🛡️⚔️", callback_data="rpga_gg")
+        ],[
+            InlineKeyboardButton("🐲 RPG-Pokemon", callback_data="poki_gg"),
+            InlineKeyboardButton("🅾️ Play OwO", callback_data="owo_gg")
+        ],[
+            InlineKeyboardButton("🔙 Main Menu", callback_data="help"),
+            InlineKeyboardButton("❌", callback_data="close")
+        ]]
+)
 @app.on_callback_query(filters.regex("^hlp$"))
-async def hlpex_callback(client, query):
+async def hlx_callback(client, query):
     hlp_tx="""
     <blockquote>**Gomez Games** 🎮</blockquote>
     """
@@ -275,34 +300,11 @@ async def hlpex_callback(client, query):
     )
     await query.answer("😎Gomez Games🎮")
 
-hlp_bt = InlineKeyboardMarkup(
-        [[
-            InlineKeyboardButton("❌⭕Tic Tac Toe 🕹️", callback_data="tic")
-        ],[
-            InlineKeyboardButton("🔴⚫Gomoku 🎮", callback_data="gmk")
-        ],[
-            InlineKeyboardButton("🔴🟢Connect 4 🕹️", callback_data="cn4")
-        ],[
-            InlineKeyboardButton("📊QuizMaster [P]🤖&[G]👥", callback_data="qz")
-        ],[
-            InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg")
-        ],[
-            InlineKeyboardButton("⚔️RPG Battle🛡️", callback_data="rpgb"),
-            InlineKeyboardButton("🔥RPG Battle Advanced 🛡️⚔️", callback_data="rpga")
-        ],[
-            InlineKeyboardButton("🐲 RPG-Pokemon", callback_data="poki"),
-            InlineKeyboardButton("🅾️ Play OwO", callback_data="owo")
-        ],[
-            InlineKeyboardButton("🔙 Main Menu", callback_data="help"),
-            InlineKeyboardButton("❌", callback_data="close")
-        ]]
-)
-
 pok_tx="""
 **PokéExperience!**
 Catch, train, trade and battle with friends.
-<blockquote expandable>
-• `/spawn_poki` (group admin) - spawn a wild Pokémon now
+
+<blockquote expandable>• `/spawn_poki` (group admin) - spawn a wild Pokémon now
 • `/catch_poki` [ball] - catch the active Pokémon (default pokeball)
 • `/profile_poki` - show your trainer profile and Pokémon
 • `/pokedex` - list species
@@ -321,16 +323,15 @@ __- Catch wild Pokémon (manual / auto spawn)
 - Leaderboard, profiles, cooldowns
 - Designed as a starter: extend POKEDEX, items, shop prices, battle logic.__<blockquote>
 """
-@app.on_callback_query(filters.regex("^poki$"))
-async def pokic_callback(client, query):
-    
+@app.on_callback_query(filters.regex("^poki_gg$"))
+async def pokic_callback(client, query):    
     await query.message.edit_text(
         text=pok_tx,
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")
 
-pok_tx="""
+owo_tx="""
 **OwO-Style Telegram Bot**
 
 <blockquote expandable>**Features implemented:**
@@ -344,8 +345,8 @@ pok_tx="""
 - Shop & selling: /shop_owo, /buy_owo, /sell_owo, /equip_owo
 - Battle: reply-to-user /battle_owo to challenge (simple)<blockquote>
 """
-@app.on_callback_query(filters.regex("^owo$"))
-async def pwowic_callback(client, query):
+@app.on_callback_query(filters.regex("^owo_gg$"))
+async def owo_callback(client, query):
     
     await query.message.edit_text(
         text=owo_tx,
@@ -363,8 +364,8 @@ First to align three marks wins
 • `/xo_leaderboard` → Show top players on Tic Tac Toe.
 Also use @TicTacToe_Xbot bot play inline mode to play.</blockquote>
 """
-@app.on_callback_query(filters.regex("^tic$"))
-async def tic_callback(client, query):
+@app.on_callback_query(filters.regex("^tic_gg$"))
+async def tictac_callback(client, query):
     
     await query.message.edit_text(
         text=xo_tx,
@@ -383,7 +384,7 @@ First to connect five marks wins
 • `/go_leaderboard` - View Top group Gomoku leaderboard.
 • `/gomoku_stats` - View group statistics.</blockquote>
 """
-@app.on_callback_query(filters.regex("^gmk$"))
+@app.on_callback_query(filters.regex("^gomk_gg$"))
 async def gok_callback(client, query):  
     await query.message.edit_text(
         text=gmk_tx,
@@ -404,7 +405,7 @@ First to connect four dots wins
 
 Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟢) is O.
 """
-@app.on_callback_query(filters.regex("^cn4$"))
+@app.on_callback_query(filters.regex("^cn4_gg$"))
 async def cnfk_callback(client, query):
     await query.message.edit_text(
         text=cn4_tx,
@@ -436,7 +437,7 @@ Get ready to test your knowledge across tons of fun and serious topics!
 • [G]`/gqzaddq` - to add more questions on group DB, `/gqzseed` seed Qz, `/gimport` import Qz
 💡 Tip: The faster you answer correctly, the more points you score!<blockquote>
 """
-@app.on_callback_query(filters.regex("^qz$"))
+@app.on_callback_query(filters.regex("^qz_gg$"))
 async def qzx_callback(client, query):
     await query.message.edit_text(
         text=qz_tx,
@@ -457,7 +458,7 @@ rpgb_tx="""
     
 Perfect ⚔️🐉 Let’s level this up into a full simple RPG__
     """
-@app.on_callback_query(filters.regex("^rpgb$"))
+@app.on_callback_query(filters.regex("^rpgb_gg$"))
 async def rpgx_callback(client, query):
     await query.message.edit_text(
         text=rpgb_tx,
@@ -483,7 +484,7 @@ Collect stuff, craft gear, run dungeons, duel, gamble & more...
 🎰**Gamble**: `/coinflip` `/dice_rpg` `/blackjack` `/slots_rpg` `/wheel_rpg` `/multidice_rpg`
 📜**Other**: `/daily_rpg` `/enchant_rpg` `/pet_rpg` `/guild_rpg` `/memerpg` `/rpgleaderboard`.</blockquote>
 """
-@app.on_callback_query(filters.regex("^rpga$"))
+@app.on_callback_query(filters.regex("^rpga_gg$"))
 async def arpg_xcallback(client, query):
     await query.message.edit_text(
         text=rpga_tx,

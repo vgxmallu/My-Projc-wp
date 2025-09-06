@@ -203,7 +203,7 @@ async def cmd_pokededx(_, message: Message):
         text += f"- {name}: HP {info['base_hp']} ATK {info['base_atk']} -> {evo} @Lv{evo_lvl}\n"
     await message.reply(text)
 
-@app.on_message(filters.command("profile_poik") & (filters.private | filters.group))
+@app.on_message(filters.command("profile_poki") & (filters.private | filters.group))
 async def cmd_profidle(_, message: Message):
     user = await ensure_user(message.from_user)
     trainer = await users_col.find_one({"user_id": message.from_user.id})

@@ -26,7 +26,7 @@ from wallbot import wbot as app
 
 # ---------- Config ----------
 
-FOOTBALL_API_KEY = os.getenv("FOOTBALL_API_KEY", "")
+FOOTBALL_API_KEY = "8f130bb08f7741a98e068b4163cc6cca"
 FOOTBALL_API_BASE = os.getenv("FOOTBALL_API_BASE", "https://api.football-data.org/v2")
 POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "60"))  # seconds
 

@@ -489,17 +489,17 @@ async def shoprp_cmd(_, message: Message):
     text = "<b>🛒 Shop</b>\n\n"
     for key, meta in SHOP_CATALOG.items():
         text += f"{key} — {meta['price']}💰 — {meta['desc']}\n"
-    text += "\nBuy with: /buy <item_key>\nCheck your inventory: /inventory"
+    text += "\nBuy with: /rbuy <item_key>\nCheck your inventory: /rbinventory"
     await message.reply_text(text)
 
-@app.on_message(filters.command("rbbuy"))
+@app.on_message(filters.command("rbuy"))
 async def buyrb_cmd(_, message: Message):
     parts = message.text.split(None, 1)
     if len(parts) < 2:
-        return await message.reply_text("Usage: /buy <item_key>")
+        return await message.reply_text("Usage: /rbuy [item_key]")
     item = parts[1].strip().lower()
     if item not in SHOP_CATALOG:
-        return await message.reply_text("Unknown item key. Use /shop to see items.")
+        return await message.reply_text("Unknown item key. Use /rbshop to see items.")
     uid = message.from_user.id
     await ensure_player(uid)
     cost = SHOP_CATALOG[item]["price"]
@@ -516,7 +516,7 @@ async def invenrbtory_cmd(_, message: Message):
     p = await ensure_player(uid)
     items = p.get("items", {})
     if not items:
-        return await message.reply_text("Your inventory is empty. Visit /shop to buy items.")
+        return await message.reply_text("Your inventory is empty. Visit /rbshop to buy items.")
     text = "<b>🎒 Inventory</b>\n\n"
     for k, v in items.items():
         text += f"{k}: {v}\n"

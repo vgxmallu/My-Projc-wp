@@ -31,3 +31,4 @@ wget
 imdbpy
 hachoir
 asgiref
+pillow

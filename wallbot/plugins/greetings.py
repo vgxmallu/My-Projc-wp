@@ -321,7 +321,7 @@ __- Catch wild Pokémon (manual / auto spawn)
 - Trades between users
 - PvP 1v1 turn-based battles in group chats (request -> accept -> fight)
 - Leaderboard, profiles, cooldowns
-- Designed as a starter: extend POKEDEX, items, shop prices, battle logic.__<blockquote>
+- Designed as a starter: extend POKEDEX, items, shop prices, battle logic.__</blockquote>
 """
 @app.on_callback_query(filters.regex("^poki_gg$"))
 async def pokic_callback(client, query):    
@@ -334,7 +334,7 @@ async def pokic_callback(client, query):
 owo_tx="""
 **OwO-Style Telegram Bot**
 
-<blockquote expandable>**Features implemented:**
+<blockquote>**Features implemented:**
 - **Economy:** /cowoncy, /daily_owo, /give_owo
 - Animals: /hunt_owo, /zoo_owo, /autohunt, /owodex, /pets_owo
 - Gambling: /slots_owo, /coinflip_owo, /lottery_owo, /blackjack_owo
@@ -343,7 +343,7 @@ owo_tx="""
 - Social: /cookie
 - Actions: /hug, /kiss, /pat, /slap
 - Shop & selling: /shop_owo, /buy_owo, /sell_owo, /equip_owo
-- Battle: reply-to-user /battle_owo to challenge (simple)<blockquote>
+- Battle: reply-to-user /battle_owo to challenge (simple)</blockquote>
 """
 @app.on_callback_query(filters.regex("^owo_gg$"))
 async def owo_callback(client, query):

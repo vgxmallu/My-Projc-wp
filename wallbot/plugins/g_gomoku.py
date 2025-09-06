@@ -275,7 +275,7 @@ async def newgogame(client, message):
     # Check for existing waiting games in this chat
     for game_id, game in active_games[chat_id].items():
         if game.status == 'waiting':
-            await message.reply_text(f"A game is waiting for an opponent. Join it with /joingame {game_id}.")
+            await message.reply_text(f"A game is waiting for an opponent. Join it with /join_gomoku {game_id}.")
             return
 
     game_id = str(uuid.uuid4())
@@ -318,7 +318,7 @@ async def joingogame(client, message):
             reply_markup=create_board_buttons(chat_id, game_id)
         )
     except ValueError:
-        await message.reply_text("Please provide a valid game ID: /joingame <game_id>")
+        await message.reply_text("Please provide a valid game ID: /join_gomoku [game_id]")
 
 @app.on_message(filters.command("go_profile") & filters.group)
 async def profgogoile(client, message):

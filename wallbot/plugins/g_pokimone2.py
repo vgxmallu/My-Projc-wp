@@ -188,9 +188,9 @@ async def cmd_hpedlp(_, message: Message):
         "/profile_poki - show your trainer profile and Pokémon\n"
         "/pokedex - list species\n"
         "/shop_poki - show items\n"
-        "/buy_poki <item> <qty> - buy items\n"
-        "/trade_poki @user <your_poke_id> for <their_poke_id> - propose trade\n"
-        "/pvp_poki @user <your_poke_id> - challenge in group\n    Opponent accepts with /acceptpvp <battle_id> <their_poke_id>\n"
+        "/buy_poki [item] [qty] - buy items\n"
+        "/trade_poki @user [your_poke_id] for [their_poke_id] - propose trade\n"
+        "/pvp_poki @user [your_poke_id] - challenge in group\n    Opponent accepts with /acceptpvp [battle_id] [their_poke_id]\n"
         "/leaderboard_poki - top trainers by level"
     )
 

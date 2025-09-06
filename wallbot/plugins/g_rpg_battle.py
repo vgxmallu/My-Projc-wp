@@ -58,6 +58,17 @@ MEMES = [
     "Me: I’ll save coins. Also me: *sees shop* — TAKE MY MONEY 💸",
     "Dungeons be like: You vs the guy she told you not to worry about 🗡️🐉",
     "If mining gave XP IRL I’d be level 999 from procrastination ⛏️",
+    "Trainer: *Pokémon fainted* — Me: quick, use revive! Wallet: *dies instead* 💀",
+    "Grinding for loot is just gambling with extra steps 🎰",
+    "Boss: ‘He’s only level 10.’ *Me at level 9 with 3 potions left* 😳",
+    "Me opening loot boxes: *please be rare* … reality: common potato 🥔",
+    "Daily reward claimed. Still broke. At least consistent 🥲",
+    "When the shop restocks and you’re poor: window-shopping speedrun 🏃‍♂️💨",
+    "My pet in battle: misses 3 times in a row. Enemy pet: lands crit every hit 🤡",
+    "Sleep? Nah. Farming coins at 3AM builds character 🌙",
+    "That feeling when RNG gives your friend the legendary and you get… a stick 🪵",
+    "Me: I don’t need another cat. RNG: here’s your 8th cat 🐱🐱🐱",
+    "Upgrading gear: 1% success chance. Me: *trusts the heart of the cards* 🎴",
 ]
 
 RANKS = [

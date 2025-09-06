@@ -134,7 +134,7 @@ async def staxoxoxrt(_, msg: Message):
 @app.on_message(filters.command("pvp_xoxo"))
 async def pvpxo(_, msg: Message):
     if not msg.reply_to_message and len(msg.command) < 2:
-        return await msg.reply("Reply to someone or use `/pvp @username`")
+        return await msg.reply("Reply to someone or use `/pvp_xoxo @username`")
     if msg.reply_to_message:
         opponent = msg.reply_to_message.from_user.id
     else:

@@ -237,8 +237,8 @@ async def check_timeouts():
             continue
 
 # schedule to run every minute
-scheduler.add_job(lambda: check_timeouts, "interval", minutes=1)
-scheduler.start()
+scheduler.add_job(lambda: asyncio.create_task(check_timeouts()), "interval", minutes=1)
+
 # ---------- Commands ----------
 @app.on_message(filters.command("connect4"))
 async def cmd_c4start(client: Client, message: Message):

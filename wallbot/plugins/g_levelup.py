@@ -361,7 +361,7 @@ async def cmd_bohost(_, m: Message):
 # Admin creates giveaway: /giveaway create <duration_minutes> <prize>
 # Users join via inline button; after duration pick random winner and award (coins or custom text).
 @app.on_message(filters.command("giveaway") & (filters.group | filters.private))
-async def cmd_give°away(_, m: Message):
+async def cmd_giveaway(_, m: Message):
     if len(m.command) < 2:
         return await m.reply_text("Usage: /giveaway create [minutes] [prize] (admin) OR /giveaway list")
     sub = m.command[1].lower()

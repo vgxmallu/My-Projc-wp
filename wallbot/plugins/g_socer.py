@@ -385,10 +385,10 @@ async def cmd_fifhacard(_, m: Message):
         return await m.reply("Usage: /fifacard <player name>")
     player_name = " ".join(m.command[1:])
     # For real app, call an API to fetch player rating/team
-    rating = random.randint(60, 92)
+    #rating = random.randint(60, 92)
     team = None
     # generate image
-    fp = await generate_fifa_card(player_name, team, rating)
+    fp = await generate_fifa_card(player_name, team)
     try:
         await app.send_photo(m.chat.id, fp, caption=f"{player_name} — Rating {rating}")
     except Exception:

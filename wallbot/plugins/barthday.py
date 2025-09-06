@@ -8,7 +8,7 @@ from wallbot import wbot as app
 # ========================
 # DATABASE
 # ========================
-mongo = MongoClient(MONGO_URL)
+mongo = MongoClient(DB_URL)
 db = mongo["birthday_bot"]
 birthdays = db["birthdays"]
 scheduler = AsyncIOScheduler()

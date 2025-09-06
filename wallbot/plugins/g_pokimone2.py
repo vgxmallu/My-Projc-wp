@@ -180,18 +180,18 @@ async def cmd_starht(_, message: Message):
         "Type /help for details."
     )
 
-@app.on_message(filters.command("hepok"))
-async def cmd_hedlp(_, message: Message):
+@app.on_message(filters.command("pokex"))
+async def cmd_hpedlp(_, message: Message):
     await message.reply(
-        "/spawn (group admin) - spawn a wild Pokémon now\n"
-        "/catch [ball] - catch the active Pokémon (default pokeball)\n"
-        "/profile - show your trainer profile and Pokémon\n"
+        "/spawn_poki (group admin) - spawn a wild Pokémon now\n"
+        "/catch_poki [ball] - catch the active Pokémon (default pokeball)\n"
+        "/profile_poki - show your trainer profile and Pokémon\n"
         "/pokedex - list species\n"
-        "/shop - show items\n"
-        "/buy <item> <qty> - buy items\n"
-        "/trade @user <your_poke_id> for <their_poke_id> - propose trade\n"
-        "/pvp @user <your_poke_id> - challenge in group\n    Opponent accepts with /acceptpvp <battle_id> <their_poke_id>\n"
-        "/leaderboard - top trainers by level"
+        "/shop_poki - show items\n"
+        "/buy_poki <item> <qty> - buy items\n"
+        "/trade_poki @user <your_poke_id> for <their_poke_id> - propose trade\n"
+        "/pvp_poki @user <your_poke_id> - challenge in group\n    Opponent accepts with /acceptpvp <battle_id> <their_poke_id>\n"
+        "/leaderboard_poki - top trainers by level"
     )
 
 @app.on_message(filters.command("pokedex") & (filters.private | filters.group))

@@ -98,7 +98,7 @@ gives about full discription about your thinked game.
 feedback me here /feedback [text] or [reply_to_messag]
 """
 @app.on_message(filters.command("help"))
-async def help_cmd(client, message):
+async def helpg_cmd(client, message):
     await message.reply_photo(
         photo="https://files.catbox.moe/80bcxh.jpg",
         caption=help_txt,
@@ -149,25 +149,7 @@ async def ggbroadcast(client, message):
     )
 
 #=======•=•==••=•=•=<pre>
-hlp_bt = InlineKeyboardMarkup(
-        [[
-            InlineKeyboardButton("❌⭕Tic Tac Toe 🕹️", callback_data="tic")
-        ],[
-            InlineKeyboardButton("🔴⚫Gomoku 🎮", callback_data="gmk")
-        ],[
-            InlineKeyboardButton("🔴🟢Connect 4 🕹️", callback_data="cn4")
-        ],[
-            InlineKeyboardButton("📊QuizMaster [P]🤖&[G]👥", callback_data="qz")
-        ],[
-            InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg")
-        ],[
-            InlineKeyboardButton("⚔️RPG Battle🛡️", callback_data="rpgb"),
-            InlineKeyboardButton("🔥RPG Battle Advanced 🛡️⚔️", callback_data="rpga")
-        ],[
-            InlineKeyboardButton("🔙 Main Menu", callback_data="help"),
-            InlineKeyboardButton("❌", callback_data="close")
-        ]]
-)
+
 
 ext3_bt = InlineKeyboardMarkup(
         [[
@@ -198,7 +180,7 @@ ext3_tx="""
 `/log` - find the logarithm of a number</blockquote>
 """
 @app.on_callback_query(filters.regex("^ext3$"))
-async def eur_callback(client, query):
+async def ext3_callback(client, query):
     await query.message.edit_text(
         text=ext3_tx,
         reply_markup=ext3_bt,
@@ -233,7 +215,7 @@ ext2_tx="""
 """
 
 @app.on_callback_query(filters.regex("^ext2$"))
-async def exx_callback(client, query):
+async def ext2_callback(client, query):
     await query.message.edit_text(
         text=ext2_tx,
         reply_markup=ext2_bt,
@@ -267,7 +249,7 @@ extone_tx="""
 **To go Next Page 📄.**
 """
 @app.on_callback_query(filters.regex("^ext$"))
-async def gomz_callback(client, query):
+async def ext1_callback(client, query):
     await query.message.edit_text(
         text=extone_tx,   # <-- fixed here
         reply_markup=ext1_bt,
@@ -275,7 +257,7 @@ async def gomz_callback(client, query):
     await query.answer("😎Gomez Games🎮")
 
 @app.on_callback_query(filters.regex("^help$"))
-async def hlp_callback(client, query):
+async def hlpx_callback(client, query):
     await query.message.edit_text(
         text=help_txt,
         reply_markup=h_button,
@@ -283,15 +265,35 @@ async def hlp_callback(client, query):
     await query.answer("😎Gomez Games🎮")
 
 @app.on_callback_query(filters.regex("^hlp$"))
-async def hlpsk_callback(client, query):
+async def hlpex_callback(client, query):
     hlp_tx="""
-    Gomez Games 🎮
+    <blockquote>**Gomez Games** 🎮</blockquote>
     """
     await query.message.edit_text(
         text=hlp_tx,
         reply_markup=hlp_bt,
     )
     await query.answer("😎Gomez Games🎮")
+
+hlp_bt = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("❌⭕Tic Tac Toe 🕹️", callback_data="tic")
+        ],[
+            InlineKeyboardButton("🔴⚫Gomoku 🎮", callback_data="gmk")
+        ],[
+            InlineKeyboardButton("🔴🟢Connect 4 🕹️", callback_data="cn4")
+        ],[
+            InlineKeyboardButton("📊QuizMaster [P]🤖&[G]👥", callback_data="qz")
+        ],[
+            InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg")
+        ],[
+            InlineKeyboardButton("⚔️RPG Battle🛡️", callback_data="rpgb"),
+            InlineKeyboardButton("🔥RPG Battle Advanced 🛡️⚔️", callback_data="rpga")
+        ],[
+            InlineKeyboardButton("🔙 Main Menu", callback_data="help"),
+            InlineKeyboardButton("❌", callback_data="close")
+        ]]
+)
 
 xo_tx="""
 **🎮 Play Tic Tac Toe game Menu!❌⭕**
@@ -345,7 +347,7 @@ First to connect four dots wins
 Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟢) is O.
 """
 @app.on_callback_query(filters.regex("^cn4$"))
-async def cn_callback(client, query):
+async def cnfk_callback(client, query):
     await query.message.edit_text(
         text=cn4_tx,
         reply_markup=bak_bt,
@@ -377,7 +379,7 @@ Get ready to test your knowledge across tons of fun and serious topics!
 💡 Tip: The faster you answer correctly, the more points you score!
 """
 @app.on_callback_query(filters.regex("^qz$"))
-async def qz_callback(client, query):
+async def qzx_callback(client, query):
     await query.message.edit_text(
         text=qz_tx,
         reply_markup=bak_bt,
@@ -398,7 +400,7 @@ rpgb_tx="""
 Perfect ⚔️🐉 Let’s level this up into a full simple RPG__
     """
 @app.on_callback_query(filters.regex("^rpgb$"))
-async def igigcallback(client, query):
+async def rpgx_callback(client, query):
     await query.message.edit_text(
         text=rpgb_tx,
         reply_markup=bak_bt,
@@ -424,7 +426,7 @@ Collect stuff, craft gear, run dungeons, duel, gamble & more...
 📜**Other**: `/daily_rpg` `/enchant_rpg` `/pet_rpg` `/guild_rpg` `/memerpg` `/rpgleaderboard`.</blockquote>
 """
 @app.on_callback_query(filters.regex("^rpga$"))
-async def arpgcallback(client, query):
+async def arpg_xcallback(client, query):
     await query.message.edit_text(
         text=rpga_tx,
         reply_markup=bak_bt,
@@ -432,7 +434,7 @@ async def arpgcallback(client, query):
     await query.answer("😎Gomez Games🎮")
 #======••=•=•==•=•=•==•=•=••=•=•=•=•=•=•=••=•=
 @app.on_callback_query(filters.regex("^close$"))
-async def colcallback(client, query):
+async def col_callback(client, query):
     await query.answer("Closed ❌")
     await asyncio.sleep(3)
     await query.message.delete()

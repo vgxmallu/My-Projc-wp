@@ -32,3 +32,4 @@ imdbpy
 hachoir
 asgiref
 pillow
+pytz~=2021.1

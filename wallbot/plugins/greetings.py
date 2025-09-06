@@ -34,9 +34,13 @@ g_button = InlineKeyboardMarkup(
 
 h_button = InlineKeyboardMarkup(
     [[
+        InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
+    ],[
         InlineKeyboardButton("Games Menu🕹️", callback_data="hlp"),
-        InlineKeyboardButton("➕ Extra Menu", callback_data="ext"),
-        InlineKeyboardButton("About Me ℹ️", callback_data="ab")
+        InlineKeyboardButton("➕ Extra Menu", callback_data="ext")
+    ],[
+        InlineKeyboardButton("About Me ℹ️", callback_data="ab"),
+        InlineKeyboardButton("❌", callback_data="close")
     ]]
 )
 
@@ -261,6 +265,8 @@ async def hlpx_callback(client, query):
 
 bak_bt = InlineKeyboardMarkup(
         [[
+            InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
+        ],[
             InlineKeyboardButton("🔙 Back Menu", callback_data="hlp"),
             InlineKeyboardButton("❌", callback_data="close")
         ]]

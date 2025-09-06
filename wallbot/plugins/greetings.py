@@ -290,10 +290,68 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("⚔️RPG Battle🛡️", callback_data="rpgb"),
             InlineKeyboardButton("🔥RPG Battle Advanced 🛡️⚔️", callback_data="rpga")
         ],[
+            InlineKeyboardButton("🐲 RPG-Pokemon", callback_data="poki"),
+            InlineKeyboardButton("🅾️ Play OwO", callback_data="owo")
+        ],[
             InlineKeyboardButton("🔙 Main Menu", callback_data="help"),
             InlineKeyboardButton("❌", callback_data="close")
         ]]
 )
+
+pok_tx="""
+**PokéExperience!**
+Catch, train, trade and battle with friends.
+<blockquote expandable>
+• `/spawn_poki` (group admin) - spawn a wild Pokémon now
+• `/catch_poki` [ball] - catch the active Pokémon (default pokeball)
+• `/profile_poki` - show your trainer profile and Pokémon
+• `/pokedex` - list species
+• `/shop_poki` - show items
+• `/buy_poki` [item] [qty] - buy items
+• `/trade_poki` @user [your_poke_id] for [their_poke_id] - propose trade
+• `/pvp_poki` @user [your_poke_id] - challenge in group.
+• Opponent accepts with `/acceptpvp` [battle_id] [their_poke_id]
+• `/leaderboard_poki` - top trainers by level"\
+
+__- Catch wild Pokémon (manual / auto spawn)
+- Poké Balls & inventory, shop
+- Trainer XP, leveling; Pokémon XP, leveling & evolution
+- Trades between users
+- PvP 1v1 turn-based battles in group chats (request -> accept -> fight)
+- Leaderboard, profiles, cooldowns
+- Designed as a starter: extend POKEDEX, items, shop prices, battle logic.__<blockquote>
+"""
+@app.on_callback_query(filters.regex("^poki$"))
+async def pokic_callback(client, query):
+    
+    await query.message.edit_text(
+        text=pok_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+pok_tx="""
+**OwO-Style Telegram Bot**
+
+**Features implemented:**
+- **Economy:** /cowoncy, /daily_owo, /give_owo
+- Animals: /hunt_owo, /zoo_owo, /autohunt, /owodex, /pets_owo
+- Gambling: /slots_owo, /coinflip_owo, /lottery_owo, /blackjack_owo
+- Fun: /8b
+- Rankings: /top_owo, /my_owo
+- Social: /cookie
+- Actions: /hug, /kiss, /pat, /slap
+- Shop & selling: /shop_owo, /buy_owo, /sell_owo, /equip_owo
+- Battle: reply-to-user /battle_owo to challenge (simple)
+"""
+@app.on_callback_query(filters.regex("^owo$"))
+async def pwowic_callback(client, query):
+    
+    await query.message.edit_text(
+        text=owo_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
 
 xo_tx="""
 **🎮 Play Tic Tac Toe game Menu!❌⭕**
@@ -358,25 +416,25 @@ qz_tx="""
 🎮 **Welcome to QuizMaster Bot! 🧠✨!**
 Get ready to test your knowledge across tons of fun and serious topics!  
 
-<blockquote>📚**Quiz for Private chat:**
+<blockquote expandable>📚**Quiz for Private chat:**
 1️⃣ Use `/start_qz` to begin a quiz.
 2️⃣ Choose your category.
 3️⃣ Answer the questions and earn points! 🏆
 • `/qzprofile` - To find your profile on Quiz.
 • `/qzleaderboard` - To get Top player on quiz.</blockquote>
 
-<blockquote>📊 **Quiz For Group chats:**
+<blockquote expandable>📊 **Quiz For Group chats:**
 • `/startquiz` - To begin a quiz in group.
 • `/stopquiz` - To stop quiz in group 
 • `/qzg_leaderboard` - view Group top players.
 • `/qz_global_leaderboard` - View global Top players.
-• `/qz_profile` - To see your Profile on Quiz</blockquote>
+• `/qz_profile` - To see your Profile on Quiz
     
 **This commands for Admin**
 
 • [P]`/p_seed` - seed the QnA, • `/p_addq` to add more questions.
 • [G]`/gqzaddq` - to add more questions on group DB, `/gqzseed` seed Qz, `/gimport` import Qz
-💡 Tip: The faster you answer correctly, the more points you score!
+💡 Tip: The faster you answer correctly, the more points you score!<blockquote>
 """
 @app.on_callback_query(filters.regex("^qz$"))
 async def qzx_callback(client, query):
@@ -411,13 +469,13 @@ rpga_tx="""
 **🛡️Welcome to Advanced RPG Battle!!** ⚔️
 Collect stuff, craft gear, run dungeons, duel, gamble & more...
     
-<blockquote>💰**Basics Usage:**
+<blockquote expandable>💰**Basics Usage:**
 • `/rpgprofile` `/me` — your stats.
 • `/rpgshop` — buyable items.
 • `/rpginventory` — your bag.
-• `/recipes_rpg` — crafting list.</blockquote>
+• `/recipes_rpg` — crafting list.
 
-<blockquote>🧰**Work**: `/chop_rpg` `/fish_rpg` `/pickup_rpg` `/mine_rpg`
+🧰**Work**: `/chop_rpg` `/fish_rpg` `/pickup_rpg` `/mine_rpg`
 🏦**Economy**: `/buy_rpg` `/sell_rpg` `/trade_rpg`
 ⛏️**Crafting**: `/craft_rpg` [item].
 👥**PvP**: `/duel_rpg @user [bet]`.

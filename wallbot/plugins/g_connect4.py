@@ -246,25 +246,25 @@ async def cmd_c4start(client: Client, message: Message):
     await message.reply(
         "🎮 Connect 4 🎮\n\n"
         "Commands:\n"
-        "`/connect4_challenge` (reply to a user) — challenge in group\n"
+        "`/c4_challenge` (reply to a user) — challenge in group\n"
         "`/c4_pve easy|medium|hard` — play vs bot in private\n"
         "`/c4_profile` — show your stats & ELO\n"
         "`/c4_leaderboard` — top players by ELO\n"
         "`/c4_spectate <game_id>` — view a game's board\n\n"
         "Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟢) is O."
     )
-@app.on_message(filters.command("connect4_challenge") & filters.private)
+@app.on_message(filters.command("c4_challenge") & filters.private)
 async def cmd_cg4challenge(_, message):
     g = await message.reply("Use this Command on Group chats not here❌")
     await asyncio.sleep(60)
     await message.delete()
     await g.delete() 
     
-@app.on_message(filters.command("connect4_challenge") & filters.group)
+@app.on_message(filters.command("c4_challenge") & filters.group)
 async def cmd_c4challenge(_, message: Message):
     # must be a reply or provide username/id
     if not message.reply_to_message and len(message.command) < 2:
-        return await message.reply("Reply to someone or use `/challenge @user`")
+        return await message.reply("Reply to someone or use `/c4_challenge @user`")
     try:
         if message.reply_to_message:
             opponent_user = message.reply_to_message.from_user
@@ -308,7 +308,7 @@ async def cmd_c4challenge(_, message: Message):
 @app.on_message(filters.command("c4_pve") & filters.private)
 async def cmd_c4pve(_, message: Message):
     if len(message.command) < 2:
-        return await message.reply("Usage: /pve easy|medium|hard")
+        return await message.reply("Usage: /c4_pve easy|medium|hard")
     level = message.command[1].lower()
     if level not in ("easy", "medium", "hard"):
         return await message.reply("Choose: easy / medium / hard")
@@ -369,7 +369,7 @@ async def cmd_c4leaderboard(_, message: Message):
 @app.on_message(filters.command("c4_spectate"))
 async def cmd_spectate(_, message: Message):
     if len(message.command) < 2:
-        return await message.reply("Usage: /spectate <game_id>")
+        return await message.reply("Usage: /c4_spectate [game_id]")
     gid = message.command[1].strip()
     g = await games_col.find_one({"_id": gid})
     if not g:
@@ -490,7 +490,7 @@ async def cb_move(_, query: CallbackQuery):
 
 @app.on_callback_query(filters.regex(r"^noop\|"))
 async def cb_noop(_, query: CallbackQuery):
-    await query.answer("This is a spectator board. Use /spectate <game_id> to open.", show_alert=True)
+    await query.answer("This is a spectator board. Use /c4_spectate [game_id] to open.", show_alert=True)
 
 @app.on_callback_query(filters.regex(r"^rematch\|"))
 async def cb_rematch(_, query: CallbackQuery):

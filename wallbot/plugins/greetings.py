@@ -333,7 +333,7 @@ async def pokic_callback(client, query):
 pok_tx="""
 **OwO-Style Telegram Bot**
 
-**Features implemented:**
+<blockquote expandable>**Features implemented:**
 - **Economy:** /cowoncy, /daily_owo, /give_owo
 - Animals: /hunt_owo, /zoo_owo, /autohunt, /owodex, /pets_owo
 - Gambling: /slots_owo, /coinflip_owo, /lottery_owo, /blackjack_owo
@@ -342,7 +342,7 @@ pok_tx="""
 - Social: /cookie
 - Actions: /hug, /kiss, /pat, /slap
 - Shop & selling: /shop_owo, /buy_owo, /sell_owo, /equip_owo
-- Battle: reply-to-user /battle_owo to challenge (simple)
+- Battle: reply-to-user /battle_owo to challenge (simple)<blockquote>
 """
 @app.on_callback_query(filters.regex("^owo$"))
 async def pwowic_callback(client, query):

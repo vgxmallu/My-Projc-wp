@@ -335,15 +335,15 @@ owo_tx="""
 **OwO-Style Telegram Bot**
 
 <blockquote>**Features implemented:**
-- **Economy:** /cowoncy, /daily_owo, /give_owo
-- Animals: /hunt_owo, /zoo_owo, /autohunt, /owodex, /pets_owo
-- Gambling: /slots_owo, /coinflip_owo, /lottery_owo, /blackjack_owo
-- Fun: /8b
-- Rankings: /top_owo, /my_owo
-- Social: /cookie
-- Actions: /hug, /kiss, /pat, /slap
-- Shop & selling: /shop_owo, /buy_owo, /sell_owo, /equip_owo
-- Battle: reply-to-user /battle_owo to challenge (simple)</blockquote>
+- **Economy:** `/cowoncy`, `/daily_owo`, `/give_owo`
+- Animals: `/hunt_owo`, `/zoo_owo`, `/autohunt`, `/owodex`, `/pets_owo`
+- Gambling: `/slots_owo`, `/coinflip_owo`, `/lottery_owo`, `/blackjack_owo`
+- Fun: `/8b`
+- Rankings: `/top_owo`, `/my_owo`
+- Social: `/cookie`
+- Actions: `/hug`, `/kiss`, `/pat`, `/slap`
+- Shop & selling: `/shop_owo`, `/buy_owo`, `/sell_owo`, `/equip_owo`
+- Battle: reply-to-user `/battle_owo` to challenge (simple)</blockquote>
 """
 @app.on_callback_query(filters.regex("^owo_gg$"))
 async def owo_callback(client, query):
@@ -359,8 +359,8 @@ xo_tx="""
 First to align three marks wins
     
 <blockquote>**Commands Usage:**
-• `/pvp_xoxo @username` or reply to group members to Challenge someone.
-• `/pve_xoxo easy|medium|hard` → Play with Bot.
+• `/pvp_xoxo` @username or reply to group members to Challenge someone.
+• `/pve_xoxo` easy|medium|hard → Play with Bot.
 • `/xo_leaderboard` → Show top players on Tic Tac Toe.
 Also use @TicTacToe_Xbot bot play inline mode to play.</blockquote>
 """
@@ -429,7 +429,7 @@ Get ready to test your knowledge across tons of fun and serious topics!
 • `/stopquiz` - To stop quiz in group 
 • `/qzg_leaderboard` - view Group top players.
 • `/qz_global_leaderboard` - View global Top players.
-• `/qz_profile` - To see your Profile on Quiz
+• `/qz_profile` - To see your Profile on Quiz.</blockquote>
     
 **This commands for Admin**
 
@@ -495,7 +495,7 @@ async def arpg_xcallback(client, query):
 @app.on_callback_query(filters.regex("^close$"))
 async def col_callback(client, query):
     await query.answer("Closed ❌")
-    await asyncio.sleep(3)
+    await asyncio.sleep(2)
     await query.message.delete()
 @app.on_callback_query(filters.regex("^gg$"))
 async def gg_callback(client, query):

@@ -142,3 +142,18 @@ async def forward_handler(client: Client, message: Message):
     except Exception as e:
         print(f"[Error] forward_handler: {e}")
 
+@app.on_message(filters.command(["admins", "adminlist"]) & filters.group)
+async def get_admins(client: Client, message: Message):
+    chat_id = message.chat.id
+    admin_list = []
+
+    async for member in client.get_chat_members(chat_id, filter=enums.ChatMembersFilter.ADMINISTRATORS):
+        status = "👑 Owner" if member.status == "owner" else "🛡️ Admin"
+        name = member.user.mention if member.user else "Unknown"
+        admin_list.append(f"{status} → {name}")
+
+    if not admin_list:
+        return await message.reply("❌ No admins found in this group.")
+
+    text = "📋 **Admins in this chat:**\n\n" + "\n".join(admin_list)
+    await message.reply(text)

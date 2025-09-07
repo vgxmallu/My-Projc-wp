@@ -319,7 +319,7 @@ Catch, train, trade and battle with friends.
 • `/trade_poki` @user [your_poke_id] for [their_poke_id] - propose trade
 • `/pvp_poki` @user [your_poke_id] - challenge in group.
 • Opponent accepts with `/acceptpvp` [battle_id] [their_poke_id]
-• `/leaderboard_poki` - top trainers by level"\
+• `/leaderboard_poki` - top trainers by level</blockquote>
 
 __- Catch wild Pokémon (manual / auto spawn)
 - Poké Balls & inventory, shop
@@ -327,7 +327,7 @@ __- Catch wild Pokémon (manual / auto spawn)
 - Trades between users
 - PvP 1v1 turn-based battles in group chats (request -> accept -> fight)
 - Leaderboard, profiles, cooldowns
-- Designed as a starter: extend POKEDEX, items, shop prices, battle logic.__</blockquote>
+- Designed as a starter: extend POKEDEX, items, shop prices, battle logic.__
 """
 @app.on_callback_query(filters.regex("^poki_gg$"))
 async def pokic_callback(client, query):    
@@ -341,15 +341,15 @@ owo_tx="""
 **OwO-Style Telegram Bot**
 
 <blockquote>**Features implemented:**
-- **Economy:** `/cowoncy`, `/daily_owo`, `/give_owo`
-- Animals: `/hunt_owo`, `/zoo_owo`, `/autohunt`, `/owodex`, `/pets_owo`
-- Gambling: `/slots_owo`, `/coinflip_owo`, `/lottery_owo`, `/blackjack_owo`
-- Fun: `/8b`
-- Rankings: `/top_owo`, `/my_owo`
-- Social: `/cookie`
-- Actions: `/hug`, `/kiss`, `/pat`, `/slap`
-- Shop & selling: `/shop_owo`, `/buy_owo`, `/sell_owo`, `/equip_owo`
-- Battle: reply-to-user `/battle_owo` to challenge (simple)</blockquote>
+• **Economy:** `/cowoncy`, `/daily_owo`, `/give_owo`
+• **Animals:** `/hunt_owo`, `/zoo_owo`, `/autohunt`, `/owodex`, `/pets_owo`
+• **Gambling:** `/slots_owo`, `/coinflip_owo`, `/lottery_owo`, `/blackjack_owo`
+• **Fun:** `/8b`
+• **Rankings:** `/top_owo`, `/my_owo`
+• **Social:** `/cookie`
+• **Actions:** `/hug`, `/kiss`, `/pat`, `/slap`
+• **Shop & selling:** `/shop_owo`, `/buy_owo`, `/sell_owo`, `/equip_owo`
+• **Battle:** reply-to-user `/battle_owo` to challenge (simple)</blockquote>
 """
 @app.on_callback_query(filters.regex("^owo_gg$"))
 async def owo_callback(client, query):

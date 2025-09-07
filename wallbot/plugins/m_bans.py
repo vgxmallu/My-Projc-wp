@@ -57,7 +57,7 @@ mute_perms = ChatPermissions(can_send_messages=False)
 # ──────────────────────────────
 # COMMANDS
 # ──────────────────────────────
-@app.on_message(filters.private & filters.command("kickme"))
+@app.on_message(filters.group & filters.command("kickme"))
 async def kickme(_, msg: Message):
     try:
         await msg.chat.kick_member(msg.from_user.id)
@@ -66,7 +66,7 @@ async def kickme(_, msg: Message):
     except Exception as e:
         await msg.reply(f"❌ Error: {e}")
 
-@app.on_message(filters.private & filters.command(["ban", "sban", "tban", "unban", "kick", "skick", "mute", "tmute", "unmute"]))
+@app.on_message(filters.group & filters.command(["ban", "sban", "tban", "unban", "kick", "skick", "mute", "tmute", "unmute"]))
 async def btmoderation(_, msg: Message):
     chat_id = msg.chat.id
     user_id = msg.from_user.id
@@ -140,7 +140,7 @@ async def btmoderation(_, msg: Message):
 # ──────────────────────────────
 # MODERATION STATS COMMAND
 # ──────────────────────────────
-@app.on_message(filters.private & filters.command("modstats"))
+@app.on_message(filters.group & filters.command("modstats"))
 async def modstats(_, msg: Message):
     chat_id = msg.chat.id
 

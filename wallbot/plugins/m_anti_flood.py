@@ -12,7 +12,7 @@ from pyrogram.types import Message, ChatPermissions
 from config import DB_URL
 from wallbot import wbot as app
 # ---------------- CONFIG ----------------
-
+DB_NAME = "floodwait_db"
 mongo = MongoClient(DB_URL)
 db = mongo[DB_NAME]
 settings_col = db["settings"]

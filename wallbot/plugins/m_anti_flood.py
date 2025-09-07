@@ -107,7 +107,7 @@ async def setflood_cmd(client: Client, message: Message):
         return await message.reply("⚠️ Only admins with restrict rights can do this!")
 
     if len(message.command) < 2:
-        return await message.reply("Usage: `/setflood <int|off>`")
+        return await message.reply("Usage: `/setflood [int|off]`")
 
     arg = message.command[1].lower()
     if arg == "off" or arg == "no":
@@ -128,7 +128,7 @@ async def floodmode_cmd(client: Client, message: Message):
         return await message.reply("⚠️ Only admins with restrict rights can do this!")
 
     if len(message.command) < 2:
-        return await message.reply("Usage: `/floodmode <mode> [time]`\nModes: ban, kick, mute, tban, tmute")
+        return await message.reply("Usage: `/floodmode [mode] [time]`\nModes: ban, kick, mute, tban, tmute")
 
     mode = message.command[1].lower()
     time_arg = message.command[2] if len(message.command) > 2 else None

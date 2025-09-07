@@ -66,13 +66,13 @@ async def send_reminder(doc):
 async def reminffder_handler(_, m: Message):
     args = m.text.split()
     if len(args) < 2:
-        return await m.reply("Usage: `/reminder [add/remove/list/edit]`")
+        return await m.reply("Usage: `/reminderx [add/remove/list/edit]`")
 
     cmd = args[1].lower()
 
     if cmd == "add":
         if len(args) < 4:
-            return await m.reply("Usage: `/reminder add [minutes_from_now] [text]`")
+            return await m.reply("Usage: `/reminderx add [minutes_from_now] [text]`")
         minutes = int(args[2])
         text = " ".join(args[3:])
         remind_time = datetime.utcnow() + timedelta(minutes=minutes)
@@ -94,7 +94,7 @@ async def reminffder_handler(_, m: Message):
 
     elif cmd == "remove":
         if len(args) < 3:
-            return await m.reply("Usage: `/reminder remove [reminder_id]`")
+            return await m.reply("Usage: `/reminderx remove [reminder_id]`")
         rid = args[2]
         res = await reminders_col.delete_one({"reminder_id": rid})
         scheduler.remove_job(rid) if rid in scheduler.get_jobs() else None
@@ -110,17 +110,17 @@ async def reminffder_handler(_, m: Message):
 async def settffings_handler(_, m: Message):
     args = m.text.split()
     if len(args) < 2:
-        return await m.reply("Usage: `/settings timezone [set/view]`")
+        return await m.reply("Usage: `/resettings timezone [set/view]`")
 
     sub = args[1].lower()
     if sub == "timezone":
         if len(args) < 3:
-            return await m.reply("Usage: `/settings timezone [set/view]`")
+            return await m.reply("Usage: `/resettings timezone [set/view]`")
 
         action = args[2].lower()
         if action == "set":
             if len(args) < 4:
-                return await m.reply("Usage: `/settings timezone set [Timezone]`\nExample: `/settings timezone set Asia/Kolkata`")
+                return await m.reply("Usage: `/resettings timezone set [Timezone]`\nExample: `/resettings timezone set Asia/Kolkata`")
             tz = args[3]
             if tz not in pytz.all_timezones:
                 return await m.reply("❌ Invalid timezone. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones")

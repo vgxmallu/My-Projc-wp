@@ -103,7 +103,7 @@ feedback me here /feedback [text] or [reply_to_messag]<blockquote>
 @app.on_message(filters.command("help"))
 async def helpg_cmd(client, message):
     await message.reply_photo(
-        photo="https://files.catbox.moe/80bcxh.jpg",
+        photo="https://files.catbox.moe/2ehsz7.jpg",
         caption=help_txt,
         reply_markup=h_button,
     )

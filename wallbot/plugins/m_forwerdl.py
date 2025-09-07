@@ -51,9 +51,10 @@ def set_forward_lock(chat_id: int, status: bool, duration: int = 600):
 async def is_admin(client: Client, chat_id: int, user_id: int) -> bool:
     try:
         member = await client.get_chat_member(chat_id, user_id)
-        return member.status in ["administrator", "creator"]
+        return bool(member.privileges) or member.status == "owner"
     except Exception:
         return False
+
 
 # ─────────────────────────────
 # COMMANDS

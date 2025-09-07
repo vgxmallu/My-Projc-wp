@@ -40,11 +40,14 @@ async def pin_message(client: Client, message: Message):
 @admin_only
 async def unpin_message(client: Client, message: Message):
     try:
-        await client.unpin_chat_message(message.chat.id)
+        chat = await client.get_chat(message.chat.id)
+        if not chat.pinned_message:
+            return await message.reply("⚠️ No pinned message found in this chat.")
+        
+        await client.unpin_chat_message(message.chat.id, chat.pinned_message.id)
         await message.reply("📍 Unpinned the last pinned message.")
     except Exception as e:
         await message.reply(f"❌ Error: {e}")
-
 
 @app.on_message(filters.command("unpinall") & filters.group)
 @admin_only

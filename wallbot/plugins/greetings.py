@@ -32,6 +32,11 @@ g_button = InlineKeyboardMarkup(
         ],
     ]
 ) 
+add_button = InlineKeyboardMarkup(
+    [[
+        InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
+    ]]
+)
 
 h_button = InlineKeyboardMarkup(
     [[
@@ -92,7 +97,7 @@ async def notify_when_added(client, message):
 async def wallhannnl(client, message):
     await message.reply_text(
         text="❤️",
-        reply_markup=InlineKeyboardMarkup([["➕Add Me To Your Chat➕", url=f"http://t.me/GomezGamesbot?startgroup=new"]])
+        reply_markup=add_button,
     )
     await asyncio.sleep(20)
     await message.delete()

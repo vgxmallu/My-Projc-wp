@@ -45,6 +45,33 @@ h_button = InlineKeyboardMarkup(
     ]]
 )
 
+#==================BOTTON-REMOVING==============
+@app.on_message(filters.command("remove_bt")) 
+async def reply_rmv(client, message):
+    ab = await message.reply_text(
+        text="Click Down Botton to Remove keyboard button\n`Message will be delete 4s`", 
+        reply_markup=ReplyKeyboardMarkup(
+            [[
+                "✖️Close✖️"
+            ]], 
+            resize_keyboard=True
+        ) 
+    ) 
+    await asyncio.sleep(4)
+    await ab.delete()
+    await message.delete()
+    
+        
+@app.on_message(filters.regex("✖️Close✖️"))
+async def close_myr2(client, message):
+    ae = await message.reply_text(
+        text="Bottons removed ✅", 
+        reply_markup=ReplyKeyboardRemove() 
+    ) 
+    await asyncio.sleep(4)
+    await ae.delete()
+    await message.delete()
+
 
 @app.on_message(filters.new_chat_members)
 async def notify_when_added(client, message):

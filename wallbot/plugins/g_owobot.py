@@ -27,7 +27,7 @@ import motor.motor_asyncio
 from config import DB_URL
 from wallbot import wbot as app
 
-DB_NAME = "owobot_db"
+DB_NAME = "owo_db"
 
 
 mongo = motor.motor_asyncio.AsyncIOMotorClient(DB_URL)

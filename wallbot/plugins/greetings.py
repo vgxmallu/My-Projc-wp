@@ -6,6 +6,7 @@ from pyrogram.errors import UserIsBlocked, PeerIdInvalid, ChatWriteForbidden
 from config import DB_URL
 from wallbot import wbot as app
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from pyrogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 OWNER_ID = 784589736   # your Telegram ID
 LOG_CHANNEL = -1001997285269  # your log channel ID (bot must be admin here)
@@ -60,8 +61,16 @@ async def notify_when_added(client, message):
             await client.send_message(LOG_CHANNEL, text)
 
 
+@app.on_message(filters.private & filters.regex("➕Add Me To Your Group➕")) 
+async def wallhannnl(client, message):
+    await message.reply_text(
+        text="❤️",
+        reply_markup=InlineKeyboardMarkup([["➕Add Me To Your Chat➕", url=f"http://t.me/GomezGamesbot?startgroup=new"]])
+    )
+    await asyncio.sleep(20)
+    await message.delete()
 # --- Save user on /start ---
-@app.on_message(filters.command("start"))
+@app.on_message(filters.command("start") & filters.private)
 async def start_game(client, message):
     user = message.from_user
     user_id = user.id
@@ -72,14 +81,21 @@ async def start_game(client, message):
         {"$set": {"_id": user_id, "name": user.first_name}},
         upsert=True
     )
-    await message.reply_sticker("CAACAgUAAxkBAANmaLk5MLScQyq443axCvBpaNASiJMAAusTAALPLMhV8eSTf4mvJD8eBA")    
+    await message.reply_sticker(
+        sticker="CAACAgUAAxkBAANmaLk5MLScQyq443axCvBpaNASiJMAAusTAALPLMhV8eSTf4mvJD8eBA",
+        reply_markup=ReplyKeyboardMarkup(
+            [[
+                "➕Add Me To Your Group➕"
+            ]], 
+            resize_keyboard=True
+        ) 
+    )
     await message.reply_photo(
         photo="https://files.catbox.moe/80bcxh.jpg",
         caption="👋<b>Hey! Welcome to Gomez Games🎮.</b>\n\n<blockquote><b>Here you can:</b>\n⭐ `Play exciting games with friends`\n🏆 `Compete for the top spot on leaderboards`\n📊 `Track your profile & stats`\n🔥 `Join quizzes, puzzles, and more`</blockquote>\n\n💡 Use the menu or type /help to explore commands.\n⚡ Stay active new games and events are added regularly!",
         reply_markup=g_button,
     )
     #await message.reply_audio("AwACAgUAAxkBAANYaLk0cu3EU-vGP2_ZTn2T9-E9ajQAAtcXAAK8T8hVy8L_8RGZVXoeBA")
-    
     #message_effect_id=5104841245755180586,
     # If it's a new user, log them
     if result.upserted_id is not None:
@@ -89,18 +105,18 @@ async def start_game(client, message):
             f"🆕 New member started the bot!\n\n👤: {mention}\n⛓️‍💥: @{user_n}\n🆔: `{user_id}`"
         )
 
+#•/profile → View your profile, stats, and achievements.
 help_txt="""
 <blockquote>📌 **General Commands:**
 •/start → Start the bot & register yourself.
 •/help → Show this help menu.
-•/profile → View your profile, stats, and achievements.
-•/leaderboard → Check who’s leading the game.
+•/leaderboard → Check who’s leading the game.</blockquote>
 
 **Feedback:** give me the Idea about new games, and i will do my best.
 gives about full discription about your thinked game.
-feedback me here /feedback [text] or [reply_to_messag]<blockquote>
+feedback me here /feedback [text] or [reply_to_messag]
 """
-@app.on_message(filters.command("help"))
+@app.on_message(filters.command("help") & filters.private)
 async def helpg_cmd(client, message):
     await message.reply_photo(
         photo="https://files.catbox.moe/2ehsz7.jpg",

@@ -17,7 +17,7 @@ settings = db["settings"]
 # ─────────────────────────────
 def parse_duration(duration: str) -> int:
     """
-    Convert 10m / 2h / 1d into seconds
+    Convert 10m / 1h / 1d into seconds
     """
     match = re.match(r"(\d+)([mhd])", duration.lower())
     if not match:
@@ -75,6 +75,7 @@ async def forward_lock_toggle(client: Client, message: Message):
             f"🔒 **Forward Lock Settings**\n\n"
             f"Status: {status}\n"
             f"Duration: {duration} minutes\n\n"
+            "Available times: 10m, 1h, 1d"
             f"Usage:\n`/forwardlock on 10m`\n`/forwardlock off`"
         )
 

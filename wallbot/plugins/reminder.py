@@ -72,7 +72,7 @@ async def reminffder_handler(_, m: Message):
 
     if cmd == "add":
         if len(args) < 4:
-            return await m.reply("Usage: `/reminder add <minutes_from_now> <text>`")
+            return await m.reply("Usage: `/reminder add [minutes_from_now] [text]`")
         minutes = int(args[2])
         text = " ".join(args[3:])
         remind_time = datetime.utcnow() + timedelta(minutes=minutes)
@@ -94,7 +94,7 @@ async def reminffder_handler(_, m: Message):
 
     elif cmd == "remove":
         if len(args) < 3:
-            return await m.reply("Usage: `/reminder remove <reminder_id>`")
+            return await m.reply("Usage: `/reminder remove [reminder_id]`")
         rid = args[2]
         res = await reminders_col.delete_one({"reminder_id": rid})
         scheduler.remove_job(rid) if rid in scheduler.get_jobs() else None
@@ -120,7 +120,7 @@ async def settffings_handler(_, m: Message):
         action = args[2].lower()
         if action == "set":
             if len(args) < 4:
-                return await m.reply("Usage: `/settings timezone set <Timezone>`\nExample: `/settings timezone set Asia/Kolkata`")
+                return await m.reply("Usage: `/settings timezone set [Timezone]`\nExample: `/settings timezone set Asia/Kolkata`")
             tz = args[3]
             if tz not in pytz.all_timezones:
                 return await m.reply("❌ Invalid timezone. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones")

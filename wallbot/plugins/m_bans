@@ -18,23 +18,26 @@ punishments_coll = db["punishments"]  # moderation logs
 TIME_RE = re.compile(r"^(\d+)([smhd])$")  # seconds/minutes/hours/days
 
 
-def parse_time_expr(expr: str) -> timedelta | None:
-    """Parse '30s', '10m', '1h', '2d' -> timedelta or None."""
-    if not expr:
+from typing import Optional
+from datetime import timedelta
+
+def parse_time_token(token: str) -> Optional[timedelta]:
+    """Parse 30s, 10m, 1h, 2d => timedelta or None"""
+    if not token:
         return None
-    m = TIME_RE.fullmatch(expr.lower())
+    m = TIME_RE.fullmatch(token)
     if not m:
         return None
-    v = int(m.group(1))
-    unit = m.group(2)
+    val = int(m.group(1))
+    unit = m.group(2).lower()
     if unit == "s":
-        return timedelta(seconds=v)
+        return timedelta(seconds=val)
     if unit == "m":
-        return timedelta(minutes=v)
+        return timedelta(minutes=val)
     if unit == "h":
-        return timedelta(hours=v)
+        return timedelta(hours=val)
     if unit == "d":
-        return timedelta(days=v)
+        return timedelta(days=val)
     return None
 
 

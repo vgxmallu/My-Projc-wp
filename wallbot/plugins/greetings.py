@@ -451,11 +451,11 @@ cn4_tx="""
 First to connect four dots wins
     
 <blockquote>**Commands Usage:**
-• /connect4_challenge` (reply to a user) — challenge in group.
+• `/connect4_challenge` (reply to a user) — challenge in group.
 • `/c4_pve easy|medium|hard` — play vs bot in private.
 • `/c4_profile` — show your stats & ELO.
 • `/c4_leaderboard` — top players by ELO.
-• `/c4_spectate <game_id>` — view a game's board.</blockquote>
+• `/c4_spectate <game_id>` — view a games board.</blockquote>
 
 Gameplay: Use column buttons to drop your piece. Red (🔴) starts and is X; Yellow (🟢) is O.
 """

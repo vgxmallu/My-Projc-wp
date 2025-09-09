@@ -209,7 +209,7 @@ def blackjack_action_buttons(user_id: int):
 
 
 # ----------------- COMMANDS -----------------
-@app.on_message(filters.command("strj"))
+@app.on_message(filters.command("st_card"))
 async def cmd_sfmjart(_, msg: Message):
     ensure_user(msg.from_user.id, msg.from_user.first_name)
     await msg.reply_text(

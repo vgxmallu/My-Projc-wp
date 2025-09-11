@@ -4,6 +4,7 @@ git+https://github.com/yasirarism/pyrofork
 #Pyrogram==2.0.106
 tgcrypto
 python-dateutil
+python-chess
 python-dotenv
 requests
 asgiref 
@@ -33,3 +34,6 @@ hachoir
 asgiref
 pillow
 pytz~=2021.1
+
+
+

@@ -225,7 +225,7 @@ async def finalize_game_on_timeout(game_oid: ObjectId, result: str):
     w_new = elo_update(w_old, l_old, 1.0); l_new = elo_update(l_old, w_old, 0.0)
     await users_col.update_one({"user_id": winner}, {"$set": {"elo": w_new}, "$inc": {"wins": 1, "games": 1}}, upsert=True)
     await users_col.update_one({"user_id": loser}, {"$set": {"elo": l_new}, "$inc": {"losses": 1, "games": 1}}, upsert=True)
-    await app.send_message(chat_id, f"⏳ Time out! Winner by clock: [user](tg://user?id={winner})", parse_mode="markdown")
+    await app.send_message(chat_id, f"⏳ Time out! Winner by clock: [user](tg://user?id={winner})")
 
 # ----------------- message commands (minimal) -----------------
 @app.on_message(filters.command("sch"))
@@ -290,12 +290,12 @@ async def cb_hachndler(_, cq: CallbackQuery):
         if arg == "open":
             join_kb = InlineKeyboardMarkup([[InlineKeyboardButton("Join as Black", callback_data=f"_join|{gid}")]])
             sent = await cq.message.reply_text(f"♟ Open lobby by {author.first_name}\nGame ID: {gid}\nAnyone can join as Black.", reply_markup=join_kb)
-            await games_col.update_one({"_id": res.inserted_id}, {"$set": {"message_id": sent.message_id}})
+            await games_col.update_one({"_id": res.inserted_id}, {"$set": {"message_id": sent.id}})
             return await cq.answer("Lobby created.")
         else:
             # started game with specified opponent id (if present)
             sent = await cq.message.reply_text(f"♟ Game started!\n{render_board_text(board, doc['white_time'], doc['black_time'], cfg['name'])}", reply_markup=kb)
-            await games_col.update_one({"_id": res.inserted_id}, {"$set": {"message_id": sent.message_id, "started": True}})
+            await games_col.update_one({"_id": res.inserted_id}, {"$set": {"message_id": sent.id, "started": True}})
             await ensure_user_doc(author.id, author.first_name)
             await ensure_user_doc(doc["black_id"], None)
             await start_clock_task(gid)
@@ -321,7 +321,7 @@ async def cb_hachndler(_, cq: CallbackQuery):
             await app.edit_message_text(game["chat_id"], game["message_id"], text=f"♟️ Game started!\n{render_board_text(board, game['white_time'], game['black_time'], TIME_CONTROLS[game['time_control']]['name'])}", reply_markup=kb)
         except Exception:
             sent = await app.send_message(game["chat_id"], f"♟️ Game started!\n{render_board_text(board, game['white_time'], game['black_time'], TIME_CONTROLS[game['time_control']]['name'])}", reply_markup=kb)
-            await games_col.update_one({"_id": ObjectId(gid)}, {"$set": {"message_id": sent.message_id}})
+            await games_col.update_one({"_id": ObjectId(gid)}, {"$set": {"message_id": sent.id}})
         await ensure_user_doc(cq.from_user.id, cq.from_user.first_name)
         await ensure_user_doc(game["white_id"], game.get("white_name"))
         await start_clock_task(gid)
@@ -502,7 +502,7 @@ async def cb_hachndler(_, cq: CallbackQuery):
         except:
             pass
         if outcome_msg:
-            await app.send_message(game["chat_id"], outcome_msg, parse_mode="markdown")
+            await app.send_message(game["chat_id"], outcome_msg)
             await games_col.delete_one({"_id": ObjectId(gid)})
             await stop_clock_task(gid)
         else:
@@ -556,7 +556,7 @@ async def cb_hachndler(_, cq: CallbackQuery):
             l_new = elo_update(ldoc.get("elo",1200), wdoc.get("elo",1200), 0.0)
             await users_col.update_one({"user_id": winner_id}, {"$set": {"elo": w_new}, "$inc": {"wins":1,"games":1}}, upsert=True)
             await users_col.update_one({"user_id": loser_id}, {"$set": {"elo": l_new}, "$inc": {"losses":1,"games":1}}, upsert=True)
-            await app.send_message(game["chat_id"], f"🏁 Checkmate! Winner: [user](tg://user?id={winner_id})", parse_mode="markdown")
+            await app.send_message(game["chat_id"], f"🏁 Checkmate! Winner: [user](tg://user?id={winner_id})")
             await games_col.delete_one({"_id": ObjectId(gid)}); await stop_clock_task(gid)
         else:
             await start_clock_task(gid)
@@ -581,7 +581,7 @@ async def cb_hachndler(_, cq: CallbackQuery):
         l_new = elo_update(ldoc.get("elo",1200), wdoc.get("elo",1200), 0.0)
         await users_col.update_one({"user_id": winner}, {"$set": {"elo": w_new}, "$inc": {"wins":1,"games":1}}, upsert=True)
         await users_col.update_one({"user_id": uid}, {"$set": {"elo": l_new}, "$inc": {"losses":1,"games":1}}, upsert=True)
-        await app.send_message(game["chat_id"], f"🏳️ {cq.from_user.first_name} resigned. Winner: [user](tg://user?id={winner})", parse_mode="markdown")
+        await app.send_message(game["chat_id"], f"🏳️ {cq.from_user.first_name} resigned. Winner: [user](tg://user?id={winner})")
         await games_col.delete_one({"_id": ObjectId(gid)}); await stop_clock_task(gid)
         try: await cq.message.edit_text("Game ended by resignation.")
         except: pass

@@ -558,9 +558,9 @@ async def cmd_players(_, m: Message):
     for p in g.get("players", []):
         text += f"- {p['name']} ({'alive' if p.get('alive',True) else 'dead'})\n"
     await m.reply(text, quote=True)
-
+    
 @app.on_message(filters.regex(r"^!start$") & filters.group)
-async def cmd_start(_, m: Message):
+async def cmd_stplart(client, m: Message):
     chat_id = m.chat.id
     g = await get_game(chat_id)
     if not g:
@@ -571,24 +571,33 @@ async def cmd_start(_, m: Message):
         return await m.reply("Only the lobby owner can start the game.", quote=True)
     # Assign roles
     assign_roles_to_players(g["players"])
-    # Special handling: cupid choose lovers immediately if cupid exists. We'll assign and notify privately (simplified: announce in chat)
+    # Cupid handling
     lovers = []
     for p in g["players"]:
         if p["role"] == "cupid":
-            # pick two random others
             others = [x for x in g["players"] if x["user_id"] != p["user_id"]]
             if len(others) >= 2:
-                a,b = random.sample(others,2)
+                a, b = random.sample(others, 2)
                 a["lover_with"] = b["user_id"]
                 b["lover_with"] = a["user_id"]
-                lovers = [a,b]
-    await save_game(chat_id, {"players": g["players"], "phase": "night", "day_count": 0, "night_count": 0})
-    # announce roles privately (in production do via pm)
-    role_list = "Roles assigned:\n"
-    roles_text = "\n".join(role_list) if isinstance(role_list, list) else str(role_list)
-    for p in g["players"]:
-        role_list += f"- {p['name']}: {p['role']}\n"
-    await app.send_message(chat_id, "🔐 Roles assigned. Night begins. (For demo we announce roles publicly — remove in production)\n\n" + role_list)
+                lovers = [a, b]
+
+    await save_game(chat_id, {
+        "players": g["players"],
+        "phase": "night",
+        "day_count": 0,
+        "night_count": 0
+    })
+    # announce roles (demo)
+    role_list = "Roles assigned:\n" + "\n".join(
+        f"- {p['name']}: {p['role']}" for p in g["players"]
+    )
+    await client.send_message(
+        chat_id,
+        "🔐 Roles assigned. Night begins. "
+        "(For demo we announce roles publicly — remove in production)\n\n"
+        + role_list
+    )
     # start main loop
     asyncio.create_task(start_game_loop(chat_id, safe_send))
 

@@ -587,7 +587,10 @@ async def cmd_start(_, m: Message):
     role_list = "Roles assigned:\n"
     for p in g["players"]:
         role_list += f"- {p['name']}: {p['role']}\n"
-    await app.send_message(chat_id, "🔐 Roles assigned. Night begins. (For demo we announce roles publicly — remove in production)\n\n" + role_list)
+    await app.send_message(
+        chat_id, 
+        text=f"🔐 Roles assigned. Night begins. (For demo we announce roles publicly — remove in production)\n\n{role_list}",
+    )
     # start main loop
     asyncio.create_task(start_game_loop(chat_id, safe_send))
 

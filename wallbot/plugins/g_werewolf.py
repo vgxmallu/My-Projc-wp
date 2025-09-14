@@ -585,12 +585,10 @@ async def cmd_start(_, m: Message):
     await save_game(chat_id, {"players": g["players"], "phase": "night", "day_count": 0, "night_count": 0})
     # announce roles privately (in production do via pm)
     role_list = "Roles assigned:\n"
+    roles_text = "\n".join(role_list) if isinstance(role_list, list) else str(role_list)
     for p in g["players"]:
         role_list += f"- {p['name']}: {p['role']}\n"
-    await app.send_message(
-        chat_id, 
-        text=f"🔐 Roles assigned. Night begins. (For demo we announce roles publicly — remove in production)\n\n{role_list}",
-    )
+    await app.send_message(chat_id, "🔐 Roles assigned. Night begins. (For demo we announce roles publicly — remove in production)\n\n" + role_list)
     # start main loop
     asyncio.create_task(start_game_loop(chat_id, safe_send))
 

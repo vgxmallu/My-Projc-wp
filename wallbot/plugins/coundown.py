@@ -14,7 +14,7 @@ from pyrogram.raw.functions.messages import UpdatePinnedMessage
 
 from wallbot import wbot as bot
 
-footer_message = os.environ["FOOTER_MESSAGE"]
+footer_message = "just a test message;)"
 
 stoptimer = False
 

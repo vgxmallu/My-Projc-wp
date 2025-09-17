@@ -164,7 +164,7 @@ async def helpg_group(_, message: Message):
     )
     await message.reply_text(txt)
 
-@app.on_message(filters.command("groupmode") & filters.groups)
+@app.on_message(filters.group & filters.command("groupmode"))
 async def group_mode_toggle(_, message: Message):
     if not message.from_user or not message.from_user.id:
         return

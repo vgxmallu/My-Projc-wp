@@ -20,10 +20,15 @@ AUTH_CHATS = [int(_x) for _x in AUTH_CHATS]
 #LOG_CHANNEL = environ.get("LOG_CHANNEL")
 LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-1001997285269"))
 
+#Broadcast
 BROADCAST_AS_COPY = bool(os.environ.get("BROADCAST_AS_COPY", True))
 
+#MongoDB
 DB_URL = os.environ.get("DB_URL", "")
 DB_NAME = os.environ.get("DB_NAME", "")
+
+#Ai_Tools_API's
+OPENAI_KEY = environ.get("OPENAI_KEY")
 
 class Telegram:
     EMOJIS = [

@@ -164,7 +164,7 @@ async def helpg_group(_, message: Message):
     )
     await message.reply_text(txt)
 
-@app.on_message(filters.command("groupmode") & filters.chat_type.groups)
+@app.on_message(filters.command("groupmode") & filters.groups)
 async def group_mode_toggle(_, message: Message):
     if not message.from_user or not message.from_user.id:
         return
@@ -288,7 +288,7 @@ async def handle_voice(_, message: Message):
 
 # ----------------- CHAT (STREAMING) -----------------
 # Main message handler: private chat or groups where bot is mentioned/replied
-@app.on_message(filters.text & ~filters.command(["image", "mode", "addmode", "help_group_chat", "groupmode"]))
+@app.on_message(filters.command(["oai", "image", "mode", "addmode", "help_group_chat", "groupmode"]))
 async def chat_handler(_, message: Message):
     # Determine if we should respond in a group: only if bot is mentioned or reply to bot
     is_group = message.chat.type in ("group", "supergroup")
@@ -318,7 +318,8 @@ async def chat_handler(_, message: Message):
         else:
             session["messages"].insert(0, {"role": "system", "content": mode_doc["prompt"]})
 
-    user_text = message.text
+    #user_text = message.text
+    user_text = text.split(maxsplit=1)
     append_session_message(session, "user", user_text)
     save_session(session)
 

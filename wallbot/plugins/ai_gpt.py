@@ -319,7 +319,7 @@ async def chat_handler(_, message: Message):
             session["messages"].insert(0, {"role": "system", "content": mode_doc["prompt"]})
 
     #user_text = message.text
-    user_text = text.split(maxsplit=1)
+    user_text = message.text.split(' ', 1)[1]
     append_session_message(session, "user", user_text)
     save_session(session)
 

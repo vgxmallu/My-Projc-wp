@@ -236,8 +236,8 @@ def next_markup(sess: Dict[str, Any]) -> InlineKeyboardMarkup:
                                  [InlineKeyboardButton("Quit", callback_data=f"quit|{sess['session_id']}")]])
 
 
-@app.on_message(filters.command("start_qz") & filters.group)
-async def cmd_cg4challenge(_, message: Message):
+@app.on_message(filters.group & filters.command("start_qz"))
+async def cmd_cg4challenbge(_, message: Message):
     g = await message.reply("Use this Command on Private not Group❌, If u want to play use /startquiz to play here ;)")
     await asyncio.sleep(60)
     await message.delete()

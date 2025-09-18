@@ -39,7 +39,7 @@ from pymongo import MongoClient, ASCENDING, DESCENDING
 from pymongo.collection import Collection
 from config import DB_URL
 from wallbot import wbot as app
-from questions_p import sample
+from sports_q import sample
 
 
 logging.basicConfig(level=logging.INFO)

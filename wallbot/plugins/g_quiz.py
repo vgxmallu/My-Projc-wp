@@ -242,6 +242,15 @@ async def cmd_cg4challenbge(_, message: Message):
     await asyncio.sleep(60)
     await message.delete()
     await g.delete()
+
+@app.on_message(filters.command("startquiz") & filters.private)
+async def cmd_cqz4challenge(_, message: Message):
+    g = await message.reply("Use this Command on Group chars not here❌ /start_qz to start here.")
+    await asyncio.sleep(60)
+    await message.delete()
+    await g.delete()
+
+
 # ------------------- Commands -------------------
 @app.on_message(filters.private & filters.command("start_qz"))
 async def starqzt_cmd(client: Client, m: Message):

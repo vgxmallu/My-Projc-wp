@@ -117,12 +117,7 @@ def record_group_score(chat_id: int, user_id: int, username: str, points: int):
 
 
 # ---------- Commands ----------
-@app.on_message(filters.command("startquiz") & filters.group)
-async def cmd_cqz4challenge(_, message: Message):
-    g = await message.reply("Use this Command on private chats not here❌")
-    await asyncio.sleep(60)
-    await message.delete()
-    await g.delete()
+
 
 @app.on_message(filters.group & filters.command("startquiz"))
 async def cmhd_quiz(client: Client, message: Message):

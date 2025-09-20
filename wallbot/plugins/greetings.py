@@ -451,7 +451,7 @@ cn4_tx="""
 First to connect four dots wins
     
 <blockquote>**Commands Usage:**
-• `/connect4_challenge` (reply to a user) — challenge in group.
+• `/c4_challenge` (reply to a user) — challenge in group.
 • `/c4_pve easy|medium|hard` — play vs bot in private.
 • `/c4_profile` — show your stats & ELO.
 • `/c4_leaderboard` — top players by ELO.

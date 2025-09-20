@@ -124,7 +124,7 @@ async def start_game(client, message):
         {"$set": {"_id": user_id, "name": user.first_name}},
         upsert=True
     )
-    await message.send_message(LOG_CHANNEL, STR.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
+    await client.send_message(LOG_CHANNEL, STR.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     await message.reply_sticker(
         sticker="CAACAgUAAxkBAANmaLk5MLScQyq443axCvBpaNASiJMAAusTAALPLMhV8eSTf4mvJD8eBA",
         reply_markup=ReplyKeyboardMarkup(
@@ -169,6 +169,85 @@ async def helpg_cmd(client, message):
         caption=help_txt,
         reply_markup=h_button,
     )
+ 
+ab_txt="""
+<blockquote>🎮** About Gomez GameS**
+
+__Gomez GameS is a fun and interactive Telegram gaming bot designed to bring entertainment directly into your chats and groups. With a variety of mini-games and challenges, Gomez GameS lets you play, compete, and enjoy with your friends without leaving Telegram.__</blockquote>
+
+<blockquote>**✨ Features ⚡**
+🕹️ Play classic and modern games right inside Telegram
+🏆 Leaderboards to track your progress and compete with others
+👥 Group-friendly – challenge your friends in real-time
+📊 Quiz games with PvP in groups or private.</blockquote>
+
+<blockquote>Whether you’re looking to pass the time, challenge your buddies, or climb the leaderboard, Gomez GameS has something for everyone.</blockquote>
+
+<blockquote>🔮 **Bot Version**: 3.10.13
+🧔🏼 **My Father**: [Bot Father](https://t.me/BotFather)
+📝 **Language**: [Python3](https://python.org)
+📚 **Library**: [Pyrogram](https://pyrogram.org)
+📡 **Hosted On** : [Digital Ocean 🌊](https://www.digitalocean.com)
+🗄 **Database** : [MongoDB & Postgres Dbs]
+✴️ **Base Docker** : Debian 12
+📋 **License** : [MIT](https://choosealicense.com/licenses/mit/)</blockquote>
+"""
+ext3_bt = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("🔙 Back menu", callback_data="help"),
+            InlineKeyboardMarkup("📜 Privacy and Policy", callback_data="pap")
+        ],[
+            InlineKeyboardButton("❌", callback_data="close")
+        ]]
+
+)
+@app.on_callback_query(filters.regex("^ab$"))
+async def abot_callback(client, query):
+    await query.message.edit_text(
+        text=ab_txt,
+        reply_markup=ab_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+
+pap_bt = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("🔙 Back menu", callback_data="ab"),
+            InlineKeyboardButton("❌", callback_data="close")
+        ]]
+
+)
+pap="""
+<blockquote>**📜 Privacy Policy – GomezGames**
+
+**1. Information We Collect**
+__Telegram user ID, username, and display name (to identify players).
+Game activity (scores, progress, achievements).
+Messages sent to the bot (only game-related, no personal chats).__
+
+**2. How We Use Information**
+__To provide game services (chess, sudoku, checkers, etc.).
+To improve gameplay, track leaderboards, and prevent abuse.
+To detect spam, cheating, or raids.__
+
+**3. Data Storage**
+__Data is stored securely in [MongoDB/Postgres/Other DB, specify].
+No personal information (like phone numbers, emails, or contacts) is collected.__
+
+**4. Data Sharing**
+__We do not sell or share your data with third parties.
+Data may be shared only if required by law.__
+
+;)</blockquote>
+"""
+@app.on_callback_query(filters.regex("^pap$"))
+async def papa_callback(client, query):
+    await query.message.edit_text(
+        text=pap_txt,
+        reply_markup=pap_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
 
 # --- Status command ---
 @app.on_message(filters.command("status") & filters.user(OWNER_ID))

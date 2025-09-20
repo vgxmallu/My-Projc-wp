@@ -36,4 +36,4 @@ pillow
 pytz~=2021.1
 
 openai==1.0.0
-google-generativeai
+#google-generativeai

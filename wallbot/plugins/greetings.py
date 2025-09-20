@@ -181,6 +181,7 @@ async def helpg_cmd(client, message):
         photo="https://files.catbox.moe/2ehsz7.jpg",
         caption=help_txt,
         reply_markup=h_button,
+        message_effect_id=5046509860389126442,
     )
  
 ab_txt="""
@@ -205,7 +206,7 @@ __Gomez GameS is a fun and interactive Telegram gaming bot designed to bring ent
 ✴️ **Base Docker** : Debian 12
 📋 **License** : [MIT](https://choosealicense.com/licenses/mit/)</blockquote>
 """
-ext3_bt = InlineKeyboardMarkup(
+ab_bt = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("🔙 Back menu", callback_data="help"),
             InlineKeyboardButton("📜 Privacy and Policy", callback_data="pap")

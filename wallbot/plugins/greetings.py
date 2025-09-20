@@ -3,13 +3,13 @@ from pyrogram import Client, filters
 from motor.motor_asyncio import AsyncIOMotorClient
 import asyncio
 from pyrogram.errors import UserIsBlocked, PeerIdInvalid, ChatWriteForbidden
-from config import DB_URL
+from config import DB_URL, LOG_CHANNEL
 from wallbot import wbot as app
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from pyrogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 OWNER_ID = 784589736   # your Telegram ID
-LOG_CHANNEL = -1001997285269  # your log channel ID (bot must be admin here)
+  # your log channel ID (bot must be admin here)
 
 # --- Init ---
 mongo_client = AsyncIOMotorClient(DB_URL)
@@ -49,6 +49,17 @@ h_button = InlineKeyboardMarkup(
         InlineKeyboardButton("❌", callback_data="close")
     ]]
 )
+STR = """
+Again loggin for Gomezzz
+triggers /start cmd 
+
+📛**Triggered Command** : /start 
+👤**Name** : {}
+👾**Username** : @{}
+💾**DC** : {}
+♐**ID** : `{}`
+🤖**BOT** : @GomezGamesbot
+"""
 
 #==================BOTTON-REMOVING==============
 @app.on_message(filters.command("remove_bt")) 
@@ -84,9 +95,9 @@ async def notify_when_added(client, message):
         if member.id == (await client.get_me()).id:  # Check if it's the bot itself
             chat = message.chat
             text = (
-                "🤖 **Bot Added to New Group**\n\n"
+                "🤖 **@GomezGamesbot Bot Added to New Group**\n\n"
                 f"🏠 Group: {chat.title}\n"
-                f"🪬 G User name: @{chat.username}"
+                f"🪬 G User name: @{chat.username}\n"
                 f"🆔 Group ID: `{chat.id}`\n"
                 f"👥 Members Count: {chat.members_count if hasattr(chat, 'members_count') else 'Unknown'}"
             )
@@ -113,6 +124,7 @@ async def start_game(client, message):
         {"$set": {"_id": user_id, "name": user.first_name}},
         upsert=True
     )
+    await message.send_message(LOG_CHANNEL, STR.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     await message.reply_sticker(
         sticker="CAACAgUAAxkBAANmaLk5MLScQyq443axCvBpaNASiJMAAusTAALPLMhV8eSTf4mvJD8eBA",
         reply_markup=ReplyKeyboardMarkup(
@@ -126,6 +138,7 @@ async def start_game(client, message):
         photo="https://files.catbox.moe/80bcxh.jpg",
         caption="👋<b>Hey! Welcome to Gomez Games🎮.</b>\n\n<blockquote><b>Here you can:</b>\n⭐ `Play exciting games with friends`\n🏆 `Compete for the top spot on leaderboards`\n📊 `Track your profile & stats`\n🔥 `Join quizzes, puzzles, and more`</blockquote>\n\n💡 Use the menu or type /help to explore commands.\n⚡ Stay active new games and events are added regularly!",
         reply_markup=g_button,
+        message_effect_id=5104841245755180586,
     )
     #await message.reply_audio("AwACAgUAAxkBAANYaLk0cu3EU-vGP2_ZTn2T9-E9ajQAAtcXAAK8T8hVy8L_8RGZVXoeBA")
     #message_effect_id=5104841245755180586,
@@ -140,13 +153,14 @@ async def start_game(client, message):
 #•/profile → View your profile, stats, and achievements.
 help_txt="""
 <blockquote>📌 **General Commands:**
+
 •/start → Start the bot & register yourself.
 •/help → Show this help menu.
 •/leaderboard → Check who’s leading the game.</blockquote>
 
-**Feedback:** give me the Idea about new games, and i will do my best.
+<blockquote>**Feedback:** give me the Idea about new games, and i will do my best.
 gives about full discription about your thinked game.
-feedback me here /feedback [text] or [reply_to_messag]
+feedback me here /feedback [text] or [reply_to_messag]</blockquote>
 """
 @app.on_message(filters.command("help") & filters.private)
 async def helpg_cmd(client, message):

@@ -230,7 +230,7 @@ pap_bt = InlineKeyboardMarkup(
         ]]
 
 )
-pap="""
+pap_txt="""
 <blockquote>**📜 Privacy Policy – GomezGames**
 
 **1. Information We Collect**

@@ -29,6 +29,7 @@ DB_NAME = os.environ.get("DB_NAME", "")
 
 #Ai_Tools_API's
 OPENAI_KEY = environ.get("OPENAI_KEY")
+BARD_KEY = environ.get("BARD_KEY")
 
 class Telegram:
     EMOJIS = [

@@ -208,7 +208,7 @@ __Gomez GameS is a fun and interactive Telegram gaming bot designed to bring ent
 ext3_bt = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("🔙 Back menu", callback_data="help"),
-            InlineKeyboardMarkup("📜 Privacy and Policy", callback_data="pap")
+            InlineKeyboardButton("📜 Privacy and Policy", callback_data="pap")
         ],[
             InlineKeyboardButton("❌", callback_data="close")
         ]]

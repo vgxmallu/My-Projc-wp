@@ -61,6 +61,18 @@ triggers /start cmd
 🤖**BOT** : @GomezGamesbot
 """
 
+HLP = """
+Again loggin for Gomezzz
+triggers /help cmd 
+
+📛**Triggered Command** : /help
+👤**Name** : {}
+👾**Username** : @{}
+💾**DC** : {}
+♐**ID** : `{}`
+🤖**BOT** : @GomezGamesbot
+"""
+
 #==================BOTTON-REMOVING==============
 @app.on_message(filters.command("remove_bt")) 
 async def reply_rmv(client, message):
@@ -164,6 +176,7 @@ feedback me here /feedback [text] or [reply_to_messag]</blockquote>
 """
 @app.on_message(filters.command("help") & filters.private)
 async def helpg_cmd(client, message):
+    await client.send_message(LOG_CHANNEL, HLP.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     await message.reply_photo(
         photo="https://files.catbox.moe/2ehsz7.jpg",
         caption=help_txt,

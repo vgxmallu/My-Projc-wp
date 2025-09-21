@@ -167,8 +167,9 @@ async def rps_callback_handler(_, query):
     """Handles all callback queries related to the RPS game."""
     data = query.data.split("_")
     action = data[1]
-    original_player_id = int(data[2])
-
+    #original_player_id = int(data[2])
+    original_player_id = query.from_user.id
+    
     user = query.from_user
 
     # Prevent the original player from joining their own game

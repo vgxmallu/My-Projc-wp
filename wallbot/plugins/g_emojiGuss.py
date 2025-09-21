@@ -52,7 +52,7 @@ PUZZLES = [
     {"emoji": "💤+😴=❓", "answer": ["sleep", "nap", "dream"]},
 ]
 
-from datetime import datetime
+
 
 async def get_user(user_id: int, username: str, full_name: str):
     """Ensure user exists in DB and update info if changed."""

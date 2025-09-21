@@ -81,7 +81,7 @@ async def get_leaderboard(limit=10):
     return users
 
 # ================= COMMANDS =================
-@bot.on_message(filters.command("gusstart"))
+@app.on_message(filters.command("gusstart"))
 async def guddstart(_, message: Message):
     await get_user(message.from_user.id, message.from_user.username, message.from_user.first_name)
     await message.reply_text(
@@ -95,7 +95,7 @@ async def guddstart(_, message: Message):
         quote=True,
     )
 
-@bot.on_message(filters.command("gusprofile"))
+@app.on_message(filters.command("gusprofile"))
 async def profile(_, message: Message):
     user = await get_user(message.from_user.id, message.from_user.username, message.from_user.first_name)
     await message.reply_text(
@@ -104,7 +104,7 @@ async def profile(_, message: Message):
         f"🎮 Games Played: {user['games_played']}\n"
     )
 
-@bot.on_message(filters.command("gusleaderboard"))
+@app.on_message(filters.command("gusleaderboard"))
 async def leaderboard(_, message: Message):
     users = await get_leaderboard()
     text = "🏆 *Top Players:*\n\n"
@@ -114,7 +114,7 @@ async def leaderboard(_, message: Message):
     await message.reply_text(text)
 
 # ================= GAME =================
-@bot.on_message(filters.command("playgus"))
+@app.on_message(filters.command("playgus"))
 async def pjlay_game(_, message: Message):
     puzzle = random.choice(PUZZLES)
     game_id = str(message.chat.id) + "_" + str(message.id)
@@ -136,7 +136,7 @@ async def pjlay_game(_, message: Message):
         ),
     )
 
-@bot.on_message(filters.command("guss") & filters.group)
+@app.on_message(filters.command("guss") & filters.group)
 async def handle_guess(_, message: Message):
     game = await games_col.find_one({"chat_id": message.chat.id, "guessed": False})
     if not game:
@@ -154,7 +154,7 @@ async def handle_guess(_, message: Message):
             f"+10 points 🏆"
         )
 
-@bot.on_callback_query(filters.regex(r"giveup:(.+)"))
+@app.on_callback_query(filters.regex(r"giveup:(.+)"))
 async def giveup(_, cq: CallbackQuery):
     game_id = cq.data.split(":")[1]
     game = await games_col.find_one({"_id": game_id, "guessed": False})

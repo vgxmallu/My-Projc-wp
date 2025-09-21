@@ -52,12 +52,14 @@ PUZZLES = [
     {"emoji": "💤+😴=❓", "answer": ["sleep", "nap", "dream"]},
 ]
 
+from datetime import datetime
 
-# ================= HELPERS =================
 async def get_user(user_id: int, username: str, full_name: str):
-    """Ensure user exists in DB."""
+    """Ensure user exists in DB and update info if changed."""
     user = await users_col.find_one({"user_id": user_id})
+    
     if not user:
+        # Create new user
         user = {
             "user_id": user_id,
             "username": username,
@@ -67,7 +69,23 @@ async def get_user(user_id: int, username: str, full_name: str):
             "created_at": datetime.utcnow(),
         }
         await users_col.insert_one(user)
+    else:
+        # Update username/full_name if changed
+        update_data = {}
+        if user.get("username") != username:
+            update_data["username"] = username
+        if user.get("full_name") != full_name:
+            update_data["full_name"] = full_name
+        
+        if update_data:
+            await users_col.update_one(
+                {"user_id": user_id},
+                {"$set": update_data}
+            )
+            user.update(update_data)
+    
     return user
+
 
 async def update_score(user_id: int, points: int):
     await users_col.update_one(

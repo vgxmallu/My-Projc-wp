@@ -112,7 +112,7 @@ async def download_insta(client: Client, message: Message):
         return await wait.edit_text("❌ Download failed.")
     await wait.edit_text("📤 Uploading…")
     # prepare BytesIO for Pyrogram
-    filename = f"insta_{message.message_id}.mp4"
+    filename = f"insta_{message.id}.mp4"
     bio = io.BytesIO(media_bytes)
     bio.name = filename
     bio.seek(0)

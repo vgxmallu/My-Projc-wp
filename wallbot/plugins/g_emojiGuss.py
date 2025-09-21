@@ -114,7 +114,7 @@ async def leaderboard(_, message: Message):
     await message.reply_text(text)
 
 # ================= GAME =================
-@bot.on_message(filters.command("play"))
+@bot.on_message(filters.command("playgus"))
 async def pjlay_game(_, message: Message):
     puzzle = random.choice(PUZZLES)
     game_id = str(message.chat.id) + "_" + str(message.id)

@@ -36,7 +36,7 @@ DB_NAME = os.getenv("DB_NAME", "rps_db")
 
 
 # ---------- INIT ----------
-mongo = AsyncIOMotorClient(MONGO_URI)
+mongo = AsyncIOMotorClient(DB_URL)
 db = mongo[DB_NAME]
 users_col = db["users"]            # { _id: user_id, username, wins, losses, ties }
 games_col = db["games"]            # optional persistent games (not required but available)

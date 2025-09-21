@@ -24,8 +24,6 @@ players_col = db["players"]
 active_games: Dict[int, dict] = {}
 
 # ===================== FLAGS DATA =====================
-Of course! Here is an expanded list of country flags, building on your original set.
-
 
 FLAGS = [
     {"flag": "🇺🇸", "country": "United States"},

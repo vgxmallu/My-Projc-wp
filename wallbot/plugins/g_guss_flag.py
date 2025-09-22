@@ -149,7 +149,7 @@ async def qflguiz_command(client: Client, message: Message):
         "answered": False
     }
 
-    await asyncio.sleep(5)
+    await asyncio.sleep(30)
 
     if chat_id in active_games and not active_games[chat_id]["answered"]:
         correct = active_games[chat_id]["answer"]

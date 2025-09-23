@@ -1,0 +1,531 @@
+#!/usr/bin/env python3
+"""
+Math Duel - Pyrogram bot
+- /math (group) -> open rapid quiz (first correct via buttons wins)
+- /duel (reply in group) -> challenge a member; they accept -> duel (only two players press)
+- /math (private) -> play vs bot
+- MongoDB (motor) stores users: _id, username, score, wins, losses, games_played
+- /profile, /leaderboard, ranks
+- Clean concurrency and stale-game cleanup
+"""
+
+import os
+import asyncio
+import random
+import time
+import uuid
+from typing import Dict, Any, List, Optional, Tuple
+
+from dotenv import load_dotenv
+from motor.motor_asyncio import AsyncIOMotorClient
+from pyrogram import Client, filters
+from pyrogram.types import (
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    Message,
+    CallbackQuery,
+)
+from config import DB_URL
+from wallbot import wbot as app
+
+
+
+DB_NAME = os.getenv("DB_NAME", "math_duel_db")
+
+
+mongo = AsyncIOMotorClient(DB_URL)
+db = mongo[DB_NAME]
+users_col = db["users"]
+# optional games_col if you want persistent games
+# games_col = db["games"]
+
+# In-memory active games: { chat_id: { game_id: GameDict } }
+active_games: Dict[int, Dict[str, Dict[str, Any]]] = {}
+chat_locks: Dict[int, asyncio.Lock] = {}
+
+CLEANUP_INTERVAL = 60  # seconds
+GAME_TIMEOUT = 12      # seconds for answering
+MAX_CHOICES = 4
+
+# ----------------- UTILS -----------------
+def new_game_id() -> str:
+    return uuid.uuid4().hex[:10]
+
+def ensure_chat(chat_id: int) -> None:
+    if chat_id not in active_games:
+        active_games[chat_id] = {}
+    if chat_id not in chat_locks:
+        chat_locks[chat_id] = asyncio.Lock()
+
+def rank_for_score(score: int) -> str:
+    if score < 50:
+        return "🥉 Bronze"
+    if score < 200:
+        return "🥈 Silver"
+    if score < 500:
+        return "🥇 Gold"
+    return "💎 Diamond"
+
+async def ensure_user(user_id: int, username: Optional[str]) -> None:
+    await users_col.update_one(
+        {"_id": user_id},
+        {"$setOnInsert": {"_id": user_id, "username": username or "", "score": 0, "wins": 0, "losses": 0, "games_played": 0},
+         "$set": {"username": username or ""}},
+        upsert=True,
+    )
+
+async def update_stats(user_id: int, username: Optional[str], points: int = 0, win: bool = False) -> None:
+    inc = {"score": points, "games_played": 1}
+    if win:
+        inc["wins"] = 1
+    else:
+        # if points==0 and not win, count as loss when used
+        pass
+    await users_col.update_one({"_id": user_id}, {"$inc": inc, "$set": {"username": username or ""}}, upsert=True)
+
+async def record_loss(user_id: int, username: Optional[str]) -> None:
+    await users_col.update_one({"_id": user_id}, {"$inc": {"losses": 1, "games_played": 1}, "$set": {"username": username or ""}}, upsert=True)
+
+async def get_stats(user_id: int) -> Dict[str, Any]:
+    doc = await users_col.find_one({"_id": user_id})
+    if not doc:
+        return {"score": 0, "wins": 0, "losses": 0, "games_played": 0, "username": ""}
+    return {"score": int(doc.get("score", 0)), "wins": int(doc.get("wins", 0)), "losses": int(doc.get("losses", 0)), "games_played": int(doc.get("games_played", 0)), "username": doc.get("username", "") or ""}
+
+async def top_leaderboard(limit: int = 10) -> List[Tuple[int, int, str]]:
+    cursor = users_col.find().sort("score", -1).limit(limit)
+    out = []
+    async for d in cursor:
+        out.append((int(d["_id"]), int(d.get("score", 0)), d.get("username", "") or ""))
+    return out
+
+# ----------------- MATH GENERATOR -----------------
+def generate_math_problem(difficulty: str = "easy") -> Tuple[str, int, List[int]]:
+    """
+    Returns: (question_text, correct_answer, options_list)
+    difficulty: 'easy','medium','hard'
+    """
+    if difficulty == "easy":
+        a = random.randint(1, 20)
+        b = random.randint(1, 20)
+        op = random.choice(["+", "-"])
+    elif difficulty == "medium":
+        a = random.randint(5, 50)
+        b = random.randint(2, 12)
+        op = random.choice(["+", "-", "*"])
+    else:
+        a = random.randint(10, 200)
+        b = random.randint(2, 30)
+        op = random.choice(["+", "-", "*", "/"])
+
+    if op == "+":
+        ans = a + b
+        q = f"{a} + {b} = ?"
+    elif op == "-":
+        ans = a - b
+        q = f"{a} - {b} = ?"
+    elif op == "*":
+        ans = a * b
+        q = f"{a} × {b} = ?"
+    else:  # division -> produce integer division result
+        # ensure divisible
+        if b == 0:
+            b = 1
+        ans = a
+        a = a * b
+        q = f"{a} ÷ {b} = ?"
+
+    # build options: include correct answer and plausible distractors
+    options = {ans}
+    spread = max(3, int(abs(ans) * 0.3) + 1)
+    while len(options) < MAX_CHOICES:
+        # distractor: add or subtract small delta or random
+        delta = random.choice([-spread, -spread//2, -1, 1, spread//2, spread, random.randint(-5, 5)])
+        candidate = ans + delta
+        # avoid negative distractors for division when ans small
+        options.add(candidate)
+    opts = list(options)
+    random.shuffle(opts)
+    return q, ans, opts
+
+# ----------------- UI HELPERS -----------------
+def mk_options_markup(game_id: str, options: List[int], duel: bool = False) -> InlineKeyboardMarkup:
+    # Each button callback: math_ans|<game_id>|<option>
+    buttons = []
+    row = []
+    for i, opt in enumerate(options):
+        row.append(InlineKeyboardButton(str(opt), callback_data=f"math_ans|{game_id}|{opt}"))
+        # two buttons per row
+        if len(row) == 2:
+            buttons.append(row)
+            row = []
+    if row:
+        buttons.append(row)
+    # if duel or not, same markup (authorization enforced server-side)
+    return InlineKeyboardMarkup(buttons)
+
+# ----------------- COMMANDS -----------------
+@app.on_message(filters.command("mdstart") & filters.private)
+async def cmd_stfkcart(_: Client, message: Message):
+    await ensure_user(message.from_user.id, message.from_user.username)
+    await message.reply_text(
+        "🧠 Math Duel Bot\n\n"
+        "Commands:\n"
+        "/math - start an open quick math quiz (group) or play vs bot (private)\n"
+        "/duel - reply to a user with /duel to challenge them in group\n"
+        "/profile - view your stats\n"
+        "/leaderboard - top players\n"
+    )
+
+@app.on_message(filters.command("mdprofile"))
+async def cmd_ffnprofile(_: Client, message: Message):
+    target = message.from_user
+    # support /profile <id|username> optional in future
+    stats = await get_stats(target.id)
+    rank = rank_for_score(stats["score"])
+    await message.reply_text(
+        f"👤 Profile — {target.mention}\n\n"
+        f"🏅 Rank: {rank}\n"
+        f"📊 Score: {stats['score']}\n"
+        f"✅ Wins: {stats['wins']}  ❌ Losses: {stats['losses']}\n"
+        f"🎮 Games played: {stats['games_played']}"
+    )
+
+@app.on_message(filters.command("mdleaderboard"))
+async def cmd_bbbleaderboard(_: Client, message: Message):
+    top = await top_leaderboard(10)
+    if not top:
+        return await message.reply_text("No players yet.")
+    lines = ["🏆 Leaderboard — Top players"]
+    i = 1
+    for uid, score, username in top:
+        uname = username or f"user{uid}"
+        lines.append(f"{i}. {uname} — {score} pts")
+        i += 1
+    await message.reply_text("\n".join(lines))
+
+# ----------------- OPEN MATH (group) -----------------
+@app.on_message(filters.command("math") & filters.group)
+async def cmd_math_group(client: Client, message: Message):
+    chat_id = message.chat.id
+    ensure_chat(chat_id)
+    lock = chat_locks[chat_id]
+    async with lock:
+        # check existing active open game in this chat
+        # only one active per chat allowed
+        existing = None
+        for gid, g in active_games[chat_id].items():
+            if g.get("type") == "open" and g.get("state") in ("pending", "started"):
+                existing = g
+                break
+        if existing:
+            return await message.reply_text("⚠️ A math quiz is already running in this chat. Wait for it to finish.")
+
+        # create a new open game
+        game_id = new_game_id()
+        q, ans, opts = generate_math_problem(random.choice(["easy", "medium"]))
+        # store game
+        active_games[chat_id][game_id] = {
+            "game_id": game_id,
+            "type": "open",
+            "question": q,
+            "answer": ans,
+            "options": opts,
+            "state": "started",
+            "start_time": time.time(),
+            "message_id": None,
+            "creator": message.from_user.id,
+        }
+
+    markup = mk_options_markup(game_id, opts, duel=False)
+    sent = await message.reply_text(f"🧠 Math Duel — First to answer wins!\n\n{q}\n\nTime: {GAME_TIMEOUT}s", reply_markup=markup)
+    # save message id
+    async with chat_locks[chat_id]:
+        active_games[chat_id][game_id]["message_id"] = sent.id
+
+    # wait for timeout
+    await asyncio.sleep(GAME_TIMEOUT)
+    async with chat_locks[chat_id]:
+        g = active_games[chat_id].get(game_id)
+        if g and g.get("state") == "started":
+            # time's up, no one answered correctly
+            try:
+                await client.send_message(chat_id, f"⏰ Time's up! No correct answer. The correct answer was: {g['answer']}")
+            except Exception:
+                pass
+            active_games[chat_id].pop(game_id, None)
+
+# ----------------- DUEL (reply to user) -----------------
+@app.on_message(filters.command("duel") & filters.group)
+async def cmd_ggduel(client: Client, message: Message):
+    if not message.reply_to_message or not message.reply_to_message.from_user:
+        return await message.reply_text("⚠️ Reply to a user to challenge them. Example: reply and send /duel")
+
+    challenger = message.from_user
+    opponent = message.reply_to_message.from_user
+    chat_id = message.chat.id
+
+    if opponent.is_bot:
+        return await message.reply_text("⚠️ You cannot challenge a bot. Use /math in private to play the bot.")
+
+    if challenger.id == opponent.id:
+        return await message.reply_text("⚠️ You cannot challenge yourself.")
+
+    ensure_chat(chat_id)
+    lock = chat_locks[chat_id]
+    async with lock:
+        # disallow multiple active duels involving either player
+        for gid, g in active_games[chat_id].items():
+            if g.get("type") == "duel" and g.get("state") in ("pending", "started"):
+                if challenger.id in (g.get("challenger_id"), g.get("opponent_id")) or opponent.id in (g.get("challenger_id"), g.get("opponent_id")):
+                    return await message.reply_text("⚠️ Either you or the opponent already has an active duel in this chat.")
+
+        # create pending duel
+        game_id = new_game_id()
+        active_games[chat_id][game_id] = {
+            "game_id": game_id,
+            "type": "duel",
+            "state": "pending",
+            "challenger_id": challenger.id,
+            "opponent_id": opponent.id,
+            "challenger_name": challenger.mention,
+            "opponent_name": opponent.mention,
+            "created_at": time.time(),
+            "message_id": None,
+            "question": None,
+            "answer": None,
+            "options": None,
+            "moves": {},  # user_id -> choice
+        }
+
+    # send accept/decline buttons
+    buttons = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("✅ Accept", callback_data=f"duel_resp|{game_id}|accept"),
+            InlineKeyboardButton("❌ Decline", callback_data=f"duel_resp|{game_id}|decline"),
+        ]]
+    )
+    sent = await message.reply_text(f"⚔️ Duel challenge!\n{challenger.mention} has challenged {opponent.mention}.\n{opponent.mention}: accept or decline.", reply_markup=buttons)
+    async with chat_locks[chat_id]:
+        active_games[chat_id][game_id]["message_id"] = sent.id
+
+# ----------------- CALLBACK: duel accept/decline -----------------
+@app.on_callback_query(filters.regex(r"^duel_resp\|"))
+async def cb_duel_resp(client: Client, cq: CallbackQuery):
+    try:
+        _, game_id, action = cq.data.split("|", 2)
+    except ValueError:
+        return await cq.answer("Invalid data.", show_alert=True)
+
+    chat_id = cq.message.chat.id
+    ensure_chat(chat_id)
+    lock = chat_locks[chat_id]
+
+    async with lock:
+        game = active_games[chat_id].get(game_id)
+        if not game or game.get("type") != "duel":
+            await cq.answer("This duel no longer exists.", show_alert=True)
+            try:
+                await cq.message.edit_text("This duel no longer exists.")
+            except Exception:
+                pass
+            return
+
+        # only opponent can accept/decline
+        if cq.from_user.id != game["opponent_id"]:
+            return await cq.answer("Only the challenged user can accept/decline.", show_alert=True)
+
+        if action == "decline":
+            active_games[chat_id].pop(game_id, None)
+            await cq.message.edit_text(f"❌ {cq.from_user.mention} declined the duel request from {game['challenger_name']}.")
+            return
+
+        # action == accept -> generate question and start duel
+        q, ans, opts = generate_math_problem(random.choice(["easy", "medium"]))
+        game["question"] = q
+        game["answer"] = ans
+        game["options"] = opts
+        game["state"] = "started"
+        game["start_time"] = time.time()
+
+    # send question with buttons (only the two players can press)
+    markup = mk_options_markup(game_id=game_id, options=opts, duel=True)
+    try:
+        await cq.message.edit_text(f"🧠 Duel started!\n{game['challenger_name']} vs {game['opponent_name']}\n\n{q}\n\nTime: {GAME_TIMEOUT}s", reply_markup=markup)
+    except Exception:
+        await cq.message.reply_text(f"🧠 Duel started!\n{game['challenger_name']} vs {game['opponent_name']}\n\n{q}\n\nTime: {GAME_TIMEOUT}s", reply_markup=markup)
+
+    # wait and then if not answered, announce timeout
+    await asyncio.sleep(GAME_TIMEOUT)
+    async with lock:
+        g = active_games[chat_id].get(game_id)
+        if g and g.get("state") == "started":
+            try:
+                await client.send_message(chat_id, f"⏰ Duel time's up! No correct answer. The answer was: {g['answer']}")
+            except Exception:
+                pass
+            active_games[chat_id].pop(game_id, None)
+
+# ----------------- CALLBACK: answer buttons -----------------
+@app.on_callback_query(filters.regex(r"^math_ans\|"))
+async def cb_math_answer(client: Client, cq: CallbackQuery):
+    try:
+        _, game_id, chosen_raw = cq.data.split("|", 2)
+        chosen = int(chosen_raw)
+    except Exception:
+        return await cq.answer("Invalid data.", show_alert=True)
+
+    chat_id = cq.message.chat.id
+    ensure_chat(chat_id)
+    lock = chat_locks[chat_id]
+
+    async with lock:
+        game = active_games[chat_id].get(game_id)
+        if not game or game.get("state") != "started":
+            return await cq.answer("No active question or it's already finished.", show_alert=True)
+
+        # Authorization:
+        if game.get("type") == "duel":
+            # Only challenger or opponent can press
+            user_id = cq.from_user.id
+            if user_id not in (game.get("challenger_id"), game.get("opponent_id")):
+                return await cq.answer("You are not a player in this duel.", show_alert=True)
+            # prevent double press
+            if user_id in game.get("moves", {}):
+                return await cq.answer("You already answered.", show_alert=True)
+            # record move
+            game["moves"][user_id] = chosen
+        else:
+            # open game: any user may press, but prevent double press by same user
+            user_id = cq.from_user.id
+            if user_id in game.get("moves", {}):
+                return await cq.answer("You already answered.", show_alert=True)
+            game.setdefault("moves", {})[user_id] = chosen
+
+        # Check correctness: chosen == answer
+        correct = game["answer"]
+        if chosen == correct:
+            # winner found
+            winner_id = cq.from_user.id
+            winner_name = cq.from_user.mention
+            # calculate reaction time points
+            elapsed = max(0.0, time.time() - float(game.get("start_time", time.time())))
+            points = max(1, int(max(1, GAME_TIMEOUT - elapsed))) * 10  # scaled points
+            # update DB: winner gets points & win, losers get loss
+            await ensure_user(winner_id, cq.from_user.username)
+            await update_stats(winner_id, cq.from_user.username, points, win=True)
+            # for duel, the loser gets a loss record
+            if game.get("type") == "duel":
+                other = game["challenger_id"] if winner_id == game["opponent_id"] else game["opponent_id"]
+                # add loss for other
+                try:
+                    other_user = await client.get_users(other)
+                    await record_loss(other, other_user.username if other_user else None)
+                except Exception:
+                    await record_loss(other, None)
+            else:
+                # open: we may want to count games_played for other participants who answered wrong
+                pass
+
+            # mark game finished
+            game["state"] = "finished"
+
+            final_text = (
+                f"🏁 Correct!\n\n"
+                f"{winner_name} answered correctly and earned {points} points!\n"
+                f"Answer: {correct}"
+            )
+
+            # edit original message to final text (remove buttons)
+            try:
+                await cq.message.edit_text(final_text)
+            except Exception:
+                try:
+                    await client.send_message(chat_id, final_text)
+                except Exception:
+                    pass
+
+            # cleanup
+            active_games[chat_id].pop(game_id, None)
+            return
+        else:
+            # wrong answer: short alert
+            await cq.answer("❌ Wrong!", show_alert=False)
+            # for duels record as attempted; may count as loss later if opponent correct or timeout
+            return
+
+# ----------------- PRIVATE: play vs bot -----------------
+@app.on_message(filters.command("mathd") & filters.private)
+async def cmd_math_private(client: Client, message: Message):
+    user = message.from_user
+    chat_id = message.chat.id
+    ensure_chat(chat_id)
+    lock = chat_locks[chat_id]
+    async with lock:
+        # create game with bot as opponent
+        game_id = new_game_id()
+        q, ans, opts = generate_math_problem(random.choice(["easy", "medium"]))
+        active_games[chat_id][game_id] = {
+            "game_id": game_id,
+            "type": "private_bot",
+            "state": "started",
+            "question": q,
+            "answer": ans,
+            "options": opts,
+            "start_time": time.time(),
+            "message_id": None,
+            "moves": {}
+        }
+
+    markup = mk_options_markup(game_id, opts, duel=False)
+    sent = await message.reply_text(f"🤖 Play vs Bot\n\n{q}\nTime: {GAME_TIMEOUT}s", reply_markup=markup)
+    async with lock:
+        active_games[chat_id][game_id]["message_id"] = sent.id
+
+    # Wait slightly for player to press; if user doesn't press, bot will pick after timeout
+    await asyncio.sleep(GAME_TIMEOUT)
+    async with lock:
+        game = active_games[chat_id].get(game_id)
+        if not game:
+            return
+        # if user already answered correctly, game would be removed
+        # if not, bot auto-answers randomly
+        if game.get("state") == "started":
+            # bot picks an answer
+            bot_choice = random.choice(game["options"])
+            # if bot picks correct, award bot (we don't record bot in DB)
+            if bot_choice == game["answer"]:
+                # send message that bot got it
+                try:
+                    await client.send_message(chat_id, f"🤖 Bot answered correctly! Answer: {game['answer']}")
+                except Exception:
+                    pass
+            else:
+                # no one got it
+                try:
+                    await client.send_message(chat_id, f"⏰ Time's up! The correct answer was: {game['answer']}")
+                except Exception:
+                    pass
+            active_games[chat_id].pop(game_id, None)
+
+# ----------------- CLEANUP TASK -----------------
+async def cleanup_task():
+    try:
+        while True:
+            now = time.time()
+            remove = []
+            for chat_id, games in list(active_games.items()):
+                for gid, g in list(games.items()):
+                    created = g.get("created_at") or g.get("start_time") or now
+                    if now - created > 60 * 30:  # 30 minutes stale
+                        remove.append((chat_id, gid))
+            for chat_id, gid in remove:
+                try:
+                    if chat_id in active_games and gid in active_games[chat_id]:
+                        active_games[chat_id].pop(gid, None)
+                except Exception:
+                    pass
+            await asyncio.sleep(CLEANUP_INTERVAL)
+    except asyncio.CancelledError:
+        return
+

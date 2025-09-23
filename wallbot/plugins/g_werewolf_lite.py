@@ -24,9 +24,6 @@ db = mongo_client["werewolf_lite"]
 users_col = db["users"]
 games_col = db["games"]
 
-# ---------------- BOT INIT ---------------- #
-bot = Client("werewolf_lite_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
-
 # ---------------- HELPERS ---------------- #
 async def get_user(user_id: int, name: str) -> Dict:
     """Fetch or create user profile"""

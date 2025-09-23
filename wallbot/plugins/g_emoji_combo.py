@@ -15,7 +15,7 @@ from config import DB_URL
 from wallbot import wbot as bot
 
 # ---------------- DATABASE ---------------- #
-mongo_client = AsyncIOMotorClient(MONGO_URL)
+mongo_client = AsyncIOMotorClient(DB_URL)
 db = mongo_client["emoji_combo"]
 users_col = db["users"]
 games_col = db["games"]

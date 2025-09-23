@@ -14,7 +14,7 @@ from pyrogram.types import (
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
 from config import DB_URL
-from wallbot import wbot as app
+from wallbot import wbot as bot
 
 
 

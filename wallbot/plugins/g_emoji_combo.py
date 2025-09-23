@@ -97,7 +97,6 @@ PUZZLES = [
     {"emoji": "🦝🌳📼", "answer": ["guardians of the galaxy"]},
     {"emoji": "👩‍🎤🛡️ lasso", "answer": ["wonder woman"]},
     {"emoji": "🔱🌊🐠", "answer": ["aquaman"]},
-
     {"emoji": "☕️🧠 Sunken Place", "answer": ["get out"]},
     {"emoji": "✂️👯‍♀️🐰", "answer": ["us"]},
     {"emoji": "🐶✏️🔫", "answer": ["john wick"]},

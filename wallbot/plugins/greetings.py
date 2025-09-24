@@ -147,7 +147,7 @@ async def start_game(client, message):
         ) 
     )
     await message.reply_photo(
-        photo="https://files.catbox.moe/80bcxh.jpg",
+        photo="https://files.catbox.moe/v9g4ai.jpg",
         caption="👋<b>Hey! Welcome to Gomez Games🎮.</b>\n\n<blockquote><b>Here you can:</b>\n⭐ `Play exciting games with friends`\n🏆 `Compete for the top spot on leaderboards`\n📊 `Track your profile & stats`\n🔥 `Join quizzes, puzzles, and more`</blockquote>\n\n💡 Use the menu or type /help to explore commands.\n⚡ Stay active new games and events are added regularly!",
         reply_markup=g_button,
         message_effect_id=5104841245755180586,
@@ -178,7 +178,7 @@ feedback me here /feedback [text] or [reply_to_messag]</blockquote>
 async def helpg_cmd(client, message):
     await client.send_message(LOG_CHANNEL, HLP.format(message.from_user.mention, message.from_user.username, message.from_user.dc_id, message.from_user.id))
     await message.reply_photo(
-        photo="https://files.catbox.moe/2ehsz7.jpg",
+        photo="https://files.catbox.moe/k7y7uz.jpg",
         caption=help_txt,
         reply_markup=h_button,
         message_effect_id=5046509860389126442,

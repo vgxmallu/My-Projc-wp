@@ -81,12 +81,11 @@ async def ensure_user_doc(user_id: int, username: Optional[str] = None):
     )
 
 
-async def add_user_score(user_id: int, username: str | None, points: int):
+async def add_user_score(user_id: int, username: Optional[str], points: int):
     await ensure_user_doc(user_id, username)
     await users_col.update_one({"_id": user_id}, {"$inc": {"score": points}})
 
-
-async def award_winner(user_id: int, username: str | None):
+async def award_winner(user_id: int, username: Optional[str] = None):
     await ensure_user_doc(user_id, username)
     await users_col.update_one({"_id": user_id}, {"$inc": {"wins": 1, "games_played": 1, "score": 10}})
 

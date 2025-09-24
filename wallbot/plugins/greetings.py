@@ -248,10 +248,6 @@ To detect spam, cheating, or raids.__
 __Data is stored securely in [MongoDB/Postgres/Other DB, specify].
 No personal information (like phone numbers, emails, or contacts) is collected.__
 
-**4. Data Sharing**
-__We do not sell or share your data with third parties.
-Data may be shared only if required by law.__
-
 ;)</blockquote>
 """
 @app.on_callback_query(filters.regex("^pap$"))

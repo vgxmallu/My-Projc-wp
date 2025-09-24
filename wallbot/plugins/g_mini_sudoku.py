@@ -158,7 +158,7 @@ async def handle_fill(_, query):
         )
 
 
-@app.on_message(filters.command("leaderboard"))
-async def leaderboard(_, message):
+@app.on_message(filters.command("msudo_leaderboard"))
+async def leaderbo7jard(_, message):
     text = await get_leaderboard()
     await message.reply_text(text)

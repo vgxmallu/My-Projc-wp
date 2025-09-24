@@ -17,7 +17,7 @@ import random
 import asyncio
 import logging
 from typing import List, Dict, Tuple, Any
-
+from typing import Optional
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from pyrogram import Client, filters
@@ -72,8 +72,7 @@ def rank_for_score(score: int) -> str:
         return "🥇 Gold"
     return "💎 Diamond"
 
-
-async def ensure_user_doc(user_id: int, username: str | None):
+async def ensure_user_doc(user_id: int, username: Optional[str] = None):
     await users_col.update_one(
         {"_id": user_id},
         {"$setOnInsert": {"_id": user_id, "username": username or "", "score": 0, "wins": 0, "games_played": 0},

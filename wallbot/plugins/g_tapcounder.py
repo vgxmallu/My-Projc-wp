@@ -101,8 +101,8 @@ async def handle_tap(_, query):
     await query.answer(f"👆 Taps: {session['scores'][user.id]}")
 
 
-@app.on_message(filters.command("leaderboard"))
-async def show_leaderboard(_, message):
+@app.on_message(filters.command("tapcleaderboard"))
+async def show_hshleaderboard(_, message):
     text = await get_leaderboard()
     await message.reply_text(text)
 

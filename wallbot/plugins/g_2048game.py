@@ -26,7 +26,7 @@ def add_random(board):
         board[i][j] = 2 if random.random()<0.9 else 4
 
 def board_to_text(board):
-    emojis = {0:"⬛", 2:"2️⃣",4:"4️⃣",8:"8️⃣",16:"1️⃣6️⃣",32:"3️⃣2️⃣",64:"6️⃣4️⃣",
+    emojis = {0:"⬜", 2:"2️⃣",4:"4️⃣",8:"8️⃣",16:"1️⃣6️⃣",32:"3️⃣2️⃣",64:"6️⃣4️⃣",
               128:"1️⃣2️⃣8️⃣",256:"2️⃣5️⃣6️⃣",512:"5️⃣1️⃣2️⃣",1024:"1️⃣0️⃣2️⃣4️⃣",2048:"2️⃣0️⃣4️⃣8️⃣"}
     return "\n".join("".join(emojis.get(cell, str(cell)) for cell in row) for row in board)
 
@@ -92,10 +92,10 @@ async def start_g2048ame(client, message):
     games_col.update_one({"chat_id":message.chat.id,"user_id":user_id},{"$set":{"board":board,"score":0}},upsert=True)
     await message.reply(f"🎮 **2048 Game Started!**\nScore: 0\n\n{board_to_text(board)}",
                         reply_markup=InlineKeyboardMarkup([
-                            [InlineKeyboardButton("⬆️",callback_data="move_up")],
-                            [InlineKeyboardButton("⬅️",callback_data="move_left"),
-                             InlineKeyboardButton("➡️",callback_data="move_right")],
-                            [InlineKeyboardButton("⬇️",callback_data="move_down")]
+                            [InlineKeyboardButton("⬆️",callback_data="mmove_up")],
+                            [InlineKeyboardButton("⬅️",callback_data="mmove_left"),
+                             InlineKeyboardButton("➡️",callback_data="mmove_right")],
+                            [InlineKeyboardButton("⬇️",callback_data="mmove_down")]
                         ]))
 
 @app.on_message(filters.command("2048_leaderboard"))
@@ -103,8 +103,8 @@ async def shojdw_leaderboard(client, message):
     await message.reply(leaderboard_text())
 
 # --- Moves ---
-@app.on_callback_query(filters.regex(r"move_(up|down|left|right)"))
-async def handle_move(client, cq: CallbackQuery):
+@app.on_callback_query(filters.regex(r"mmove_(up|down|left|right)"))
+async def handlen_move(client, cq: CallbackQuery):
     user_id = cq.from_user.id
     move = cq.data.split("_")[1]
     game = games_col.find_one({"chat_id":cq.message.chat.id,"user_id":user_id})
@@ -127,10 +127,10 @@ async def handle_move(client, cq: CallbackQuery):
     
     await cq.message.edit(f"🎮 **2048 Game**\nScore: {score}\n\n{board_to_text(new_board_state)}",
                           reply_markup=InlineKeyboardMarkup([
-                              [InlineKeyboardButton("⬆️",callback_data="move_up")],
-                              [InlineKeyboardButton("⬅️",callback_data="move_left"),
-                               InlineKeyboardButton("➡️",callback_data="move_right")],
-                              [InlineKeyboardButton("⬇️",callback_data="move_down")]
+                              [InlineKeyboardButton("⬆️",callback_data="mmove_up")],
+                              [InlineKeyboardButton("⬅️",callback_data="mmove_left"),
+                               InlineKeyboardButton("➡️",callback_data="mmove_right")],
+                              [InlineKeyboardButton("⬇️",callback_data="mmove_down")]
                           ]))
     await cq.answer()
 

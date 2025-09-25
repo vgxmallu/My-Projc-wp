@@ -192,4 +192,4 @@ async def rehstart_game(client, cq: CallbackQuery):
         )
     except Exception:
         pass
-    await cq.answer("Game restarted!"
+    await cq.answer("Game restarted!")

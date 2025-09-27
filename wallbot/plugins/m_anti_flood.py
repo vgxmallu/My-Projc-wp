@@ -214,14 +214,22 @@ async def flood_check(client: Client, message: Message):
             # Mute permissions object (no send rights)
             mute_perms = ChatPermissions(
                 can_send_messages=False,
-                can_send_media_messages=False,
+                #can_send_media_messages=False,
+                can_send_documents=False,
+                can_send_photos=False,
+                can_send_videos=False,
+                can_send_video_notes=False,
+                can_send_voice_notes=False,
                 can_send_polls=False,
                 can_add_web_page_previews=False,
                 can_change_info=False,
                 can_invite_users=False,
                 can_pin_messages=False
+                can_send_audios=False,
+                can_send_other_messages=False,
+                can_add_web_page_previews=False
             )
-            
+
             if mode == "ban":
                 await client.ban_chat_member(chat_id=chat_id, user_id=user_id)
                 update_stats(chat_id, "ban")
@@ -235,6 +243,8 @@ async def flood_check(client: Client, message: Message):
                 await client.restrict_chat_member(chat_id=chat_id, user_id=user_id, permissions=mute_perms)
                 update_stats(chat_id, "mute")
                 await message.reply(f"🔇 {message.from_user.mention} muted for flooding!")
+            except Exception:
+                pass
             elif mode == "tmute":
                 td = parse_time(time_str)
                 if not td:
@@ -258,3 +268,4 @@ async def flood_check(client: Client, message: Message):
 
         # reset the user's message timestamps
         cache[key] = []
+

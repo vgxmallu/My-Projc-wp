@@ -74,9 +74,6 @@ async def get_leaderboard():
     return text
 
 
-# =============== BOT ===============
-app = Client("emoji_equations_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
-
 
 @app.on_message(filters.command("emoji_math") & filters.group)
 async def start_equahfftion(_, message):

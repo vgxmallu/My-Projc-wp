@@ -238,8 +238,6 @@ async def flood_check(client: Client, message: Message):
                 await client.restrict_chat_member(chat_id=chat_id, user_id=user_id, permissions=mute_perms)
                 update_stats(chat_id, "mute")
                 await message.reply(f"🔇 {message.from_user.mention} muted for flooding!")
-            except Exception:
-                pass
             elif mode == "tmute":
                 td = parse_time(time_str)
                 if not td:

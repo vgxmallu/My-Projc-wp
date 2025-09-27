@@ -133,11 +133,11 @@ async def floodmode_cmd(client: Client, message: Message):
         return await message.reply("⚠️ Only admins with restrict permission can do this!")
 
     if len(message.command) < 2:
-        return await message.reply("Usage: /floodmode [mode] [time]\nModes: ban, kick, mute, tban, tmute")
+        return await message.reply("Usage: /floodmode [mode] [time]\nModes: ban, kick, mute")
 
     mode = message.command[1].lower()
     if mode not in ("ban", "kick", "mute", "tban", "tmute"):
-        return await message.reply("❌ Invalid mode. Supported: ban, kick, mute, tban, tmute")
+        return await message.reply("❌ Invalid mode. Supported: ban, kick, mute")
 
     time_arg = message.command[2] if len(message.command) > 2 else None
     if mode in ("tmute", "tban"):

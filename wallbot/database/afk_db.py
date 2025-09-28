@@ -33,7 +33,7 @@ async def cleanmode_off(chat_id: int):
 
 async def is_afk(user_id: int) -> bool:
     user = await usersdb.find_one({"user_id": user_id})
-    return (True, user["reason"]) if user else (False, {})
+    return (True, user.get["reason"]) if user else (False, {})
 
 
 async def add_afk(user_id: int, mode):

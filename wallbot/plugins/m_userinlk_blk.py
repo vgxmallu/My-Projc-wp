@@ -82,6 +82,8 @@ async def apply_punishment(message: Message, punishment: str):
 
 @app.on_message(filters.command("username_antispam") & filters.group)
 async def usernambe_antispam_cmd(client, message):
+    user_id = message.from_user.id
+    chat_id = message.chat.id
     if not await is_admin_with_permission(client, chat_id, user_id, 'can_restrict_members'):
         await message.reply_text("👮‍♂️ You need to be an admin with 'Restrict Members' permission to use this command.")
         return

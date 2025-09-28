@@ -187,7 +187,7 @@ async def detect_username_spam(client, message):
 # Main Admin Command to Open Menu
 # -----------------------------
 @app.on_message(filters.command("username_antispam") & filters.group)
-async def main_menu(client, message):
+async def majrin_menu(client, message):
     if not await is_admin(message.chat.id, message.from_user.id):
         return await message.reply_text("Only admins can use this command!")
     await show_menu(message.chat.id)

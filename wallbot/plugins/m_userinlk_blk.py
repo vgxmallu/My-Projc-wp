@@ -57,23 +57,23 @@ async def apply_punishment(message: Message, punishment: str):
 
     elif punishment == "kick":
         try:
-            await app.kick_chat_member(chat_id, user_id)
+            await message.ban_chat_member(chat_id, user_id)
             await asyncio.sleep(1)
-            await app.unban_chat_member(chat_id, user_id)
+            await message.unban_chat_member(chat_id, user_id)
             await message.reply_text(f"👢 {message.from_user.mention} was kicked for spam.")
         except Exception as e:
             await message.reply_text(f"❌ Failed to kick: {e}")
 
     elif punishment == "ban":
         try:
-            await app.kick_chat_member(chat_id, user_id)
+            await message.ban_chat_member(chat_id, user_id)
             await message.reply_text(f"🚫 {message.from_user.mention} was banned for spam.")
         except Exception as e:
             await message.reply_text(f"❌ Failed to ban: {e}")
 
     elif punishment == "mute":
         try:
-            await app.restrict_chat_member(chat_id, user_id, permissions={})
+            await message.restrict_chat_member(chat_id, user_id, permissions={})
             await message.reply_text(f"🔇 {message.from_user.mention} was muted for spam.")
         except Exception as e:
             await message.reply_text(f"❌ Failed to mute: {e}")

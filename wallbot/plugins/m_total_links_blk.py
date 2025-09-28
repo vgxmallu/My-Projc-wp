@@ -5,6 +5,7 @@ from pyrogram import Client, filters
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.types import Message, ChatPermissions
 from motor.motor_asyncio import AsyncIOMotorClient
+from pyrogram.errors import UserNotParticipant, ChatAdminRequired
 from datetime import timedelta
 from config import DB_URL
 from wallbot import wbot as app

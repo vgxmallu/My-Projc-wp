@@ -203,7 +203,7 @@ LINK_REGEX = re.compile(
     re.IGNORECASE
 )
 
-@app.on_message(filters.group & filters.incoming & ~filters.edited)
+@app.on_message(filters.group & filters.incoming)
 async def check_total_link_spam(client, message: Message):
     """Handles messages and applies link blocking logic if enabled."""
     chat_id = message.chat.id

@@ -241,9 +241,15 @@ async def handle_admin_repjlies(client: Client, message: Message):
 
 # --- Link Detection and Punishment Handler ---
 
-TELEGRAM_LINK_REGEX = r"(https?://)?(www\.)?(t\.me|telegram\.me)/[\w\+]+"
+TELEGRAM_LINK_REGEX = re.compile(
+    r'(https?|ftp):\/\/[^\s\/$.?#].[^\s]*|' # Full URLs
+    r'([a-zA-Z0-9-]+\.([a-zA-Z]{2,})(\/\S*)?)\b|' # Domain names
+    r'(@[a-zA-Z0-9_]|telegram\.me)'
+    r'(t\.me|telegra\.ph)\/[^\s]+', # Telegram specific links
+    re.IGNORECASE
+)
 
-@app.on_message(filters.regex(TELEGRAM_LINK_REGEX, re.IGNORECASE) & filters.group, group=2)
+@app.on_message(filters.regex(TELEGRAM_LINK_REGEX) & filters.group, group=2)
 async def link_blocjker_handler(client: Client, message: Message):
     """This handler now only triggers for messages containing a Telegram link."""
     chat_id = message.chat.id

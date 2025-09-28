@@ -51,7 +51,7 @@ async def apply_punishment(message: Message, punishment: str):
 
     elif punishment == "kick":
         try:
-            await message.kick_chat_member(chat_id, user_id)
+            await message.ban_chat_member(chat_id, user_id)
             await asyncio.sleep(1)
             await message.unban_chat_member(chat_id, user_id)
             await message.reply_text(f"👢 {message.from_user.mention} was kicked for sending a link.")
@@ -60,7 +60,7 @@ async def apply_punishment(message: Message, punishment: str):
 
     elif punishment == "ban":
         try:
-            await message.kick_chat_member(chat_id, user_id)
+            await message.ban_chat_member(chat_id, user_id)
             await message.reply_text(f"🚫 {message.from_user.mention} was banned for sending a link.")
         except Exception as e:
             await message.reply_text(f"❌ Failed to ban: {e}")

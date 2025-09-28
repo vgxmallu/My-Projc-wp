@@ -114,9 +114,9 @@ async def callbhack_handler(client, callback_query):
     chat_id = callback_query.message.chat.id
     user_id = callback_query.from_user.id
 
-    if not await is_admin(chat_id, user_id):
-        return await callback_query.answer("❌ Only admins can change this.", show_alert=True)
-
+    if not await is_admin_with_permission(client, chat_id, user_id, 'can_restrict_members'):
+        await callback_query.answer("❌ Only admins can change this. your not to allow to use this!!", show_alert=True)
+        return
     data = callback_query.data
 
     if data.startswith("ua_toggle_"):

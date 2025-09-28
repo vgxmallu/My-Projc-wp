@@ -15,28 +15,10 @@ from config import DB_URL
 from wallbot import wbot as app
 
 
-
-
-# --- Logging Setup ---
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-LOGGER = logging.getLogger(name)
-
-# --- Database Setup ---
-try:
-    mongo_client = MongoClient(DB_URL)
-    db = mongo_client.LinkManagerBot
-    settings_collection = db.group_settings
-    LOGGER.info("Successfully connected to MongoDB.")
-except ConnectionFailure as e:
-    LOGGER.error(f"Could not connect to MongoDB: {e}")
-    # The bot cannot run without a database, so we exit.
-    exit()
-except Exception as e:
-    LOGGER.error(f"An error occurred during MongoDB setup: {e}")
-    exit()
+mongo_client = MongoClient(DB_URL)
+db = mongo_client.LinkManagerBot
+settings_collection = db.group_settings
+    
 
 
 # A simple in-memory cache to track which admin is setting what.

@@ -192,7 +192,4 @@ async def main_menu(client, message):
         return await message.reply_text("Only admins can use this command!")
     await show_menu(message.chat.id)
 
-# -----------------------------
-# Run Bot
-# -----------------------------
-app.run()
+

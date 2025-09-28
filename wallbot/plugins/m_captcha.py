@@ -189,7 +189,8 @@ async def captcha_settings_cmd(_, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
     # check admin
-    member = await app.get_chat_member(chat_id, user_id)
+    #await app.get_chat_member(chat_id: Union[int, str], user_id: int)
+    member = await app.get_chat_member(chat_id=chat_id, user_id=user_id)
     if member.status not in ("administrator", "creator"):
         return await message.reply("🚫 Only group admins can change captcha settings.")
 

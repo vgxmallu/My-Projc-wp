@@ -5,6 +5,8 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import DB_URL
 from wallbot import wbot as app
+from pyrogram.enums import ChatMemberStatus
+from pyrogram.errors import UserNotParticipant, ChatAdminRequired
 
 mongo_client = AsyncIOMotorClient(DB_URL)
 db = mongo_client["antispam_bot"]
@@ -19,6 +21,18 @@ async def is_admin(chat_id: int, user_id: int) -> bool:
         member = await app.get_chat_member(chat_id, user_id)
         return member.status in ("administrator", "creator")
     except:
+        return False
+
+#onlyfor admin
+async def is_admin_with_permission(client: Client, chat_id: int, user_id: int, permission: str):
+    """Check if a user is an admin with a specific permission."""
+    try:
+        member = await client.get_chat_member(chat_id, user_id)
+        if member.status in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR]:
+            if permission == 'can_restrict_members':
+                return member.privileges and member.privileges.can_restrict_members
+        return False
+    except UserNotParticipant:
         return False
 
 async def get_settings(chat_id: int) -> dict:
@@ -68,9 +82,10 @@ async def apply_punishment(message: Message, punishment: str):
 
 @app.on_message(filters.command("username_antispam") & filters.group)
 async def usernambe_antispam_cmd(client, message):
-    if not await is_admin(message.chat.id, message.from_user.id):
-        return await message.reply_text("❌ Only admins can manage this setting.")
-
+    if not await is_admin_with_permission(client, chat_id, user_id, 'can_restrict_members'):
+        await message.reply_text("👮‍♂️ You need to be an admin with 'Restrict Members' permission to use this command.")
+        return
+    
     settings = await get_settings(message.chat.id)
     status = "✅ Enabled" if settings["enabled"] else "❌ Disabled"
     punishment = settings["punishment"].capitalize()

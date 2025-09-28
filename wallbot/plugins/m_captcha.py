@@ -187,8 +187,9 @@ def build_captcha_markup(chat_id: int, user_id: int, session_id: str, options: l
 async def captcha_settings_cmd(_, message: Message):
     """Admin UI to show and toggle captcha settings for the chat."""
     chat_id = message.chat.id
+    user_id = message.from_user.id
     # check admin
-    member = await app.get_chat_member(chat_id, message.from_user.id)
+    member = await app.get_chat_member(chat_id, user_id)
     if member.status not in ("administrator", "creator"):
         return await message.reply("🚫 Only group admins can change captcha settings.")
 

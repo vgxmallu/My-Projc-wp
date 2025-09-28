@@ -1,195 +1,136 @@
-from pyrogram import Client, types, filters
-from pymongo import MongoClient
 import re
 import asyncio
-from datetime import datetime
-from pyrogram.types import (
-    InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery, ChatPermissions
-)
-from pyrogram.enums import ChatMemberStatus
-from pyrogram.errors import UserNotParticipant, ChatAdminRequired
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
+from motor.motor_asyncio import AsyncIOMotorClient
 from config import DB_URL
 from wallbot import wbot as app
 
-
-
-# -----------------------------
-# MongoDB Setup
-# -----------------------------
-mongo = MongoClient("DB_URL")
-db = mongo["telegram_bot"]
-settings_collection = db["username_antispam_settings"]
-warns_collection = db["username_warns"]
+mongo_client = AsyncIOMotorClient(DB_URL)
+db = mongo_client["antispam_bot"]
+settings_col = db["username_antispam"]
+warns_col = db["user_warns"]
 
 
 
-# -----------------------------
-# Helper Functions
-# -----------------------------
-def get_group_settings(chat_id: int) -> dict:
-    """Retrieve or create default settings for a group."""
-    settings = settings_collection.find_one({"chat_id": chat_id})
-    if not settings:
-        settings = {
-            "chat_id": chat_id,
-            "enabled": True,
-            "punishment": "warn",
-            "mute_duration": 300,  # default 5 minutes
-            "spam_keywords": ["spam", "bot", "fake"]  # default spam username keywords
-        }
-        settings_collection.insert_one(settings)
-    return settings
-
-def set_group_settings(chat_id: int, field: str, value):
-    """Update a field in group settings."""
-    settings_collection.update_one(
-        {"chat_id": chat_id},
-        {"$set": {field: value}},
-        upsert=True
-    )
-
-async def punish_user(chat_id: int, user_id: int, punishment: str, mute_duration: int = None):
-    """Apply punishment to the user."""
-    try:
-        if punishment == "warn":
-            warns_collection.update_one(
-                {"chat_id": chat_id, "user_id": user_id},
-                {"$inc": {"count": 1}, "$set": {"last_warn": datetime.utcnow()}},
-                upsert=True
-            )
-            warn_data = warns_collection.find_one({"chat_id": chat_id, "user_id": user_id})
-            return warn_data.get("count", 1)
-        elif punishment == "mute":
-            duration = mute_duration or 300
-            await app.restrict_chat_member(
-                chat_id,
-                user_id,
-                permissions=types.ChatPermissions(can_send_messages=False)
-            )
-            asyncio.create_task(unmute_after(chat_id, user_id, duration))
-        elif punishment == "kick":
-            await app.kick_chat_member(chat_id, user_id)
-        elif punishment == "ban":
-            await app.ban_chat_member(chat_id, user_id)
-    except Exception as e:
-        print(f"Failed to punish user {user_id}: {e}")
-
-async def unmute_after(chat_id: int, user_id: int, duration: int):
-    """Automatically unmute a user after a given duration."""
-    await asyncio.sleep(duration)
-    try:
-        await app.restrict_chat_member(
-            chat_id,
-            user_id,
-            permissions=types.ChatPermissions(
-                can_send_messages=True,
-                can_send_media_messages=True,
-                can_send_stickers=True,
-                can_send_animations=True,
-                can_send_polls=True,
-                can_add_web_page_previews=True,
-            )
-        )
-        print(f"User {user_id} unmuted in chat {chat_id}")
-    except Exception as e:
-        print(f"Failed to unmute user {user_id}: {e}")
-
+# ------------------- HELPERS -------------------
 async def is_admin(chat_id: int, user_id: int) -> bool:
-    """Check if a user is admin or creator."""
     try:
         member = await app.get_chat_member(chat_id, user_id)
-        return member.status in ["administrator", "creator"]
+        return member.status in ("administrator", "creator")
     except:
         return False
 
-async def show_menu(chat_id: int, message=None):
-    """Show inline button menu for admin settings."""
-    settings = get_group_settings(chat_id)
-    enabled_text = "✅ Enabled" if settings["enabled"] else "❌ Disabled"
-    punishment = settings.get("punishment", "warn")
+async def get_settings(chat_id: int) -> dict:
+    settings = await settings_col.find_one({"chat_id": chat_id})
+    if not settings:
+        settings = {"chat_id": chat_id, "enabled": False, "punishment": "warn"}
+        await settings_col.insert_one(settings)
+    return settings
 
-    keyboard = InlineKeyboardMarkup(
+async def update_settings(chat_id: int, data: dict):
+    await settings_col.update_one({"chat_id": chat_id}, {"$set": data}, upsert=True)
+
+async def apply_punishment(message: Message, punishment: str):
+    user_id = message.from_user.id
+    chat_id = message.chat.id
+
+    if punishment == "warn":
+        user_warns = await warns_col.find_one({"chat_id": chat_id, "user_id": user_id}) or {"warns": 0}
+        warns = user_warns.get("warns", 0) + 1
+        await warns_col.update_one({"chat_id": chat_id, "user_id": user_id}, {"$set": {"warns": warns}}, upsert=True)
+        await message.reply_text(f"⚠️ {message.from_user.mention} warned! Total warns: {warns}")
+
+    elif punishment == "kick":
+        try:
+            await app.kick_chat_member(chat_id, user_id)
+            await asyncio.sleep(1)
+            await app.unban_chat_member(chat_id, user_id)
+            await message.reply_text(f"👢 {message.from_user.mention} was kicked for spam.")
+        except Exception as e:
+            await message.reply_text(f"❌ Failed to kick: {e}")
+
+    elif punishment == "ban":
+        try:
+            await app.kick_chat_member(chat_id, user_id)
+            await message.reply_text(f"🚫 {message.from_user.mention} was banned for spam.")
+        except Exception as e:
+            await message.reply_text(f"❌ Failed to ban: {e}")
+
+    elif punishment == "mute":
+        try:
+            await app.restrict_chat_member(chat_id, user_id, permissions={})
+            await message.reply_text(f"🔇 {message.from_user.mention} was muted for spam.")
+        except Exception as e:
+            await message.reply_text(f"❌ Failed to mute: {e}")
+
+# ------------------- COMMAND HANDLER -------------------
+
+@app.on_message(filters.command("username_antispam") & filters.group)
+async def usernambe_antispam_cmd(client, message):
+    if not await is_admin(message.chat.id, message.from_user.id):
+        return await message.reply_text("❌ Only admins can manage this setting.")
+
+    settings = await get_settings(message.chat.id)
+    status = "✅ Enabled" if settings["enabled"] else "❌ Disabled"
+    punishment = settings["punishment"].capitalize()
+
+    buttons = [
+        [InlineKeyboardButton(f"Status: {status}", callback_data=f"ua_toggle_{int(not settings['enabled'])}")],
         [
-            [
-                InlineKeyboardButton(
-                    "Enable" if not settings["enabled"] else "Disable",
-                    callback_data=f"toggle_enable:{chat_id}"
-                ),
-            ],
-            [
-                InlineKeyboardButton("Warn", callback_data=f"set_punishment:{chat_id}:warn"),
-                InlineKeyboardButton("Mute", callback_data=f"set_punishment:{chat_id}:mute"),
-                InlineKeyboardButton("Kick", callback_data=f"set_punishment:{chat_id}:kick"),
-                InlineKeyboardButton("Ban", callback_data=f"set_punishment:{chat_id}:ban"),
-            ]
+            InlineKeyboardButton("⚠️ Warn", callback_data="ua_set_warn"),
+            InlineKeyboardButton("👢 Kick", callback_data="ua_set_kick"),
+        ],
+        [
+            InlineKeyboardButton("🚫 Ban", callback_data="ua_set_ban"),
+            InlineKeyboardButton("🔇 Mute", callback_data="ua_set_mute"),
         ]
+    ]
+
+    await message.reply_text(
+        f"🔧 **Username Antispam Settings**\n\nStatus: {status}\nPunishment: {punishment}",
+        reply_markup=InlineKeyboardMarkup(buttons)
     )
 
-    if message:
-        await message.edit_text(
-            f"Username AntiSpam Settings:\nStatus: {enabled_text}\nPunishment: {punishment}",
-            reply_markup=keyboard
-        )
-    else:
-        await app.send_message(
-            chat_id,
-            f"Username AntiSpam Settings:\nStatus: {enabled_text}\nPunishment: {punishment}",
-            reply_markup=keyboard
-        )
+@app.on_callback_query(filters.regex(r"ua_"))
+async def callbhack_handler(client, callback_query):
+    chat_id = callback_query.message.chat.id
+    user_id = callback_query.from_user.id
 
-# -----------------------------
-# Callback Queries
-# -----------------------------
-@app.on_callback_query(filters.regex(r"toggle_enable:\d+"))
-async def toggle_enable(client, query):
-    chat_id = int(query.data.split(":")[1])
-    if not await is_admin(chat_id, query.from_user.id):
-        return await query.answer("Only admins can use this!", show_alert=True)
-    settings = get_group_settings(chat_id)
-    new_state = not settings["enabled"]
-    set_group_settings(chat_id, "enabled", new_state)
-    await query.answer(f"Module {'Enabled' if new_state else 'Disabled'}!")
-    await show_menu(chat_id, query.message)
+    if not await is_admin(chat_id, user_id):
+        return await callback_query.answer("❌ Only admins can change this.", show_alert=True)
 
-@app.on_callback_query(filters.regex(r"set_punishment:\d+:\w+"))
-async def set_punishment(client, query):
-    parts = query.data.split(":")
-    chat_id = int(parts[1])
-    if not await is_admin(chat_id, query.from_user.id):
-        return await query.answer("Only admins can use this!", show_alert=True)
-    punishment = parts[2]
-    set_group_settings(chat_id, "punishment", punishment)
-    await query.answer(f"Punishment set to {punishment}")
-    await show_menu(chat_id, query.message)
+    data = callback_query.data
 
-# -----------------------------
-# Detect Username Spam
-# -----------------------------
-@app.on_message(filters.group)
-async def detect_username_spam(client, message):
-    chat_id = message.chat.id
-    settings = get_group_settings(chat_id)
+    if data.startswith("ua_toggle_"):
+        enabled = bool(int(data.split("_")[2]))
+        await update_settings(chat_id, {"enabled": enabled})
+        await callback_query.answer("✅ Updated!")
+        await username_antispam_cmd(client, callback_query.message)
+
+    elif data.startswith("ua_set_"):
+        punishment = data.split("_")[2]
+        await update_settings(chat_id, {"punishment": punishment})
+        await callback_query.answer(f"✅ Punishment set to {punishment.capitalize()}")
+        await username_antispam_cmd(client, callback_query.message)
+
+# ------------------- SPAM DETECTION -------------------
+
+USERNAME_REGEX = re.compile(r"(@[a-zA-Z0-9_]{4,}|t\.me/[a-zA-Z0-9_]{4,})", re.IGNORECASE)
+
+@app.on_message(filters.group, group=5)
+async def detect_userbname_spam(client, message: Message):
+    if not message.from_user or message.sender_chat:
+        return
+
+    settings = await get_settings(message.chat.id)
     if not settings["enabled"]:
         return
 
-    username = (message.from_user.username or "").lower()
-    spam_keywords = settings.get("spam_keywords", [])
-
-    if any(keyword in username for keyword in spam_keywords):
-        punishment = settings.get("punishment", "warn")
-        mute_duration = settings.get("mute_duration", 300)
-        warn_count = await punish_user(chat_id, message.from_user.id, punishment, mute_duration)
-        await message.delete()
-        if punishment == "warn":
-            await message.reply_text(f"{message.from_user.mention} warned for spammy username! Total warnings: {warn_count}")
-
-# -----------------------------
-# Main Admin Command to Open Menu
-# -----------------------------
-@app.on_message(filters.command("username_antispam") & filters.group)
-async def majrin_menu(client, message):
-    if not await is_admin(message.chat.id, message.from_user.id):
-        return await message.reply_text("Only admins can use this command!")
-    await show_menu(message.chat.id)
-
-
+    text = message.text or message.caption or ""
+    if USERNAME_REGEX.search(text):
+        await apply_punishment(message, settings["punishment"])
+        try:
+            await message.delete()
+        except:
+            pass

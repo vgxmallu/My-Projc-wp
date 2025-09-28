@@ -89,37 +89,26 @@ def next_punishment_level(punishments: dict, current_warnings: int) -> int:
 
 # --- CUSTOM DECORATOR FOR ADMIN CHECK ---
 
-def require_admin(func):
-    """Decorator to check if the user is an admin or creator before running the command."""
-    async def wrapper(client, message: Message):
-        if not message.chat.type.name in ["SUPERGROUP", "GROUP"]:
-            return await message.reply("This command only works in groups.")
-
-        user_id = message.from_user.id
-        chat_id = message.chat.id
-
-        try:
-            member = await client.get_chat_member(chat_id, user_id)
-            if member.status in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]:
-                # Check if the bot has necessary permissions
-                bot_member = await client.get_chat_member(chat_id, client.me.id)
-                # Bot needs to be able to delete messages and restrict members for full functionality
-                if not bot_member.can_delete_messages or not bot_member.can_restrict_members:
-                    return await message.reply("⚠️ **Error:** I need 'Delete Messages' AND 'Restrict Members' permissions to run link antispam commands effectively.")
-                await func(client, message)
-            else:
-                await message.reply("You must be an administrator or the chat owner to use this command.")
-        except Exception as e:
-            print(f"Admin check error: {e}")
-            await message.reply("An error occurred while checking permissions.")
-
-    return wrapper
-
+#onlyfor admin
+async def is_admin_with_permission(client: Client, chat_id: int, user_id: int, permission: str):
+    """Check if a user is an admin with a specific permission."""
+    try:
+        member = await client.get_chat_member(chat_id, user_id)
+        if member.status in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR]:
+            if permission == 'can_restrict_members':
+                return member.privileges and member.privileges.can_restrict_members
+        return False
+    except UserNotParticipant:
+        return False
 # --- COMMAND HANDLERS (ADMIN ONLY) ---
 
 @app.on_message(filters.command("linkblock") & filters.group)
-@require_admin
 async def toggle_link_block(client, message: Message):
+    user_id = message.from_user.id
+    chat_id = message.chat.id
+    if not await is_admin_with_permission(client, chat_id, user_id, 'can_restrict_members'):
+        await message.reply_text("👮‍♂️ You need to be an admin with 'Restrict Members' permission to use this command.")
+        return
     """Enables or disables the total link block module."""
     if len(message.command) != 2:
         return await message.reply("Usage: `/linkblock [enable|disable]`")
@@ -137,8 +126,12 @@ async def toggle_link_block(client, message: Message):
         await message.reply("Invalid action. Use `enable` or `disable`.")
 
 @app.on_message(filters.command("setlinkpunishment") & filters.group)
-@require_admin
 async def set_punishment(client, message: Message):
+    user_id = message.from_user.id
+    chat_id = message.chat.id
+    if not await is_admin_with_permission(client, chat_id, user_id, 'can_restrict_members'):
+        await message.reply_text("👮‍♂️ You need to be an admin with 'Restrict Members' permission to use this command.")
+        return
     """Sets a custom punishment for a specific warning count."""
     if len(message.command) != 3:
         return await message.reply("Usage: `/setlinkpunishment [warns] [punishment]`\n\n**Punishments:** `warn`, `mute`, `kick`, `ban`\n**Example:** `/setlinkpunishment 4 mute` (Mutes user on 4th warning)")
@@ -160,10 +153,14 @@ async def set_punishment(client, message: Message):
     await message.reply(f"🔧 **Punishment Updated:** A user will now be **{punishment.upper()}** after **{warn_count}** warnings for sending links.")
 
 @app.on_message(filters.command("getlinkpunishments") & filters.group)
-@require_admin
 async def get_punishments(client, message: Message):
     """Displays the current link block configuration."""
+    
+    user_id = message.from_user.id
     chat_id = message.chat.id
+    if not await is_admin_with_permission(client, chat_id, user_id, 'can_restrict_members'):
+        await message.reply_text("👮‍♂️ You need to be an admin with 'Restrict Members' permission to use this command.")
+        return
     settings = await get_group_settings(chat_id)
 
     status = "✅ ENABLED" if settings["link_block_enabled"] else "❌ DISABLED"

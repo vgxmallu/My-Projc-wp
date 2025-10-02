@@ -63,8 +63,8 @@ async def is_admin_with_permission(client: Client, chat_id: int, user_id: int, p
 
 # --- Main Command Handler ---
 
-@app.on_message(filters.command("antilink") & filters.group)
-async def antilink_command(client: Client, message: Message):
+@app.on_message(filters.command("bloklink") & filters.group)
+async def bloklink_command(client: Client, message: Message):
     """Main command for admins to open the settings menu."""
     user_id = message.from_user.id
     chat_id = message.chat.id

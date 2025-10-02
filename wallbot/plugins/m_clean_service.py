@@ -70,8 +70,6 @@ async def update_cleanup_settings(chat_id: int, action: str, types: list):
         upsert=True
     )
 
-# --- Pyrogram Client ---
-app = Client("cleanservice_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 # ----------------------------------------------------
 # --- Clean Service Admin Commands (Group Admins Only) ---

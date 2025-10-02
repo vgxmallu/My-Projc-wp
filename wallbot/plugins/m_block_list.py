@@ -259,7 +259,7 @@ async def blocklist_checker(client: Client, message: Message):
             await client.ban_chat_member(chat_id, user_id)
         elif mode == "mute":
             # Mute indefinitely (until 2038)
-            await client.restrict_chat_member(chat_id, user_id, ChatPermissions(can_send_messages=False))
+            await client.restrict_chat_member(chat_id, user_id, ChatPermissions(can_send_messages=False, can_send_media_messages=False))
         elif mode == "kick":
             # Kick and then unban immediately so they can rejoin
             await client.ban_chat_member(chat_id, user_id)

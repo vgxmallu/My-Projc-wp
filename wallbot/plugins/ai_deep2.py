@@ -7,7 +7,7 @@ from wallbot import wbot as app
 
 
 SITE_URL = "https://t.me/XBOTS_X"      # Optional
-SITE_NAME = "Games Gomez"    # Optional
+SITE_NAME = "Gomez Games"    # Optional
 MODEL = "deepseek/deepseek-r1:free"
 
 

@@ -2,8 +2,8 @@ import requests
 from pyrogram import Client, filters
 from pyrogram.enums import ParseMode
 from wallbot import wbot as app
+from config import GROQ_API_KEY
 
-GROQ_API_KEY = "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"
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 TEXT_MODEL = "deepseek-r1-distill-llama-70b" #"llama3-8b-8192"  # Example model
 

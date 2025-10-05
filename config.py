@@ -30,7 +30,8 @@ DB_NAME = os.environ.get("DB_NAME", "")
 #Ai_Tools_API's
 OPENAI_KEY = environ.get("OPENAI_KEY")
 BARD_KEY = environ.get("BARD_KEY")
-
+OPENROUTER_API_KEY = environ.get("OPENROUTER_API_KEY")
+GROQ_API_KEY = environ.get("GROQ_API_KEY")
 class Telegram:
     EMOJIS = [
         "👍", "👎", "❤️", "🔥", 

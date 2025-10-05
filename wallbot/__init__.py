@@ -10,8 +10,6 @@ import asyncio
 from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
 from wallbot.plugins.word import load_words, load_common_words
 # from wallbot.plugins.rss import check_feeds, CHECK_INTERVAL
-from wallbot.plugins.weather_alert import alert_loop
-
 
 # ---------------- Logging ----------------
 formatter = logging.Formatter('%(levelname)s %(asctime)s - %(name)s - %(message)s')
@@ -95,12 +93,4 @@ MEAN_WORD_SET = set(MEAN_WORD)
 
 print(f"Loaded {len(WORD_SET)} words from the word list.")
 
-# ---------------- Main Startup ----------------
-async def main():
-    bot = wbot()
-    await bot.start()
-    bot.loop.create_task(alert_loop())
-    print("✅ Weather alert bot (free API) started.")
-    await idle()
-    await bot.stop()
 

@@ -86,7 +86,7 @@ async with wbot:
 
 DEV_LIST = [784589736]
 
-client = AsyncIOMotorClient(DB_URL) for 
+client = AsyncIOMotorClient(DB_URL)
 db = client['WordNWord']
 user_Collection = db['user']
 collection = db['word']

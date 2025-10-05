@@ -12,8 +12,8 @@ MODEL = "deepseek/deepseek-r1:free"
 
 
 # ========== /ask COMMAND ==========
-@app.on_message(filters.command("deep2"))
-async def ask_afi(_, message):
+@app.on_message(filters.command("depask"))
+async def ask_deepaik(_, message):
     user_text = " ".join(message.command[1:])
     if not user_text:
         return await message.reply_text("⚠️ Please provide a question after `/ask`.")

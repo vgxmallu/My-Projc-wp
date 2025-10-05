@@ -1,0 +1,47 @@
+import json
+import requests
+from pyrogram import Client, filters
+from pyrogram.enums import ParseMode
+from config import OPENROUTER_API_KEY
+
+
+OPENROUTER_API_KEY = "<OPENROUTER_API_KEY>"
+SITE_URL = "https://t.me/XBOTS_X"      # Optional
+SITE_NAME = "Games Gomez"    # Optional
+MODEL = "deepseek/deepseek-r1:free"
+
+
+# ========== /ask COMMAND ==========
+@app.on_message(filters.command("deep2"))
+async def ask_afi(_, message):
+    user_text = " ".join(message.command[1:])
+    if not user_text:
+        return await message.reply_text("⚠️ Please provide a question after `/ask`.")
+
+    temp_msg = await message.reply_text("⚡ Asking AI... ⏳")
+
+    try:
+        response = requests.post(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": SITE_URL,
+                "X-Title": SITE_NAME,
+            },
+            data=json.dumps({
+                "model": MODEL,
+                "messages": [
+                    {"role": "user", "content": user_text}
+                ],
+            }),
+            timeout=30
+        )
+
+        data = response.json()
+        reply = data.get("choices", [{}])[0].get("message", {}).get("content", "⚠️ No response from AI.")
+        await temp_msg.edit_text(reply, parse_mode=ParseMode.MARKDOWN)
+
+    except Exception as e:
+        await temp_msg.edit_text(f"⚠️ Error: {e}")
+

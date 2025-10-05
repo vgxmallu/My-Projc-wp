@@ -5,7 +5,7 @@ from pyrogram.enums import ParseMode
 from config import OPENROUTER_API_KEY
 from wallbot import wbot as app
 
-OPENROUTER_API_KEY = "<OPENROUTER_API_KEY>"
+
 SITE_URL = "https://t.me/XBOTS_X"      # Optional
 SITE_NAME = "Games Gomez"    # Optional
 MODEL = "deepseek/deepseek-r1:free"

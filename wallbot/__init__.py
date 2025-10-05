@@ -10,7 +10,7 @@ from wallbot.plugins.word import load_words, load_common_words
 from motor.motor_asyncio import AsyncIOMotorClient
 import asyncio
 #from wallbot.plugins.rss import check_feeds, CHECK_INTERVAL
-
+from wallbot.plugins.weather_alert import alert_loop
 
 
 formatter = logging.Formatter('%(levelname)s %(asctime)s - %(name)s - %(message)s')
@@ -74,26 +74,19 @@ class wbot(Client):
     async def stop(self, *args):
         await super().stop()
         LOGGER.info("Bot is OFFLINE 🔴")
-"""
-async def feed_checker()
-    print("RSS Feed Bot started")
-    while True:
-        try:
-            await check_feeds()
-        except Exception as e:
-            print(f"Error in feed checker: {str(e)}")
         
-        await asyncio.sleep(CHECK_INTERVAL)
-        
-asyncio.create_task(feed_checker())
-loop = asyncio.get_event_loop()
-loop.run_until_complete(start())
-"""
+from pyrogram import idle
+
+async with wbot:
+    wbot.loop.create_task(alert_loop())
+    print("✅ Weather alert bot (free API) started.")
+    await idle()
+
 
 
 DEV_LIST = [784589736]
 
-client = AsyncIOMotorClient(DB_URL)
+client = AsyncIOMotorClient(DB_URL) for 
 db = client['WordNWord']
 user_Collection = db['user']
 collection = db['word']

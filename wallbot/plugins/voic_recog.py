@@ -59,11 +59,9 @@ async def contains_profanity(text: str) -> bool:
 # =============== ADMIN COMMANDS ===============
 
 @app.on_message(filters.command("voicefilter") & filters.group)
-async def voicefilter_settings(client, message: Message):
+async def voicefilter_settings(_, message: Message):
     chat_id = message.chat.id
-    if not await is_admin_or_creator(client, message.chat.id, message.from_user.id):
-        return await message.reply("❌ **Access Denied.** This command is for group admins only.")
-
+    
     settings = await get_settings(chat_id)
     status = "🟢 Enabled" if settings["enabled"] else "🔴 Disabled"
 

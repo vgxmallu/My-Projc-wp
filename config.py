@@ -32,6 +32,11 @@ OPENAI_KEY = environ.get("OPENAI_KEY")
 BARD_KEY = environ.get("BARD_KEY")
 OPENROUTER_API_KEY = environ.get("OPENROUTER_API_KEY")
 GROQ_API_KEY = environ.get("GROQ_API_KEY")
+HF_API = os.getenv("HF_API", "")  # Get free token from https://huggingface.co/settings/tokens
+
+
+
+
 class Telegram:
     EMOJIS = [
         "👍", "👎", "❤️", "🔥", 

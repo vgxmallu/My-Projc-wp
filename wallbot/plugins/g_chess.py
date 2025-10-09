@@ -215,12 +215,13 @@ async def cmd_xhestart(client, message:Message):
 @app.on_message(filters.command("chess_create") & filters.group)
 async def cmd_chess_create(client, message:Message):
     chat_id = message.chat.id
+    m_id = message.id
     # check active game
     active = await get_active_game(chat_id)
     if active:
         return await message.reply_text("A game is already active in this chat. Use /board to view it.")
     sent = await message.reply_text("♟️ Chess lobby created! Click Join to enter the queue (first two players will start).", reply_markup=lobby_keyboard(chat_id, message.message_id))
-    await create_lobby_doc(chat_id, message.message_id)
+    await create_lobby_doc(chat_id, m_id)
 
 @app.on_message(filters.command("chessprofile") & (filters.group | filters.private))
 async def cmdches_profile(client, message:Message):

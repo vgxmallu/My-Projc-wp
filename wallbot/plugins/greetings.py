@@ -427,15 +427,19 @@ bak_bt = InlineKeyboardMarkup(
 
 hlp_bt = InlineKeyboardMarkup(
         [[
-            InlineKeyboardButton("❌⭕Tic Tac Toe 🕹️", callback_data="tic_gg")
+            InlineKeyboardButton("❌⭕Tic Tac Toe", callback_data="tic_gg")
         ],[
-            InlineKeyboardButton("🔴⚫Gomoku 🎮", callback_data="gomk_gg")
+            InlineKeyboardButton("🔴⚫Gomoku", callback_data="gomk_gg")
         ],[
-            InlineKeyboardButton("🔴🟢Connect 4 🕹️", callback_data="cn4_gg")
+            InlineKeyboardButton("🪨Rock,Paper📃,✂️cissor", callback_data="rps")
         ],[
-            InlineKeyboardButton("📊QuizMaster [P]🤖&[G]👥", callback_data="qz_gg")
+            InlineKeyboardButton("🔴🟢Connect4", callback_data="cn4_gg")
         ],[
-            InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg")
+            InlineKeyboardButton("📊QuizMaster [B]🤖&[G]👥", callback_data="qz_gg")
+        ],[
+            InlineKeyboardButton("⬇️", callback_data="gg"),
+            InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg"),
+            InlineKeyboardButton("⬇️", callback_data="gg")
         ],[
             InlineKeyboardButton("⚔️RPG Battle🛡️", callback_data="rpgb_gg"),
             InlineKeyboardButton("🔥RPG Battle Advanced 🛡️⚔️", callback_data="rpga_gg")
@@ -485,6 +489,55 @@ __- Catch wild Pokémon (manual / auto spawn)
 async def pokic_callback(client, query):    
     await query.message.edit_text(
         text=pok_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+rps_tx="""
+🎮 *Welcome to Rock–Paper–Scissors PvP Bot!*
+__Battle your friends in quick, fun duels and climb the ranks to become the ultimate champion!__
+
+<blockquote expandable>────────────────────
+⚔️ *How to Play:*
+1️⃣ In a group, reply to a member’s message with `/rps`
+2️⃣ The bot will start a PvP match between you and them.
+3️⃣ Both players tap one of the move buttons:
+   🪨 Rock | 📄 Paper | ✂️ Scissors
+4️⃣ When both have chosen, the result appears instantly!
+────────────────────
+🏆 *Game Rules:*
+- Rock beats Scissors  
+- Scissors beats Paper  
+- Paper beats Rock  
+- Same move = Tie 🤝
+────────────────────
+💫 *XP & Ranks:*
+Gain XP every time you play!
+- 🏆 Win: +50 XP  
+- 😅 Lose: +10 XP  
+- 🤝 Tie: +25 XP  
+
+Ranks:
+- Novice (0 XP)  
+- Apprentice (200 XP)  
+- Warrior (500 XP)  
+- Champion (1000 XP)  
+- Legend (2000 XP)
+────────────────────
+📜 *Commands:*
+`/rps` — Start a duel (reply to someone)  
+`/rpsprofile` — View your stats and rank  
+`/rpsleaderboard` — Show top players in the server  
+────────────────────<blockquote>
+💡 *Tips:*
+__• You can’t challenge yourself 😆  
+• Each match times out after 90 seconds ⏱️  
+• You can forfeit anytime using 🚪 Forfeit button.__
+"""
+@app.on_callback_query(filters.regex("^rps$"))
+async def pc_callback(client, query):    
+    await query.message.edit_text(
+        text=rps_tx,
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")

@@ -12,7 +12,14 @@ mongo = AsyncIOMotorClient(DB_URL)
 db = mongo.voice_filter_bot
 
 # =============== HELPER FUNCTIONS ===============
-
+async def is_admin_or_creator(client: Client, chat_id: int, user_id: int) -> bool:
+    """Checks if a user is an admin or creator in the chat."""
+    try:
+        member: ChatMember = await client.get_chat_member(chat_id, user_id)
+        return member.status in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]
+    except Exception:
+        return False # Failsafe
+        
 async def get_settings(chat_id: int):
     data = await db.settings.find_one({"chat_id": chat_id})
     if not data:
@@ -52,11 +59,10 @@ async def contains_profanity(text: str) -> bool:
 # =============== ADMIN COMMANDS ===============
 
 @app.on_message(filters.command("voicefilter") & filters.group)
-async def voicefilter_settings(_, message: Message):
+async def voicefilter_settings(client, message: Message):
     chat_id = message.chat.id
-    member = await app.get_chat_member(chat_id, message.from_user.id)
-    if member.status not in [enums.ChatMemberStatus.OWNER, enums.ChatMemberStatus.ADMINISTRATOR]:
-        return await message.reply("❌ Only admins can use this command.")
+    if not await is_admin_or_creator(client, message.chat.id, message.from_user.id):
+        return await message.reply("❌ **Access Denied.** This command is for group admins only.")
 
     settings = await get_settings(chat_id)
     status = "🟢 Enabled" if settings["enabled"] else "🔴 Disabled"

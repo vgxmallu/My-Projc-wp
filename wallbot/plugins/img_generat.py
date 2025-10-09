@@ -50,7 +50,7 @@ async def generate_image(prompt: str):
 @app.on_message(filters.command("imagine"))
 async def imabwgine_cmd(_, message: Message):
     if len(message.command) < 2:
-        return await message.reply("Usage: `/imagine <prompt>`", quote=True)
+        return await message.reply("Usage: `/imagine prompt`")
 
     prompt = message.text.split(maxsplit=1)[1].strip()
     user = await get_user(message.from_user.id)

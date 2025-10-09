@@ -269,7 +269,7 @@ async def cb_join(client, cq:CallbackQuery):
         fen = game["fen"]
         desc = f"♟️ Game started!\nWhite: [{game['white_name']}](tg://user?id={game['white_id']})\nBlack: [{game['black_name']}](tg://user?id={game['black_id']})\nTurn: White"
         kb = make_board_buttons(fen, selectable_from=None, highlight_squares=None, player_allowed=None, game_id=str(game["_id"]), actor_id=0)
-        await client.send_message(chat_id, desc + "\n\nTap your piece, then destination.", parse_mode="markdown", reply_markup=kb)
+        await client.send_message(chat_id, desc + "\n\nTap your piece, then destination.", reply_markup=kb)
 
 @app.on_callback_query(filters.regex(r"^chess_cancel_lobby\|"))
 async def cb_cancel_lobby(client, cq:CallbackQuery):

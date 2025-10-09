@@ -156,10 +156,11 @@ async def start_game(client, message):
     #message_effect_id=5104841245755180586,
     # If it's a new user, log them
     if result.upserted_id is not None:
-        mention = f"[{user.first_name}](tg://user?id={user_id})"
+        mention = f"[User_Link](tg://user?id={user_id})"
+        first_name = f"{user.first_name}"
         await client.send_message(
             LOG_CHANNEL,
-            f"🆕 New member started the bot!\n\n👤: {mention}\n⛓️‍💥: @{user_n}\n🆔: `{user_id}`"
+            f"🆕 **New member started the bot!**\n\n👤First name: {first_name}\n⛓️‍💥 User Link: {mention}\n©️ User Name: @{user_n}\n🆔 User ID: `{user_id}`"
         )
 
 #•/profile → View your profile, stats, and achievements.

@@ -497,7 +497,7 @@ rps_tx="""
 🎮 *Welcome to Rock–Paper–Scissors PvP Bot!*
 __Battle your friends in quick, fun duels and climb the ranks to become the ultimate champion!__
 
-<blockquote expandable>────────────────────
+<blockquote expandable>
 ⚔️ *How to Play:*
 1️⃣ In a group, reply to a member’s message with `/rps`
 2️⃣ The bot will start a PvP match between you and them.
@@ -510,19 +510,12 @@ __Battle your friends in quick, fun duels and climb the ranks to become the ulti
 - Scissors beats Paper  
 - Paper beats Rock  
 - Same move = Tie 🤝
-────────────────────
+
 💫 *XP & Ranks:*
 Gain XP every time you play!
 - 🏆 Win: +50 XP  
 - 😅 Lose: +10 XP  
 - 🤝 Tie: +25 XP  
-
-Ranks:
-- Novice (0 XP)  
-- Apprentice (200 XP)  
-- Warrior (500 XP)  
-- Champion (1000 XP)  
-- Legend (2000 XP)
 ────────────────────
 📜 *Commands:*
 `/rps` — Start a duel (reply to someone)  

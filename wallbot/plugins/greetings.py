@@ -494,35 +494,35 @@ async def pokic_callback(client, query):
     await query.answer("😎Gomez Games🎮")
 
 rps_tx="""
-🎮 *Welcome to Rock–Paper–Scissors PvP Bot!*
+🎮 **Welcome to Rock–Paper–Scissors PvP Bot!**
 __Battle your friends in quick, fun duels and climb the ranks to become the ultimate champion!__
 
 <blockquote expandable>
-⚔️ *How to Play:*
+⚔️ **How to Play:**
 1️⃣ In a group, reply to a member’s message with `/rps`
 2️⃣ The bot will start a PvP match between you and them.
 3️⃣ Both players tap one of the move buttons:
    🪨 Rock | 📄 Paper | ✂️ Scissors
 4️⃣ When both have chosen, the result appears instantly!
-────────────────────
-🏆 *Game Rules:*
+
+🏆 **Game Rules:**
 - Rock beats Scissors  
 - Scissors beats Paper  
 - Paper beats Rock  
 - Same move = Tie 🤝
 
-💫 *XP & Ranks:*
+💫 **XP & Ranks:**
 Gain XP every time you play!
 - 🏆 Win: +50 XP  
 - 😅 Lose: +10 XP  
 - 🤝 Tie: +25 XP  
-────────────────────
-📜 *Commands:*
+
+📜 **Commands:**
 `/rps` — Start a duel (reply to someone)  
 `/rpsprofile` — View your stats and rank  
 `/rpsleaderboard` — Show top players in the server  
-────────────────────<blockquote>
-💡 *Tips:*
+</blockquote>
+💡 **Tips:**
 __• You can’t challenge yourself 😆  
 • Each match times out after 90 seconds ⏱️  
 • You can forfeit anytime using 🚪 Forfeit button.__

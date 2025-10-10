@@ -9,7 +9,7 @@ import asyncio
 
 from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
 from wallbot.plugins.word import load_words, load_common_words
-# from wallbot.plugins.rss import check_feeds, CHECK_INTERVAL
+from wallbot.plugins.birthday_remind import birthday_check_loop, wishes_col, subscriptions_col, birthdays_col
 
 # ---------------- Logging ----------------
 formatter = logging.Formatter('%(levelname)s %(asctime)s - %(name)s - %(message)s')
@@ -75,8 +75,17 @@ class wbot(Client):
         await super().stop()
         LOGGER.info("Bot is Stopped 1🔴")
 
-
-
+    async def on_start():
+        logger.info("Birthday bot started, creating indexes")
+    # create helpful indexes
+        try:
+            await birthdays_col.create_index("user_id", unique=True)
+            await subscriptions_col.create_index("chat_id", unique=True)
+            await wishes_col.create_index("user_id", unique=True)
+        except Exception:
+            pass
+    # start background loop
+        app.loop.create_task(birthday_check_loop())
 
 # ---------------- Database + Word Setup ----------------
 DEV_LIST = [784589736]

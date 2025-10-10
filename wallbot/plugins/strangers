@@ -1,0 +1,121 @@
+import asyncio
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+API_ID = 123456   # your api_id
+API_HASH = "your_api_hash"
+BOT_TOKEN = "your_bot_token"
+
+app = Client("anon_chat_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+
+# ─── MEMORY STORAGE ───────────────────────────────
+queue = set()           # waiting users
+active_chats = {}       # user_id: partner_id
+
+# ─── UTILITIES ─────────────────────────────────────
+def get_keyboard(in_chat=False):
+    if in_chat:
+        return InlineKeyboardMarkup([
+            [InlineKeyboardButton("❌ Stop", callback_data="stop")],
+            [InlineKeyboardButton("👤 Find New Partner", callback_data="find")]
+        ])
+    else:
+        return InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔍 Find Partner", callback_data="find")]
+        ])
+
+async def end_chat(user_id):
+    partner_id = active_chats.get(user_id)
+    if partner_id:
+        await app.send_message(partner_id, "⚠️ The other user has left the chat.", reply_markup=get_keyboard())
+        active_chats.pop(partner_id, None)
+    active_chats.pop(user_id, None)
+
+# ─── START ─────────────────────────────────────────
+@app.on_message(filters.command("start"))
+async def start(_, msg):
+    await msg.reply_text(
+        "**👋 Welcome to Anonymous Chat!**\n\n"
+        "🔹 Click below to find a random partner.\n"
+        "🔹 Chat anonymously — no names, no IDs.\n\n"
+        "Enjoy your private chat!",
+        reply_markup=get_keyboard()
+    )
+
+# ─── FIND PARTNER ─────────────────────────────────
+@app.on_callback_query(filters.regex("find"))
+async def find_partner(_, query):
+    user_id = query.from_user.id
+
+    # already in a chat
+    if user_id in active_chats:
+        await query.answer("You're already chatting!", show_alert=True)
+        return
+
+    # find a match
+    if len(queue) > 0:
+        partner_id = queue.pop()
+        active_chats[user_id] = partner_id
+        active_chats[partner_id] = user_id
+
+        await app.send_message(
+            partner_id,
+            "💬 Connected! Say hi to your new partner.",
+            reply_markup=get_keyboard(in_chat=True)
+        )
+        await query.message.edit_text(
+            "💬 Connected! Say hi to your new partner.",
+            reply_markup=get_keyboard(in_chat=True)
+        )
+    else:
+        queue.add(user_id)
+        await query.message.edit_text(
+            "🔍 Searching for a partner... please wait.",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("❌ Cancel Search", callback_data="cancel")]])
+        )
+
+# ─── CANCEL SEARCH ────────────────────────────────
+@app.on_callback_query(filters.regex("cancel"))
+async def cancel_search(_, query):
+    user_id = query.from_user.id
+    if user_id in queue:
+        queue.remove(user_id)
+        await query.message.edit_text("❌ Search cancelled.", reply_markup=get_keyboard())
+    else:
+        await query.answer("You are not searching right now!", show_alert=True)
+
+# ─── STOP CHAT ────────────────────────────────────
+@app.on_callback_query(filters.regex("stop"))
+async def stop_chat(_, query):
+    user_id = query.from_user.id
+    await end_chat(user_id)
+    await query.message.edit_text("🛑 You left the chat.", reply_markup=get_keyboard())
+
+# ─── MESSAGE RELAY ────────────────────────────────
+@app.on_message(filters.private & filters.text & ~filters.command("start"))
+async def relay_text(_, msg):
+    user_id = msg.from_user.id
+    partner_id = active_chats.get(user_id)
+
+    if partner_id:
+        try:
+            await app.send_message(partner_id, msg.text)
+        except Exception:
+            await msg.reply_text("⚠️ Message failed to deliver.")
+    else:
+        await msg.reply_text("🔹 You're not chatting yet. Click below to find someone!",
+                             reply_markup=get_keyboard())
+
+# ─── MEDIA RELAY (optional) ───────────────────────
+@app.on_message(filters.private & (filters.photo | filters.video | filters.voice))
+async def relay_media(_, msg):
+    user_id = msg.from_user.id
+    partner_id = active_chats.get(user_id)
+    if not partner_id:
+        await msg.reply_text("⚠️ You're not chatting with anyone.")
+        return
+    await msg.copy(partner_id)
+
+# ─── RUN BOT ──────────────────────────────────────
+print("🤖 Anonymous Chat Bot running...")
+app.run()

@@ -9,9 +9,8 @@ import asyncio
 
 from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
 from wallbot.plugins.word import load_words, load_common_words
-from wallbot.plugins.birthday_remind import birthday_check_loop, wishes_col, subscriptions_col, birthdays_col
-from wallbot import wbot as app
-# ---------------- Logging ----------------
+#from wallbot.plugins.birthday_remind import birthday_check_loop, wishes_col, subscriptions_col, birthdays_col
+
 formatter = logging.Formatter('%(levelname)s %(asctime)s - %(name)s - %(message)s')
 
 fh = logging.FileHandler(f'{__name__}.log', 'w')
@@ -38,53 +37,9 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 LOGGER = logging.getLogger(__name__)
 
 
-# ---------------- Bot Class ----------------
-class wbot(Client):
-    def __init__(self):
-        super().__init__(
-            "wallbot",
-            plugins=dict(root="wallbot/plugins"),
-            workdir="./cache/",
-            api_id=API_ID,
-            api_hash=API_HASH,
-            bot_token=BOT_TOKEN,
-            sleep_threshold=30,
-        )
-
-    async def start(self):
-        global BOT_INFO
-        await super().start()
-        BOT_INFO = await self.get_me()
-
-        if not path.exists("/tmp/thumbnails/"):
-            mkdir("/tmp/thumbnails/")
-
-        for chat in AUTH_CHATS:
-            try:
-                await self.send_photo(
-                    chat,
-                    "https://files.catbox.moe/80bcxh.jpg",
-                    "**My Test Bot is started** ✅",
-                )
-            except Exception as e:
-                LOGGER.warning(f"Could not send startup message to {chat}: {e}")
-
-        LOGGER.info(f"\n✅ {BOT_INFO.username} is ONLINE 1 🟢\n")
-    
-        logger.info("Birthday bot started, creating indexes")
-    # create helpful indexes
-        try:
-            await birthdays_col.create_index("user_id", unique=True)
-            await subscriptions_col.create_index("chat_id", unique=True)
-            await wishes_col.create_index("user_id", unique=True)
-        except Exception:
-            pass
-    # start background loop
-        app.loop.create_task(birthday_check_loop())
+wbot = Client("games_gomez", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
         
-    async def stop(self, *args):
-        await super().stop()
-        LOGGER.info("Bot is Stopped 1🔴")
+    
         
 
 # ---------------- Database + Word Setup ----------------

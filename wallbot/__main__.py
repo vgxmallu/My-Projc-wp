@@ -1,9 +1,8 @@
 
 from os import mkdir, path
 
-from wallbot import wbot
+from wallbot import wbot 
 
+# Run
 if __name__ == "__main__":
-    if not path.exists("cache"):
-        mkdir("cache")
-    wbot().run()
+    wbot.run()

@@ -10,7 +10,7 @@ import asyncio
 from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
 from wallbot.plugins.word import load_words, load_common_words
 from wallbot.plugins.birthday_remind import birthday_check_loop, wishes_col, subscriptions_col, birthdays_col
-
+from wallbot import wbot as app
 # ---------------- Logging ----------------
 formatter = logging.Formatter('%(levelname)s %(asctime)s - %(name)s - %(message)s')
 
@@ -85,7 +85,7 @@ class wbot(Client):
         except Exception:
             pass
     # start background loop
-        wbot.loop.create_task(birthday_check_loop())
+        app.loop.create_task(birthday_check_loop())
 
 # ---------------- Database + Word Setup ----------------
 DEV_LIST = [784589736]

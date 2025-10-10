@@ -85,7 +85,7 @@ class wbot(Client):
         except Exception:
             pass
     # start background loop
-        app.loop.create_task(birthday_check_loop())
+        wbot.loop.create_task(birthday_check_loop())
 
 # ---------------- Database + Word Setup ----------------
 DEV_LIST = [784589736]

@@ -70,12 +70,7 @@ class wbot(Client):
                 LOGGER.warning(f"Could not send startup message to {chat}: {e}")
 
         LOGGER.info(f"\n✅ {BOT_INFO.username} is ONLINE 1 🟢\n")
-
-    async def stop(self, *args):
-        await super().stop()
-        LOGGER.info("Bot is Stopped 1🔴")
-
-    async def on_start():
+    
         logger.info("Birthday bot started, creating indexes")
     # create helpful indexes
         try:
@@ -86,6 +81,11 @@ class wbot(Client):
             pass
     # start background loop
         app.loop.create_task(birthday_check_loop())
+        
+    async def stop(self, *args):
+        await super().stop()
+        LOGGER.info("Bot is Stopped 1🔴")
+        
 
 # ---------------- Database + Word Setup ----------------
 DEV_LIST = [784589736]

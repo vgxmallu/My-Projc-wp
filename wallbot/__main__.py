@@ -5,7 +5,7 @@ import asyncio
 from wallbot import wbot 
 
 async def main():
-    wbot = Bot()
+    wbot = wbot()
     await wbot.start()
     await idle()  # wait until Ctrl+C or SIGTERM
     await wbot.stop()

@@ -5,10 +5,10 @@ import asyncio
 from wallbot import wbot 
 
 async def main():
-    wbot = wbot()
-    await wbot.start()
+    bot = wbot()
+    await bot.start()
     await idle()  # wait until Ctrl+C or SIGTERM
-    await wbot.stop()
+    await bot.stop()
 
 if __name__ == "__main__":
     try:

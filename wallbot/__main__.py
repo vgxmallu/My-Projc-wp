@@ -3,6 +3,14 @@ from os import mkdir, path
 
 from wallbot import wbot 
 
-# Run
+async def main():
+    wbot = Bot()
+    await wbot.start()
+    await idle()  # wait until Ctrl+C or SIGTERM
+    await wbot.stop()
+
 if __name__ == "__main__":
-    wbot.run()
+    try:
+        asyncio.run(main())
+    except (KeyboardInterrupt, SystemExit):
+        LOGGER.info("Bot shutting down...")

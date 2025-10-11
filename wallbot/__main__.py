@@ -1,6 +1,7 @@
 
 from os import mkdir, path
-
+import sys
+import asyncio
 from wallbot import wbot 
 
 async def main():

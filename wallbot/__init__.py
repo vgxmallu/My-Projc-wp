@@ -4,7 +4,6 @@ from pyrogram import Client
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
 from wallbot.plugins.word import load_words, load_common_words
-from wallbot.plugins.group_wrstats import daily_summary_task, weekly_reset_and_champion, chats_col, users_col
 # ---------------- Logging ----------------
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger("WallBot")

@@ -51,23 +51,3 @@ MEAN_WORD_SET = set(MEAN_WORD)
 
 print(f"Loaded {len(WORD_SET)} words from the word list.")
 
-
-
-async def main():
-    # create indexes
-    try:
-        await users_col.create_index([("chat_id", 1), ("user_id", 1)], unique=True)
-        await chats_col.create_index("chat_id", unique=True)
-    except Exception:
-        pass
-
-    # start client
-    await wbot.start()
-    print("✅ Community Hero Bot started — connecting to Telegram & MongoDB")
-
-    # spawn background tasks
-    asyncio.create_task(weekly_reset_and_champion())
-    asyncio.create_task(daily_summary_task())
-
-    # keep running
-    await asyncio.Event().wait()

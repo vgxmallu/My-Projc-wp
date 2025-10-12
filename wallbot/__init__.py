@@ -1,17 +1,15 @@
-
-
-from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
-from wallbot.plugins.word import load_words, load_common_words
-
+import asyncio
 import logging
-import os
 from pyrogram import Client
 from motor.motor_asyncio import AsyncIOMotorClient
-
-
+from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
+from wallbot.plugins.word import load_words, load_common_words
+from wallbot.plugins.group_wrstats import daily_summary_task, weekly_reset_and_champion, chats_col, users_col
+# ---------------- Logging ----------------
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger("WallBot")
 
+# ---------------- Pyrogram Bot Class ----------------
 class wbot(Client):
     def __init__(self):
         super().__init__(
@@ -37,6 +35,7 @@ class wbot(Client):
         await super().stop()
         LOGGER.info("🔴 Bot stopped.")
 
+
 # ---------------- Database + Word Setup ----------------
 DEV_LIST = [784589736]
 
@@ -51,3 +50,24 @@ MEAN_WORD = load_common_words()
 MEAN_WORD_SET = set(MEAN_WORD)
 
 print(f"Loaded {len(WORD_SET)} words from the word list.")
+
+
+
+async def main():
+    # create indexes
+    try:
+        await users_col.create_index([("chat_id", 1), ("user_id", 1)], unique=True)
+        await chats_col.create_index("chat_id", unique=True)
+    except Exception:
+        pass
+
+    # start client
+    await app.start()
+    print("✅ Community Hero Bot started — connecting to Telegram & MongoDB")
+
+    # spawn background tasks
+    asyncio.create_task(weekly_reset_and_champion())
+    asyncio.create_task(daily_summary_task())
+
+    # keep running
+    await asyncio.Event().wait()

@@ -62,7 +62,7 @@ async def main():
         pass
 
     # start client
-    await app.start()
+    await wbot.start()
     print("✅ Community Hero Bot started — connecting to Telegram & MongoDB")
 
     # spawn background tasks

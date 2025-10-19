@@ -1,0 +1,514 @@
+#!/usr/bin/env python3
+"""
+Coding Practice Bot (Pyrogram + MongoDB)
+
+Features:
+- Problems stored in MongoDB (type: "mcq" or "code")
+- /practice -> gives a random problem for the chat/user
+- MCQ problems: answer via inline buttons, immediate feedback & XP
+- Code problems: user replies with /submitcode (reply to problem message) and their code; submission stored for admin review
+- Admins can add problems via /addmcq or /addcode in private chat with the bot
+- Admins review submissions with /pending (accept/reject). Accepting awards XP and marks solved.
+- /profile shows user stats; /leaderboard shows top users by XP
+- Safety: bot does NOT execute user code (manual review required)
+"""
+
+import os
+import asyncio
+import logging
+import json
+from typing import Optional, List, Dict, Any
+from datetime import datetime
+
+from dotenv import load_dotenv
+from pyrogram import Client, filters
+from pyrogram.types import (
+    Message,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    CallbackQuery,
+)
+from motor.motor_asyncio import AsyncIOMotorClient
+from bson.objectid import ObjectId
+
+load_dotenv()
+
+# ---------- Config ----------
+API_ID = int(os.getenv("API_ID", "0"))
+API_HASH = os.getenv("API_HASH", "")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+DB_NAME = os.getenv("DB_NAME", "coding_bot_db")
+ADMIN_IDS = [int(x) for x in os.getenv("ADMIN_IDS", "").split(",") if x.strip()]
+
+if not (API_ID and API_HASH and BOT_TOKEN):
+    raise SystemExit("Set API_ID, API_HASH, BOT_TOKEN in .env")
+
+# ---------- Init ----------
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("CodingPracticeBot")
+
+app = Client("coding_practice_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+mongo = AsyncIOMotorClient(MONGO_URL)
+db = mongo[DB_NAME]
+
+# Collections
+problems_col = db["problems"]       # problems: { type: "mcq"|"code", title, statement, choices (for mcq), answer (index), xp, tags, created_by, created_at }
+users_col = db["users"]             # users: { user_id, name, xp, solved: [problem_id], submissions_count }
+subs_col = db["submissions"]        # submissions: { user_id, problem_id, code, status: pending/accepted/rejected, reviewer, reason, created_at }
+meta_col = db["meta"]               # misc
+
+# ---------- Helpers ----------
+async def ensure_user(user_id: int, name: str):
+    user = await users_col.find_one({"user_id": user_id})
+    if not user:
+        user = {
+            "user_id": user_id,
+            "name": name,
+            "xp": 0,
+            "solved": [],
+            "submissions_count": 0,
+            "created_at": datetime.utcnow(),
+        }
+        await users_col.insert_one(user)
+    return user
+
+async def award_xp(user_id: int, xp: int, problem_id: str):
+    await users_col.update_one({"user_id": user_id}, {"$inc": {"xp": xp}, "$push": {"solved": problem_id}})
+    return await users_col.find_one({"user_id": user_id})
+
+def mcq_keyboard(problem_id: str, choices: List[str]):
+    kb = []
+    for i, c in enumerate(choices):
+        kb.append([InlineKeyboardButton(f"{i+1}. {c}", callback_data=f"mcq_answer|{problem_id}|{i}")])
+    kb.append([InlineKeyboardButton("⏭ Next", callback_data=f"next|{problem_id}")])
+    return InlineKeyboardMarkup(kb)
+
+def code_problem_keyboard(problem_id: str):
+    kb = [
+        [InlineKeyboardButton("Submit Code (reply to problem) /submitcode", callback_data=f"hint_submit|{problem_id}")],
+        [InlineKeyboardButton("⏭ Next", callback_data=f"next|{problem_id}")]
+    ]
+    return InlineKeyboardMarkup(kb)
+
+async def random_problem(filter_tag: Optional[str] = None):
+    # fetch random problem optionally filtered by tag
+    query = {}
+    if filter_tag:
+        query["tags"] = filter_tag
+    count = await problems_col.count_documents(query)
+    if count == 0:
+        return None
+    skip = int(os.urandom(2).hex(), 16) % count  # random skip
+    cursor = problems_col.find(query).skip(skip).limit(1)
+    doc = await cursor.to_list(length=1)
+    return doc[0] if doc else None
+
+# ---------- Command Handlers ----------
+@app.on_message(filters.command("start"))
+async def cmd_start(_, m: Message):
+    await ensure_user(m.from_user.id, m.from_user.first_name or m.from_user.username or str(m.from_user.id))
+    await m.reply_text(
+        "👋 Welcome to Coding Practice Bot!\n\n"
+        "Use /practice to get a problem.\n"
+        "Use /profile to view your XP and solved problems.\n"
+        "Admins: use /addmcq and /addcode to add problems.\n"
+        "Important: The bot **does not run your code** for safety. Code submissions require admin review."
+    )
+
+@app.on_message(filters.command("practice"))
+async def cmd_practice(_, m: Message):
+    await ensure_user(m.from_user.id, m.from_user.first_name or m.from_user.username or str(m.from_user.id))
+    # optional tag after command: /practice python
+    tag = None
+    if len(m.command) >= 2:
+        tag = m.command[1]
+    p = await random_problem(tag)
+    if not p:
+        await m.reply_text("No problems found. Admins can add problems using /addmcq or /addcode.")
+        return
+    # save last served problem in meta for reply handling (per chat)
+    await meta_col.update_one({"_id": "last_served"}, {"$set": {str(m.chat.id): str(p["_id"])}}, upsert=True)
+    # send differently for mcq/code
+    if p["type"] == "mcq":
+        text = f"*{p.get('title','MCQ Problem')}*\n\n{p.get('statement')}\n\nXP: {p.get('xp',50)}\nTags: {', '.join(p.get('tags',[]))}"
+        await m.reply_text(text, reply_markup=mcq_keyboard(str(p["_id"]), p["choices"]), parse_mode="markdown")
+    else:
+        text = f"*{p.get('title','Coding Problem')}*\n\n{p.get('statement')}\n\n*Input/Output:* {p.get('io','See statement')}\n\nXP: {p.get('xp',100)}\nTags: {', '.join(p.get('tags',[]))}\n\nTo submit your solution: reply to this message with `/submitcode` followed by your code (or reply and send code then `/submitcode`)."
+        await m.reply_text(text, reply_markup=code_problem_keyboard(str(p["_id"])), parse_mode="markdown")
+
+@app.on_message(filters.command("profile"))
+async def cmd_profile(_, m: Message):
+    user = await ensure_user(m.from_user.id, m.from_user.first_name or m.from_user.username or str(m.from_user.id))
+    solved_count = len(user.get("solved", []))
+    text = (
+        f"👤 *{user.get('name')}*\n"
+        f"⭐ XP: *{user.get('xp',0)}*\n"
+        f"✅ Problems solved: *{solved_count}*\n"
+        f"📥 Submissions made: *{user.get('submissions_count',0)}*\n"
+    )
+    await m.reply_text(text, parse_mode="markdown")
+
+@app.on_message(filters.command("leaderboard"))
+async def cmd_leaderboard(_, m: Message):
+    top = await users_col.find().sort("xp", -1).limit(10).to_list(length=10)
+    lines = ["🏆 *Leaderboard*"]
+    for i, u in enumerate(top, 1):
+        lines.append(f"{i}. {u.get('name')} — {u.get('xp',0)} XP")
+    await m.reply_text("\n".join(lines), parse_mode="markdown")
+
+# ---------- Submission Flow ----------
+@app.on_message(filters.command("submitcode"))
+async def cmd_submitcode(_, m: Message):
+    """
+    Users should reply to the problem message with their code, then send /submitcode.
+    The bot stores the submission as pending for admin review. No code execution.
+    """
+    if not m.reply_to_message:
+        return await m.reply_text("Reply to the problem message with your code and then send /submitcode.")
+    # find last served problem id for this chat (we try to detect)
+    last_served = await meta_col.find_one({"_id": "last_served"})
+    problem_id = None
+    if last_served and str(m.chat.id) in last_served:
+        problem_id = last_served[str(m.chat.id)]
+    # Alternatively, check if reply_to_message has text that contains "Problem" and attempt to parse id from attached meta (not guaranteed)
+    if not problem_id:
+        # fallback: ask user to include problem id
+        return await m.reply_text("Could not detect problem. Please include problem id in your submission message like: `#problem:<id>` or use /practice then reply to that problem message.")
+    # get problem
+    try:
+        prob = await problems_col.find_one({"_id": ObjectId(problem_id)})
+    except Exception:
+        prob = None
+    if not prob:
+        return await m.reply_text("Problem not found (maybe expired). Please /practice again and reply to that message with /submitcode.")
+    # get code from reply message - prefer the replied message text if that message is code, else use the current message text after command
+    code_text = None
+    if m.reply_to_message.text and len(m.reply_to_message.text) > 0:
+        code_text = m.reply_to_message.text
+    else:
+        # use message after command (text following /submitcode)
+        if len(m.command) >= 2:
+            code_text = " ".join(m.command[1:])
+    if not code_text:
+        return await m.reply_text("No code detected. Reply to your code message or include code after /submitcode.")
+    # store submission
+    sub_doc = {
+        "user_id": m.from_user.id,
+        "user_name": m.from_user.first_name or m.from_user.username or str(m.from_user.id),
+        "problem_id": str(prob["_id"]),
+        "problem_title": prob.get("title"),
+        "code": code_text,
+        "status": "pending",
+        "reviewer": None,
+        "review_note": None,
+        "created_at": datetime.utcnow()
+    }
+    res = await subs_col.insert_one(sub_doc)
+    await users_col.update_one({"user_id": m.from_user.id}, {"$inc": {"submissions_count": 1}}, upsert=True)
+    await m.reply_text("✅ Submission received and marked *pending*. An admin will review it soon.", parse_mode="markdown")
+    # notify admins (best-effort)
+    for aid in ADMIN_IDS:
+        try:
+            await app.send_message(aid, f"🆕 New submission #{res.inserted_id} by {sub_doc['user_name']} for `{prob.get('title')}`. Use /review to manage.")
+        except Exception:
+            pass
+
+# ---------- Admin: add MCQ ----------
+@app.on_message(filters.command("addmcq") & filters.user(ADMIN_IDS))
+async def cmd_addmcq(_, m: Message):
+    """
+    Usage (in private chat with bot):
+    /addmcq
+    Title: Two Sum
+    Statement: Given...
+    Choices:
+    a) ...
+    b) ...
+    c) ...
+    d) ...
+    Answer: b
+    XP: 50
+    Tags: arrays, easy
+    """
+    if not m.reply_to_message:
+        await m.reply_text("Reply to a message containing the problem spec in the format described in help.")
+        return
+    text = m.reply_to_message.text or m.text
+    # naive parser: read lines
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    data = {"type": "mcq", "choices": [], "tags": [], "created_at": datetime.utcnow(), "created_by": m.from_user.id}
+    for line in lines:
+        if line.lower().startswith("title:"):
+            data["title"] = line.split(":",1)[1].strip()
+        elif line.lower().startswith("statement:"):
+            data["statement"] = line.split(":",1)[1].strip()
+        elif line.lower().startswith("choices:"):
+            # following lines until Answer:
+            continue
+        elif line.lower().startswith("answer:"):
+            ans = line.split(":",1)[1].strip().lower()
+            # map a/b/c/d to index
+            if ans and ans[0] in "abcd":
+                data["answer"] = ord(ans[0]) - ord("a")
+            else:
+                try:
+                    data["answer"] = int(ans) - 1
+                except:
+                    data["answer"] = 0
+        elif line.lower().startswith("xp:"):
+            try:
+                data["xp"] = int(line.split(":",1)[1].strip())
+            except:
+                data["xp"] = 50
+        elif line.lower().startswith("tags:"):
+            data["tags"] = [t.strip() for t in line.split(":",1)[1].split(",") if t.strip()]
+        elif line and (line[0].lower() in "abcd") and (")" in line or ". " in line):
+            # e.g. "a) option text"
+            # split after a) or a.
+            parts = line.split(")",1) if ")" in line else line.split(".",1)
+            if len(parts) >= 2:
+                data["choices"].append(parts[1].strip())
+        else:
+            # append to statement if already have statement
+            if "statement" in data and not line.lower().startswith(("choices","answer","xp","tags")):
+                data["statement"] += " " + line
+    if not data.get("title") or not data.get("statement") or len(data["choices"]) < 2:
+        return await m.reply_text("Failed to parse problem. Please follow the format. Example in /help.")
+    await problems_col.insert_one(data)
+    await m.reply_text("✅ MCQ problem added successfully.")
+
+# ---------- Admin: add Code Problem ----------
+@app.on_message(filters.command("addcode") & filters.user(ADMIN_IDS))
+async def cmd_addcode(_, m: Message):
+    """
+    Usage (reply to a message):
+    Title: ...
+    Statement: ...
+    IO: Input: ... Output: ...
+    XP: 100
+    Tags: arrays, dp
+    """
+    if not m.reply_to_message:
+        return await m.reply_text("Reply to a message containing the problem spec.")
+    text = m.reply_to_message.text or m.text
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    data = {"type": "code", "tags": [], "created_at": datetime.utcnow(), "created_by": m.from_user.id}
+    for line in lines:
+        if line.lower().startswith("title:"):
+            data["title"] = line.split(":",1)[1].strip()
+        elif line.lower().startswith("statement:"):
+            data["statement"] = line.split(":",1)[1].strip()
+        elif line.lower().startswith("io:"):
+            data["io"] = line.split(":",1)[1].strip()
+        elif line.lower().startswith("xp:"):
+            try:
+                data["xp"] = int(line.split(":",1)[1].strip())
+            except:
+                data["xp"] = 100
+        elif line.lower().startswith("tags:"):
+            data["tags"] = [t.strip() for t in line.split(":",1)[1].split(",") if t.strip()]
+        else:
+            if "statement" in data:
+                data["statement"] += " " + line
+    if not data.get("title") or not data.get("statement"):
+        return await m.reply_text("Failed to parse code problem. Please follow format.")
+    await problems_col.insert_one(data)
+    await m.reply_text("✅ Code problem added successfully.")
+
+# ---------- Admin: list pending submissions ----------
+@app.on_message(filters.command("pending") & filters.user(ADMIN_IDS))
+async def cmd_pending(_, m: Message):
+    pending = await subs_col.find({"status":"pending"}).to_list(length=20)
+    if not pending:
+        return await m.reply_text("No pending submissions.")
+    text_lines = ["📥 *Pending Submissions*"]
+    for s in pending:
+        text_lines.append(f"ID: `{s.get('_id')}` — {s.get('user_name')} — Problem: {s.get('problem_title')}")
+    text_lines.append("\nUse /review <submission_id> to open reviewer UI.")
+    await m.reply_text("\n".join(text_lines), parse_mode="markdown")
+
+# ---------- Admin: review single submission ----------
+@app.on_message(filters.command("review") & filters.user(ADMIN_IDS))
+async def cmd_review(_, m: Message):
+    if len(m.command) < 2:
+        return await m.reply_text("Usage: /review <submission_id>")
+    sid = m.command[1]
+    try:
+        sub = await subs_col.find_one({"_id": ObjectId(sid)})
+    except Exception:
+        return await m.reply_text("Invalid submission id.")
+    if not sub:
+        return await m.reply_text("Submission not found.")
+    text = (
+        f"📝 Submission `{sub.get('_id')}`\n"
+        f"User: {sub.get('user_name')} (`{sub.get('user_id')}`)\n"
+        f"Problem: {sub.get('problem_title')}\n"
+        f"Code:\n\n{sub.get('code')}\n\n"
+        f"Submitted at: {sub.get('created_at')}"
+    )
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton("✅ Accept", callback_data=f"review_accept|{sid}"),
+         InlineKeyboardButton("❌ Reject", callback_data=f"review_reject|{sid}")],
+        [InlineKeyboardButton("📝 Add note & Accept", callback_data=f"review_accept_note|{sid}"),
+         InlineKeyboardButton("📝 Add note & Reject", callback_data=f"review_reject_note|{sid}")]
+    ])
+    await m.reply_text(text, reply_markup=kb)
+
+# ---------- Callback handlers for MCQ & review ----------
+@app.on_callback_query(filters.regex(r"^mcq_answer\|"))
+async def cb_mcq_answer(_, cq: CallbackQuery):
+    try:
+        _, pid, idx_s = cq.data.split("|")
+        idx = int(idx_s)
+    except:
+        return await cq.answer("Invalid data", show_alert=True)
+    # fetch problem
+    prob = await problems_col.find_one({"_id": ObjectId(pid)})
+    if not prob:
+        return await cq.answer("Problem not found", show_alert=True)
+    correct = prob.get("answer", 0)
+    if idx == correct:
+        # award xp and mark solved if not already solved
+        await ensure_user(cq.from_user.id, cq.from_user.first_name or cq.from_user.username or str(cq.from_user.id))
+        user = await users_col.find_one({"user_id": cq.from_user.id})
+        already = False
+        if user and str(prob["_id"]) in user.get("solved", []):
+            already = True
+        if not already:
+            await award_xp(cq.from_user.id, prob.get("xp",50), str(prob["_id"]))
+            await cq.answer("✅ Correct! XP awarded.", show_alert=True)
+            await cq.message.edit_text(cq.message.text + f"\n\n✅ Answer: Correct — {cq.from_user.mention} awarded {prob.get('xp',50)} XP", parse_mode="markdown")
+        else:
+            await cq.answer("✅ Correct — but you already solved this problem before.", show_alert=True)
+    else:
+        await cq.answer("❌ Incorrect. Try next!", show_alert=True)
+        await cq.message.edit_text(cq.message.text + f"\n\n❌ Incorrect answer by {cq.from_user.mention}", parse_mode="markdown")
+
+@app.on_callback_query(filters.regex(r"^next\|"))
+async def cb_next(_, cq: CallbackQuery):
+    # serve next problem (random) when user presses Next
+    _, pid = cq.data.split("|",1)
+    p = await random_problem()
+    if not p:
+        return await cq.answer("No other problems available.", show_alert=True)
+    # update last served mapping for this chat
+    await meta_col.update_one({"_id":"last_served"}, {"$set": {str(cq.message.chat.id): str(p["_id"])}}, upsert=True)
+    if p["type"] == "mcq":
+        text = f"*{p.get('title')}*\n\n{p.get('statement')}\n\nXP: {p.get('xp',50)}"
+        await cq.message.edit_text(text, reply_markup=mcq_keyboard(str(p["_id"]), p["choices"]), parse_mode="markdown")
+    else:
+        text = f"*{p.get('title')}*\n\n{p.get('statement')}\n\nXP: {p.get('xp',100)}\n\nTo submit: reply to this message with /submitcode"
+        await cq.message.edit_text(text, reply_markup=code_problem_keyboard(str(p["_id"])), parse_mode="markdown")
+    await cq.answer()
+
+# Review callbacks
+@app.on_callback_query(filters.regex(r"^review_(accept|reject)(?:_note)?\|"))
+async def cb_review_decision(_, cq: CallbackQuery):
+    data = cq.data  # e.g. review_accept|<sid> or review_reject_note|<sid>
+    parts = data.split("|")
+    action_part = parts[0]  # review_accept or review_reject_note
+    sid = parts[1]
+    try:
+        sub = await subs_col.find_one({"_id": ObjectId(sid)})
+    except:
+        return await cq.answer("Submission not found.", show_alert=True)
+    if not sub:
+        return await cq.answer("Submission not found.", show_alert=True)
+
+    # if action expects a note we ask admin to reply to this callback with a message containing the note
+    if action_part.endswith("_note"):
+        # Record that admin intends to add note; we store temporary meta mapping admin->submission
+        await meta_col.update_one({"_id":"pending_notes"}, {"$set": {str(cq.from_user.id): sid}}, upsert=True)
+        return await cq.answer("Please reply to this chat with your note. The next message you send will be used as review note.", show_alert=True)
+
+    # Immediate accept/reject without note
+    if action_part.startswith("review_accept"):
+        # accept
+        await subs_col.update_one({"_id": ObjectId(sid)}, {"$set": {"status":"accepted", "reviewer": cq.from_user.id, "reviewed_at": datetime.utcnow()}})
+        # award xp
+        prob_id = sub.get("problem_id")
+        prob = await problems_col.find_one({"_id": ObjectId(prob_id)}) if prob_id else None
+        xp = prob.get("xp",100) if prob else 100
+        await award_xp(sub.get("user_id"), xp, prob_id)
+        # notify user
+        try:
+            await app.send_message(sub.get("user_id"), f"✅ Your submission for *{sub.get('problem_title')}* was *ACCEPTED*! You gained {xp} XP.", parse_mode="markdown")
+        except Exception:
+            pass
+        await cq.answer("Submission accepted and XP awarded.", show_alert=True)
+    else:
+        # reject
+        await subs_col.update_one({"_id": ObjectId(sid)}, {"$set": {"status":"rejected", "reviewer": cq.from_user.id, "reviewed_at": datetime.utcnow()}})
+        try:
+            await app.send_message(sub.get("user_id"), f"❌ Your submission for *{sub.get('problem_title')}* was *REJECTED*.", parse_mode="markdown")
+        except Exception:
+            pass
+        await cq.answer("Submission rejected.", show_alert=True)
+
+# Handle admin note messages (admin replies with note after selecting review_accept_note/reject_note)
+@app.on_message(filters.private & filters.user(ADMIN_IDS))
+async def admin_note_handler(_, m: Message):
+    # check meta if admin has a pending note
+    doc = await meta_col.find_one({"_id":"pending_notes"})
+    if not doc:
+        return
+    mapping = doc or {}
+    sid = mapping.get(str(m.from_user.id))
+    if not sid:
+        return
+    note_text = m.text or ""
+    # find submission
+    try:
+        sub = await subs_col.find_one({"_id": ObjectId(sid)})
+    except:
+        sub = None
+    if not sub:
+        await m.reply_text("Submission not found.")
+        # cleanup pending note
+        await meta_col.update_one({"_id":"pending_notes"}, {"$unset": {str(m.from_user.id): ""}})
+        return
+    # admin must decide whether accept or reject in previous callback; we cannot deduce action type here.
+    # So we store the note and ask admin to run /finalize_review <submission_id> accept|reject
+    # store note in meta temp storage
+    await meta_col.update_one({"_id":"review_notes"}, {"$set": {sid: note_text}}, upsert=True)
+    await m.reply_text(f"Note saved for submission {sid}.\nNow run `/finalize_review {sid} accept` or `/finalize_review {sid} reject` to complete review.")
+
+# Admin finalize_review command to accept/reject with note
+@app.on_message(filters.command("finalize_review") & filters.user(ADMIN_IDS))
+async def cmd_finalize_review(_, m: Message):
+    # usage: /finalize_review <submission_id> accept|reject
+    if len(m.command) < 3:
+        return await m.reply_text("Usage: /finalize_review <submission_id> accept|reject")
+    sid = m.command[1]
+    verdict = m.command[2].lower()
+    try:
+        sub = await subs_col.find_one({"_id": ObjectId(sid)})
+    except:
+        sub = None
+    if not sub:
+        return await m.reply_text("Submission not found.")
+    note_doc = await meta_col.find_one({"_id":"review_notes"}) or {}
+    note_text = note_doc.get(sid)
+    if verdict == "accept":
+        await subs_col.update_one({"_id": ObjectId(sid)}, {"$set": {"status":"accepted", "reviewer": m.from_user.id, "review_note": note_text, "reviewed_at": datetime.utcnow()}})
+        prob = await problems_col.find_one({"_id": ObjectId(sub.get("problem_id"))})
+        xp = prob.get("xp",100) if prob else 100
+        await award_xp(sub.get("user_id"), xp, sub.get("problem_id"))
+        try:
+            await app.send_message(sub.get("user_id"), f"✅ Your submission for *{sub.get('problem_title')}* was *ACCEPTED*! You gained {xp} XP.\n\nNote: {note_text or 'No note.'}", parse_mode="markdown")
+        except Exception:
+            pass
+        await m.reply_text("Submission accepted and user awarded XP.")
+    elif verdict == "reject":
+        await subs_col.update_one({"_id": ObjectId(sid)}, {"$set": {"status":"rejected", "reviewer": m.from_user.id, "review_note": note_text, "reviewed_at": datetime.utcnow()}})
+        try:
+            await app.send_message(sub.get("user_id"), f"❌ Your submission for *{sub.get('problem_title')}* was *REJECTED*.\n\nNote: {note_text or 'No note.'}", parse_mode="markdown")
+        except Exception:
+            pass
+        await m.reply_text("Submission rejected.")
+    else:
+        await m.reply_text("Unknown verdict — use accept or reject.")
+    # cleanup saved note
+    await meta_col.update_one({"_id":"review_notes"}, {"$unset": {sid: ""}})
+

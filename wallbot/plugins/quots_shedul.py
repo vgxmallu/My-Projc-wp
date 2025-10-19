@@ -26,9 +26,6 @@ ZENQUOTES_API = os.getenv("ZENQUOTES_API", "https://zenquotes.io/api/random")
 DEFAULT_TIME_UTC = os.getenv("DEFAULT_TIME_UTC", "08:00")
 
 
-# ---------------- LOGGING ----------------
-logging.basicConfig(level=logging.INFO)
-LOG = logging.getLogger("DailyQuotesBot")
 
 # ---------------- UTILITIES ----------------
 def now_utc():

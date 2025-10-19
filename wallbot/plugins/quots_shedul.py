@@ -17,6 +17,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pyrogram import Client, filters, enums 
 from pyrogram.types import Message
 #from enums import ParseMode
+from wallbot import wbot as bot
 
 
 

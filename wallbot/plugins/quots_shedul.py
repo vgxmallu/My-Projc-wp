@@ -14,9 +14,9 @@ from typing import Optional
 import aiohttp
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
-from pyrogram import Client, filters
+from pyrogram import Client, filters, enums 
 from pyrogram.types import Message
-from enums import ParseMode
+#from enums import ParseMode
 
 
 
@@ -75,7 +75,7 @@ async def quote_cmd(_, m: Message):
     q = await fetch_quote()
     if not q:
         return await m.reply_text("❌ Couldn't fetch a quote.")
-    await m.reply_text(build_quote(q), parse_mode=ParseMode.HTML.value)
+    await m.reply_text(build_quote(q), parse_mode=enums.ParseMode.MARKDOWN)
 
 @bot.on_message(filters.command("qtsubscribe"))
 async def subscribxxe_cmd(client, m: Message):
@@ -90,7 +90,7 @@ async def subscribxxe_cmd(client, m: Message):
         {"$set": {"chat_id": m.chat.id, "enabled": True, "send_time": time, "chat_type": m.chat.type}},
         upsert=True
     )
-    await m.reply_text(f"✅ Subscribed! Daily quote at <b>{time} UTC</b>.", parse_mode=ParseMode.HTML.value)
+    await m.reply_text(f"✅ Subscribed! Daily quote at <b>{time} UTC</b>.", parse_mode=enums.ParseMode.MARKDOWN)
 
 @bot.on_message(filters.command("qtunsubscribe"))
 async def unsubxxscribe_cmd(client, m: Message):
@@ -108,6 +108,6 @@ async def sgsettime_cmd(client, m: Message):
     if not t:
         return await m.reply_text("❌ Invalid format. Use HH:MM (UTC)")
     await client.subs.update_one({"chat_id": m.chat.id}, {"$set": {"send_time": t}}, upsert=True)
-    await m.reply_text(f"🕒 Time updated to <b>{t} UTC</b>.", parse_mode=ParseMode.HTML.value)
+    await m.reply_text(f"🕒 Time updated to <b>{t} UTC</b>.", parse_mode=enums.ParseMode.MARKDOWN)
 
 # ---------------- RUN ----------------

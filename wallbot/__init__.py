@@ -7,8 +7,11 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
 from wallbot.plugins.word import load_words, load_common_words
 
-
 from wallbot.plugins.quots_shedul import build_quote, fetch_quote, now_utc
+
+
+DB_NAME = os.getenv("DB_NAME", "daily_quotes")
+
 
 # ---------------- Logging ----------------
 
@@ -25,7 +28,7 @@ class GomezGamesbot(Client):
             bot_token=BOT_TOKEN,
             plugins=dict(root="plugins"),  # optional plugin dir
         )
-        self.db = AsyncIOMotorClient(MONGO_URL)[DB_NAME]
+        self.db = AsyncIOMotorClient(DB_URL)[DB_NAME]
         self.subs = self.db["subscriptions"]
 
     async def start(self):

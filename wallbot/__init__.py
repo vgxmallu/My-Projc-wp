@@ -16,7 +16,7 @@ LOGGER = logging.getLogger("WallBot")
 
 
 # ---------------- Pyrogram Bot Class ----------------
-class wbot(Client):
+class WallBot(Client):
     def init(self):
         super().init(
             "wallbot",
@@ -50,7 +50,7 @@ class wbot(Client):
 
     async def _quote_scheduler(self):
         """Auto-running background task"""
-        LOG.info("📅 Quote scheduler active (UTC)")
+        LOGGER.info("📅 Quote scheduler active (UTC)")
         while True:
             try:
                 now = now_utc()
@@ -60,23 +60,23 @@ class wbot(Client):
                 if subs:
                     q = await fetch_quote()
                     if not q:
-                        LOG.warning("No quote fetched.")
+                        LOGGER.warning("No quote fetched.")
                     else:
                         msg = build_quote(q)
                         for s in subs:
                             try:
                                 await self.send_message(s["chat_id"], msg, parse_mode="html")
                             except Exception as e:
-                                LOG.warning(f"Failed to send quote to {s['chat_id']}: {e}")
+                                LOGGER.warning(f"Failed to send quote to {s['chat_id']}: {e}")
                 await asyncio.sleep(30)
             except Exception as e:
-                LOG.exception(f"Error in scheduler: {e}")
+                LOGGER.exception(f"Error in scheduler: {e}")
                 await asyncio.sleep(60)
    # async def stop(self, *args):
    #     await super().stop()
    #     LOGGER.info("🔴 Bot stopped.")
 
-
+wbot = WallBot()
 # ---------------- Database + Word Setup ----------------
 DEV_LIST = [784589736]
 

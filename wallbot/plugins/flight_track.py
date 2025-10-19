@@ -19,7 +19,7 @@ import logging
 import random
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
-
+#from enums import parse_mode
 from dotenv import load_dotenv
 from pyrogram import Client, filters
 from pyrogram.types import Message
@@ -91,10 +91,10 @@ async def cmdjjhelp(_, m: Message):
     )
 
 @app.on_message(filters.command("track_f"))
-async def cmd_track(_, m: Message):
+async def cmd_trback(_, m: Message):
     args = m.text.split()
     if len(args) != 4:
-        return await m.reply_text("Usage: `/track_f ORG DST YYYY-MM-DD`")
+        return await m.reply_text("Usage: `/track ORG DST YYYY-MM-DD`", parse_mode="markdown")
     origin, dest, date = args[1].upper(), args[2].upper(), args[3]
     try:
         datetime.strptime(date, "%Y-%m-%d")
@@ -116,7 +116,8 @@ async def cmd_track(_, m: Message):
     await m.reply_text(
         f"🛫 Tracking flight *{origin} → {dest}* on *{date}*\n",
         f"Current price: `${current_price}`\n",
-        f"Flight ID: `{res.inserted_id}`"
+        f"Flight ID: `{res.inserted_id}`",
+        parse_mode="markdown"
     )
 
 @app.on_message(filters.command("myflights"))
@@ -131,12 +132,12 @@ async def cmd_myflights(_, m: Message):
             f"`{f['_id']}` — {f['origin']} → {f['destination']} on {f['date']}\n"
             f"Last price: ${f['last_price']} (checked {f['last_checked'].strftime('%Y-%m-%d %H:%M')})\n\n"
         )
-    await m.reply_text(text)
+    await m.reply_text(text, parse_mode="markdown")
 
 @app.on_message(filters.command("remove_f"))
-async def cmd_remove(_, m: Message):
+async def cmd_remgove(_, m: Message):
     if len(m.command) < 2:
-        return await m.reply_text("Usage: `/remove_f <flight_id>`")
+        return await m.reply_text("Usage: `/remove_f <flight_id>`", parse_mode="markdown")
     fid = m.command[1]
     res = await flights_col.delete_one({"_id": {"$eq": m.command[1]}})  # fallback text id
     if res.deleted_count == 0:

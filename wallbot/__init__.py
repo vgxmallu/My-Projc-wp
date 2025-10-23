@@ -1,22 +1,23 @@
 import asyncio
-import logging
-from pyrogram import Client
-from motor.motor_asyncio import AsyncIOMotorClient
-from config import API_ID, API_HASH, BOT_TOKEN, DB_URL
-from wallbot.plugins.word import load_words, load_common_words
-
 import time
 from asyncio import get_event_loop
 from logging import ERROR, INFO, StreamHandler, basicConfig, getLogger, handlers
+from aiohttp import ClientSession
+import logging
+from pyrogram import Client
+
+from config import API_ID, API_HASH, BOT_TOKEN, DB_URL
+from wallbot.plugins.word import load_words, load_common_words
+
 
 from apscheduler.jobstores.mongodb import MongoDBJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
+from motor.motor_asyncio import AsyncIOMotorClient
 from async_pymongo import AsyncClient
 from pymongo import MongoClient
-from motor import motor_asyncio
+#from motor import motor_asyncio
 
-from aiohttp import ClientSession
 
 
 # enable logging
@@ -32,7 +33,7 @@ getLogger("pyrogram").setLevel(ERROR)
 
 
 
-mongo = motor_asyncio.AsyncIOMotorClient(DB_URL)
+mongo = AsyncIOMotorClient(DATABASE_URI)
 db = mongo["Gomezgames"]
 
 #Telethon bot

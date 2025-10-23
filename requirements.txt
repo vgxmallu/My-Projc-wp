@@ -42,7 +42,7 @@ aiosqlite
 matplotlib 
 
 motor==2.5.1
-async_pymongo
+#async_pymongo
 pymongo==3.12.3
 
 uvloop==0.19.0

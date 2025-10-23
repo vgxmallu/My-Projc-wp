@@ -33,8 +33,8 @@ getLogger("pyrogram").setLevel(ERROR)
 
 
 
-mongo = AsyncIOMotorClient(DB_URL)
-db = mongo["Gomezgames"]
+#mongo = AsyncIOMotorClient(DB_URL)
+#db = mongo["Gomezgames"]
 
 #Telethon bot
 #tle = TelegramClient("telethn", API_ID, API_HASH, flood_sleep_threshold=0).start(bot_token=BOT_TOKEN)
@@ -52,8 +52,7 @@ wbot = Client(
     workers=50,
     max_concurrent_transmissions=4,
 )
-
-wbot.db = AsyncIOMotorClient(DB_URL)
+wbot.db = AsyncIOMotorClient(DB_URL)["wallbot_db"]
 LOGGER.info(f"✅ Bot started as {me.first_name} (@{me.username})")
 
 

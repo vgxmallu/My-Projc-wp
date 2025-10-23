@@ -14,7 +14,7 @@ from apscheduler.jobstores.mongodb import MongoDBJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from motor.motor_asyncio import AsyncIOMotorClient
-from async_pymongo import AsyncClient
+#from async_pymongo import AsyncClient
 from pymongo import MongoClient
 #from motor import motor_asyncio
 
@@ -46,7 +46,7 @@ wbot = Client(
     api_id=API_ID,
     api_hash=API_HASH,
     bot_token=BOT_TOKEN,
-    mongodb=dict(connection=AsyncClient(DB_URL), remove_peers=True),
+    mongodb=dict(connection=AsyncIOMotorClient(DB_URL), remove_peers=True),
     sleep_threshold=180,
     app_version="MissKatyPyro Stable",
     workers=50,
@@ -55,7 +55,7 @@ wbot = Client(
 BOT_ID = wbot.me.id
 BOT_NAME = wbot.me.first_name
 BOT_USERNAME = wbot.me.username
-wbot.db = AsyncClient(DB_URL)
+wbot.db = AsyncIOMotorClient(DB_URL)
 LOGGER.info(f"✅ Bot started as {BOT_NAME} (@{BOT_USERNAME}) My Goms {BOT_ID}")
 
 

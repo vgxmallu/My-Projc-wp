@@ -2,7 +2,7 @@ import asyncio
 import logging
 from pyrogram import Client
 from motor.motor_asyncio import AsyncIOMotorClient
-from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
+from config import API_ID, API_HASH, BOT_TOKEN, DB_URL
 from wallbot.plugins.word import load_words, load_common_words
 
 import time

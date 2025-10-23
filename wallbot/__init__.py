@@ -52,11 +52,9 @@ wbot = Client(
     workers=50,
     max_concurrent_transmissions=4,
 )
-BOT_ID = wbot.me.id
-BOT_NAME = wbot.me.first_name
-BOT_USERNAME = wbot.me.username
+
 wbot.db = AsyncIOMotorClient(DB_URL)
-LOGGER.info(f"✅ Bot started as {BOT_NAME} (@{BOT_USERNAME}) My Goms {BOT_ID}")
+LOGGER.info(f"✅ Bot started as {me.first_name} (@{me.username})")
 
 
 # ---------------- Database + Word Setup ----------------

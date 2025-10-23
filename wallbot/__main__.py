@@ -17,5 +17,3 @@ async def main():
         await bot.stop()
         LOGGER.info("👋 WallBot stopped cleanly.")
 
-if name == "main":
-    asyncio.run(main())

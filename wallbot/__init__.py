@@ -33,7 +33,7 @@ getLogger("pyrogram").setLevel(ERROR)
 
 
 
-mongo = AsyncIOMotorClient(DATABASE_URI)
+mongo = AsyncIOMotorClient(DB_URL)
 db = mongo["Gomezgames"]
 
 #Telethon bot

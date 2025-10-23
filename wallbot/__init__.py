@@ -53,7 +53,7 @@ wbot = Client(
     max_concurrent_transmissions=4,
 )
 wbot.db = AsyncIOMotorClient(DB_URL)["wallbot_db"]
-LOGGER.info(f"✅ Bot started as {me.first_name} (@{me.username})")
+LOGGER.info(f"✅ Bot started")
 
 
 # ---------------- Database + Word Setup ----------------

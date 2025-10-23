@@ -4,35 +4,60 @@ from pyrogram import Client
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import API_ID, API_HASH, BOT_TOKEN, AUTH_CHATS, DB_URL
 from wallbot.plugins.word import load_words, load_common_words
-# ---------------- Logging ----------------
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger("WallBot")
 
-# ---------------- Pyrogram Bot Class ----------------
-class wbot(Client):
-    def init(self):
-        super().init(
-            "wallbot",
-            api_id=API_ID,
-            api_hash=API_HASH,
-            bot_token=BOT_TOKEN,
-            plugins=dict(root="wallbot/plugins"),
-        )
-        self.db = AsyncIOMotorClient(DB_URL)["wallbot_db"]
+import time
+from asyncio import get_event_loop
+from faulthandler import enable as faulthandler_enable
+from logging import ERROR, INFO, StreamHandler, basicConfig, getLogger, handlers
+import uvloop, uvicorn
 
-    async def start(self):
-        await super().start()
-        me = await self.get_me()
-        LOGGER.info(f"✅ Bot started as {me.first_name} (@{me.username})")
-        for chat in AUTH_CHATS:
-            try:
-                await self.send_message(chat, "✅ Bot is now online!")
-            except Exception as e:
-                LOGGER.warning(f"Failed to send startup message to {chat}: {e}")
+from apscheduler.jobstores.mongodb import MongoDBJobStore
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-    async def stop(self, *args):
-        await super().stop()
-        LOGGER.info("🔴 Bot stopped.")
+from async_pymongo import AsyncClient
+from pymongo import MongoClient
+from motor import motor_asyncio
+
+from aiohttp import ClientSession
+
+
+# enable logging
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("log.txt"), logging.StreamHandler()],
+    level=logging.INFO,
+)
+
+LOGGER = logging.getLogger(__name__)
+
+getLogger("pyrogram").setLevel(ERROR)
+
+
+
+mongo = motor_asyncio.AsyncIOMotorClient(DB_URL)
+db = mongo["Gomezgames"]
+
+#Telethon bot
+#tle = TelegramClient("telethn", API_ID, API_HASH, flood_sleep_threshold=0).start(bot_token=BOT_TOKEN)
+#print("⚫⚪TELETHON IS STARTED...⚫⚪")
+
+# Pyrogram Bot Client
+wbot = Client(
+    "Gomezgames",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN,
+    mongodb=dict(connection=AsyncClient(DB_URL), remove_peers=True),
+    sleep_threshold=180,
+    app_version="MissKatyPyro Stable",
+    workers=50,
+    max_concurrent_transmissions=4,
+)
+BOT_ID = wbot.me.id
+BOT_NAME = wbot.me.first_name
+BOT_USERNAME = wbot.me.username
+wbot.db = AsyncClient(DB_URL)
+LOGGER.info(f"✅ Bot started as {BOT_NAME} (@{BOT_USERNAME}) My Goms {BOT_ID}")
 
 
 # ---------------- Database + Word Setup ----------------
@@ -49,3 +74,14 @@ MEAN_WORD = load_common_words()
 MEAN_WORD_SET = set(MEAN_WORD)
 
 print(f"Loaded {len(WORD_SET)} words from the word list.")
+# ---------------- Database + Word Setup ----------------
+
+
+#jobstores = {
+#    "default": MongoDBJobStore(
+#        client=MongoClient(DATABASE_URI), database=DATABASE_NAME, collection="nightmode"
+#    )
+#}
+#scheduler = AsyncIOScheduler(jobstores=jobstores, timezone=TZ)
+
+wbot.start()

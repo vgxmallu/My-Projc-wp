@@ -7,9 +7,7 @@ from wallbot.plugins.word import load_words, load_common_words
 
 import time
 from asyncio import get_event_loop
-from faulthandler import enable as faulthandler_enable
 from logging import ERROR, INFO, StreamHandler, basicConfig, getLogger, handlers
-import uvloop, uvicorn
 
 from apscheduler.jobstores.mongodb import MongoDBJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler

@@ -12,9 +12,9 @@ apscheduler==3.10.4
 pykeyboard
 aiohttp==3.9.2 
 asyncio
-motor==2.5.1
+
 aiofiles
-pymongo[srv]==3.12.3
+
 
 Flask
 gunicorn==20.1.0
@@ -38,7 +38,11 @@ pytz~=2021.1
 openai==1.0.0
 #google-generativeai
 aiosqlite
- 
+
 matplotlib 
+
+motor==2.5.1
 async_pymongo
+pymongo==3.12.3
+
 uvloop==0.19.0

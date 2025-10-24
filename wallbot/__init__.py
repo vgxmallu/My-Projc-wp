@@ -10,7 +10,7 @@ import time
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import API_ID, API_HASH, BOT_TOKEN, DB_URL, AUTH_CHATS
-
+from wallbot.plugins.word import load_words, load_common_words
 
 
 

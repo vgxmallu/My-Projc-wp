@@ -8,7 +8,7 @@ from pyrogram import Client
 from aiohttp import ClientSession
 import time
 from dotenv import load_dotenv
-
+from motor.motor_asyncio import AsyncIOMotorClient
 from config import API_ID, API_HASH, BOT_TOKEN, DB_URL, AUTH_CHATS
 
 
@@ -58,3 +58,17 @@ class wbot(Client):
         await super().stop()
         LOGGER.info("Gomezgames STOPPED BRO.")
 
+# ---------------- Database + Word Setup ----------------
+DEV_LIST = [784589736]
+
+client = AsyncIOMotorClient(DB_URL)
+db = client["WordNWord"]
+user_Collection = db["user"]
+collection = db["word"]
+
+WORD_LIST = set(load_words())
+WORD_SET = set(WORD_LIST)
+MEAN_WORD = load_common_words()
+MEAN_WORD_SET = set(MEAN_WORD)
+
+print(f"Loaded {len(WORD_SET)} words from the word list.")

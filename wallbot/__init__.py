@@ -9,7 +9,7 @@ from aiohttp import ClientSession
 import time
 from dotenv import load_dotenv
 
-from config import API_ID, API_HASH, BOT_TOKEN, DB_URL
+from config import API_ID, API_HASH, BOT_TOKEN, DB_URL, AUTH_CHATS
 
 
 

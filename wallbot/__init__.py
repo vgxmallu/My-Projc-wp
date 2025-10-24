@@ -32,7 +32,7 @@ class wbot(Client):
         name = self.__class__.__name__.lower()
         super().__init__(
             ":memory:",
-            plugins=dict(root=f"{name}/plugins"),
+            plugins=dict(root="wallbot/plugins"),
             workdir="./cache/",
             api_id=API_ID,
             api_hash=API_HASH,

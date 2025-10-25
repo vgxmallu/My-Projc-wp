@@ -486,6 +486,8 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("📊QuizMaster-[B]🤖&[G]👥", callback_data="qz_gg"),
             InlineKeyboardButton("🟡2048!", callback_data="248")
         ],[
+            InlineKeyboardButton("😜Emoji-Guss", callback_data="emogs"),
+        ],[
             InlineKeyboardButton("⬇️", callback_data="gg"),
             InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg"),
             InlineKeyboardButton("⬇️", callback_data="gg")
@@ -514,7 +516,7 @@ async def hlx_callback(client, query):
 tzf_tx="""
 🎮 Welcome to 2048 Telegram Edition!
 
-• Merge tiles with the same number to reach **2048**.
+<blockquote>• Merge tiles with the same number to reach **2048**.
 • Use the buttons below to move tiles: **Up, Down, Left, Right**.
 
 **Controls:**
@@ -523,7 +525,7 @@ tzf_tx="""
 
 **Commands:**
 `/play2048` tap to play 2048 group chats on here;)
-`/2048_leaderboard` See your leadership.
+`/2048_leaderboard` See your leadership.</blockquote>
 
 **Tip:** __combine large tiles and avoid filling the board.__
 """
@@ -531,6 +533,34 @@ tzf_tx="""
 async def townat_callback(client, query):    
     await query.message.edit_text(
         text=tzf_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+emogs_tx="""
+hey im a simple *Emoji Guess Game!* 😜
+<blockquote>I will show you emojis like 🍕+🍍=❓
+You guess the word or concept.
+
+**Commands:**
+• `/playgus` → Start a new game
+• `/guss` Guss what you think.
+• `/gusleaderboard` → Show top players
+• `/gusprofile` → Your stats
+
+**Another Commands:**
+• `/ecplay` start emoji cpmbo gm.
+• `/ecguss` guss what u thinking here.
+• `/ecleaderboard show top players.
+
+**Emoji Math Cmd:**
+• `/emoji_math`
+• `/emleaderboard`</blockquote>
+"""
+@app.on_callback_query(filters.regex("^emogs$"))
+async def emogss_callback(client, query):    
+    await query.message.edit_text(
+        text=emogs_tx,
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")

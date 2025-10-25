@@ -466,7 +466,7 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("❌Tic-Tac-Toe⭕", callback_data="tic_gg"),
             InlineKeyboardButton("⚫Gomoku🔴", callback_data="gomk_gg")
         ],[
-            InlineKeyboardButton("🪨Rock,Paper📃,✂️cissor", callback_data="rps"),
+            InlineKeyboardButton("🪨Rock,📃Paper,✂️cissor", callback_data="rps"),
             InlineKeyboardButton("🔴Connect4🟢", callback_data="cn4_gg")
         ],[
             InlineKeyboardButton("📊QuizMaster-[B]🤖&[G]👥", callback_data="qz_gg"),
@@ -475,7 +475,8 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("😜Emoji-Guss", callback_data="emogs"),
             InlineKeyboardButton("🧮Math-Dual", callback_data="matd")
         ],[
-            InlineKeyboardButton("🧠Memory-Tiles", callback_data="mty")
+            InlineKeyboardButton("🧠Memory-Tiles", callback_data="mty"),
+            InlineKeyboardButton("🔢No.Rush🏃‍♀️", callback_data="nrs")
         ],[
             InlineKeyboardButton("⬇️", callback_data="gg"),
             InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg"),
@@ -522,6 +523,24 @@ tzf_tx="""
 async def townat_callback(client, query):    
     await query.message.edit_text(
         text=tzf_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+
+
+nrs_tx= """
+🔢🏃‍♀️ Welcome to Number Rush!
+
+Press the right number before time runs out!
+• `/play_rush` Start the game.
+• `/rushprofile` Show your stats
+• `/rushleaderboard` Show top players
+"""
+@app.on_callback_query(filters.regex("^nrs$"))
+async def nrsgt_callback(client, query):    
+    await query.message.edit_text(
+        text=nrs_tx,
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")

@@ -475,6 +475,8 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("😜Emoji-Guss", callback_data="emogs"),
             InlineKeyboardButton("🧮Math-Dual", callback_data="matd")
         ],[
+            InlineKeyboardButton("🧠Memory-Tiles", callback_data="mty")
+        ],[
             InlineKeyboardButton("⬇️", callback_data="gg"),
             InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg"),
             InlineKeyboardButton("⬇️", callback_data="gg")
@@ -537,17 +539,71 @@ You guess the word or concept.
 **Another Commands:**
 • `/ecplay` start emoji cpmbo gm.
 • `/ecguss` guss what u thinking here.
-• `/ecleaderboard show top players.
+• `/ecleaderboard show top players.</blockquote>
+
+use this command in groups!!
+"""
+@app.on_callback_query(filters.regex("^emogs$"))
+async def emogss_callback(client, query):    
+    await query.message.edit_text(
+        text=emogs_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+emogs2_tx="""
+welcome to **Emoji Guess Game two** 😜
+
 **Emoji Math Cmd:**
 • `/emoji_math`
 • `/emleaderboard
 **Guss Flags Cmd:**
 • `/flgquiz`
 • `/flgprofile`
-• `/flgleaderboard</blockquote>
+• `/flgleaderboard
+
+use this command in groups!!
 """
-@app.on_callback_query(filters.regex("^emogs$"))
-async def emogss_callback(client, query):    
+bak2_bt = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
+        ],[
+            InlineKeyboardButton("🔙 Back Menu", callback_data="emogs"),
+            InlineKeyboardButton("❌", callback_data="close")
+        ]]
+
+)
+@app.on_callback_query(filters.regex("^emogs2$"))
+async def emogsstow_callback(client, query):    
+    await query.message.edit_text(
+        text=emogs2_tx,
+        reply_markup=bak2_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+mty_tx="""
+🧩 🧠 Welcome to **Memory Tiles** — Test your memory!
+
+ <b>Memory Tiles!</b>
+Tap  to begin the game.
+Only the <b>first player</b> who presses Start will be able to play this round.
+
+🟩 Watch closely — I’ll flash a sequence of tiles (emojis) for a few seconds.
+🔢 Then, reproduce the sequence <b>in the exact order</b> by tapping the emojis!
+
+🎯 Correct = Continue
+❌ Wrong = try again!
+
+• `/mtplay` Tap to start or use in groups.
+• `/mtleaderboard` see your top.
+
+💡 The longer the sequence, the higher your score.
+Compete with friends and climb the leaderboard!📈
+Watch the tiles flash, then repeat them in order.
+Good luck!
+"""
+@app.on_callback_query(filters.regex("^mty$"))
+async def memotl_callback(client, query):    
     await query.message.edit_text(
         text=emogs_tx,
         reply_markup=bak_bt,

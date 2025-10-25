@@ -1,7 +1,4 @@
-
 import time
-
-
 from pyrogram import Client, filters, enums
 from motor.motor_asyncio import AsyncIOMotorClient
 import asyncio
@@ -492,7 +489,7 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("❌", callback_data="close")
         ]]
 )
-@app.on_callback_query(filters.regex("^ghlp$"))
+@app.on_callback_query(filters.regex("^hlp$"))
 async def hlx_callback(client, query):
     hlp_tx="""
     <blockquote>**Gomez Games** 🎮</blockquote>
@@ -529,24 +526,21 @@ async def townat_callback(client, query):
 
 emogs_tx="""
 hey im a simple *Emoji Guess Game!* 😜
-<blockquote>I will show you emojis like 🍕+🍍=❓
+I will show you emojis like 🍕+🍍=❓
 You guess the word or concept.
 
-**Commands:**
-• `/playgus` → Start a new game
+<blockquote>**Commands:**
+• `/playgus` Start a new game
 • `/guss` Guss what you think.
-• `/gusleaderboard` → Show top players
-• `/gusprofile` → Your stats
-
+• `/gusleaderboard` Show top players
+• `/gusprofile` Your stats
 **Another Commands:**
 • `/ecplay` start emoji cpmbo gm.
 • `/ecguss` guss what u thinking here.
 • `/ecleaderboard show top players.
-
 **Emoji Math Cmd:**
 • `/emoji_math`
 • `/emleaderboard
-
 **Guss Flags Cmd:**
 • `/flgquiz`
 • `/flgprofile`

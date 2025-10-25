@@ -555,7 +555,12 @@ You guess the word or concept.
 
 **Emoji Math Cmd:**
 • `/emoji_math`
-• `/emleaderboard`</blockquote>
+• `/emleaderboard
+
+**Guss Flags Cmd:**
+• `/flgquiz`
+• `/flgprofile`
+• `/flgleaderboard</blockquote>
 """
 @app.on_callback_query(filters.regex("^emogs$"))
 async def emogss_callback(client, query):    

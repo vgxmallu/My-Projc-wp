@@ -44,7 +44,7 @@ active_games: Dict[int, Dict[str, Dict[str, Any]]] = {}
 chat_locks: Dict[int, asyncio.Lock] = {}
 
 CLEANUP_INTERVAL = 60  # seconds
-GAME_TIMEOUT = 12      # seconds for answering
+GAME_TIMEOUT = 20      # seconds for answering
 MAX_CHOICES = 4
 
 # ----------------- UTILS -----------------

@@ -64,10 +64,8 @@ g_button = InlineKeyboardMarkup(
             InlineKeyboardButton("📣Channel", url="https://t.me/xbots_x"),
         ],
         [
-            InlineKeyboardButton("🀄Help Menu", callback_data="hlp"),
-            InlineKeyboardButton("ℹ️About Me", callback_data="ab")
-        ],[
-            InlineKeyboardButton("❌–⭕", callback_data="close")
+            InlineKeyboardButton("🀄Help Menu", callback_data="help"),
+            InlineKeyboardButton("❌", callback_data="close")
         ],
     ]
 ) 
@@ -226,12 +224,10 @@ async def helpg_cmd(client, message):
 
 
 @app.on_callback_query(filters.regex("^help$"))
-async def callhlpr(client, query):
-    
+async def hlpx_callback(client, query):
     await query.message.edit_text(
         text=help_txt,
         reply_markup=h_button,
-        message_effect_id=5046509860389126442,
     )
     await query.answer("😎Gomez Games🎮")
 
@@ -457,13 +453,6 @@ async def ext1_callback(client, query):
     )
     await query.answer("😎Gomez Games🎮")
 
-@app.on_callback_query(filters.regex("^help$"))
-async def hlpx_callback(client, query):
-    await query.message.edit_text(
-        text=help_txt,
-        reply_markup=h_button,
-    )
-    await query.answer("😎Gomez Games🎮")
 
 bak_bt = InlineKeyboardMarkup(
         [[

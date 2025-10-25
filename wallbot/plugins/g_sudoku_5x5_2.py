@@ -367,7 +367,7 @@ async def cmd_sudfivoku(_, m: Message):
 
     kb = InlineKeyboardMarkup([[InlineKeyboardButton("▶️ Start (become player)", callback_data=f"start|{gid}")]])
     sent = await m.reply_text("🧩 Mini Sudoku (5×5)\nTap Start to become the player — only that player may make moves.", reply_markup=kb)
-    await games_col.update_one({"_id": res.inserted_id}, {"$set": {"message_id": sent.message_id}})
+    await games_col.update_one({"_id": res.inserted_id}, {"$set": {"message_id": sent.id}})
     LOG.info("Created game %s in chat %s", gid, chat_id)
 
 @app.on_message(filters.command("sudokuprofile"))

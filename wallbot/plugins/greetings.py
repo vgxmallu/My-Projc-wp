@@ -478,6 +478,9 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("🧠Memory-Tiles", callback_data="mty"),
             InlineKeyboardButton("🔢No.Rush🏃‍♀️", callback_data="nrs")
         ],[
+            InlineKeyboardButton("🧮SudoKu", callback_data="sdk"),
+            InlineKeyboardButton("🎭TruthOrDare", callback_data="tod")
+        ],[
             InlineKeyboardButton("⬇️", callback_data="gg"),
             InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg"),
             InlineKeyboardButton("⬇️", callback_data="gg")
@@ -527,7 +530,36 @@ async def townat_callback(client, query):
     )
     await query.answer("😎Gomez Games🎮")
 
+tod_tx="""
+🎭Welcome to <b>Truth or Dare Bot!
 
+Use `/truthdare` @username to challenge someone!
+Use `/tdleaderboard` to see top players.
+"""
+@app.on_callback_query(filters.regex("^tod$"))
+async def todt_callback(client, query):    
+    await query.message.edit_text(
+        text=tod_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+sudk_tx="""
+🧩 welcome to <b>Mini Sudoku (5×5)</b>
+
+• Use `/sudoku5x5` to start a round.
+• First user to press Start becomes the player — only that player may make moves.
+• Tap a cell → choose a number (1–5) or clear.
+• Press Finish to validate your board and claim victor.
+• `/sudokuprofile`, `/sudokuleaderboard`
+"""
+@app.on_callback_query(filters.regex("^sdk$"))
+async def tosudokcallback(client, query):    
+    await query.message.edit_text(
+        text=sudk_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
 
 nrs_tx= """
 🔢🏃‍♀️ Welcome to Number Rush!

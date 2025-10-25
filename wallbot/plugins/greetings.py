@@ -1,5 +1,8 @@
- 
-from pyrogram import Client, filters
+ import os
+import time
+
+
+from pyrogram import Client, filters, enums
 from motor.motor_asyncio import AsyncIOMotorClient
 import asyncio
 from pyrogram.errors import UserIsBlocked, PeerIdInvalid, ChatWriteForbidden
@@ -17,18 +20,54 @@ db = mongo_client["broadcast_db"]
 users_collection = db["users"]
 
 
+StartTime = time.time()
+def get_readable_time(seconds: int) -> str:
+    count = 0
+    ping_time = ""
+    time_list = []
+    time_suffix_list = ["s", "m", "h", "days"]
+    while count < 4:
+        count += 1
+        remainder, result = divmod(seconds, 60) if count < 3 else divmod(seconds, 24)
+        if seconds == 0 and remainder == 0:
+            break
+        time_list.append(int(result))
+        seconds = int(remainder)
+    for x in range(len(time_list)):
+        time_list[x] = str(time_list[x]) + time_suffix_list[x]
+    if len(time_list) == 4:
+        ping_time += time_list.pop() + ", "
+    time_list.reverse()
+    ping_time += ":".join(time_list)
+    return ping_time
+    
+@app.on_message(filters.command("ping"))
+async def ping_bot(bot, message):
+    start_time = time.time()
+    n = await message.reply_chat_action(enums.ChatAction.TYPING)
+    p4 = await message.text("Loading...")
+    end_time = time.time()
+    ping_time = round((end_time - start_time) * 1000, 3)
+    uptime = get_readable_time((time.time() - StartTime))
+    await message.reply_text(f"**🏓 Pong:** `{ping_time} ms`\n**🆙 UpTime:** `{uptime}`")
+    await p4.delete()
+    await message.delete()
+    
+
+
 
 g_button = InlineKeyboardMarkup(
     [
         [
             
-            InlineKeyboardButton("📣My Channel", url="https://t.me/xbots_x"),
+            InlineKeyboardButton("➕Add to Group!", url=f"http://t.me/GomezGamesbot?startgroup=new"),
+            InlineKeyboardButton("📣Channel", url="https://t.me/xbots_x"),
         ],
         [
-            InlineKeyboardButton(
-                text="➕Add Me To Your Chat➕",
-                url=f"http://t.me/GomezGamesbot?startgroup=new",
-            )
+            InlineKeyboardButton("🀄Help Menu", callback_data="hlp"),
+            InlineKeyboardButton("ℹ️About Me", callback_data="ab")
+        ],[
+            InlineKeyboardButton("❌–⭕", callback_data="close")
         ],
     ]
 ) 
@@ -42,7 +81,7 @@ h_button = InlineKeyboardMarkup(
     [[
         InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
     ],[
-        InlineKeyboardButton("Games Menu🕹️", callback_data="hlp"),
+        InlineKeyboardButton("Games Menu🕹️", callback_data="ghlp"),
         InlineKeyboardButton("➕ Extra Menu", callback_data="ext")
     ],[
         InlineKeyboardButton("About Me ℹ️", callback_data="ab"),
@@ -184,7 +223,18 @@ async def helpg_cmd(client, message):
         reply_markup=h_button,
         message_effect_id=5046509860389126442,
     )
- 
+
+
+@app.on_callback_query(filters.regex("^help$"))
+async def callhlpr(client, query):
+    
+    await query.message.edit_text(
+        text=help_txt,
+        reply_markup=h_button,
+        message_effect_id=5046509860389126442,
+    )
+    await query.answer("😎Gomez Games🎮")
+
 ab_txt="""
 <blockquote>🎮** About Gomez GameS**
 
@@ -451,7 +501,7 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("❌", callback_data="close")
         ]]
 )
-@app.on_callback_query(filters.regex("^hlp$"))
+@app.on_callback_query(filters.regex("^ghlp$"))
 async def hlx_callback(client, query):
     hlp_tx="""
     <blockquote>**Gomez Games** 🎮</blockquote>

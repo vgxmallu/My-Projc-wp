@@ -64,7 +64,7 @@ g_button = InlineKeyboardMarkup(
             InlineKeyboardButton("📣Channel", url="https://t.me/xbots_x"),
         ],
         [
-            InlineKeyboardButton("🀄Help Menu", callback_data="help"),
+            InlineKeyboardButton("🀄Help Menu", callback_data="helr"),
             InlineKeyboardButton("❌", callback_data="close")
         ],
     ]
@@ -72,7 +72,7 @@ g_button = InlineKeyboardMarkup(
 add_button = InlineKeyboardMarkup(
     [[
         InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
-    ]]
+    ]] 
 )
 
 h_button = InlineKeyboardMarkup(
@@ -223,8 +223,8 @@ async def helpg_cmd(client, message):
     )
 
 
-@app.on_callback_query(filters.regex("^help$"))
-async def hlpx_callback(client, query):
+@app.on_callback_query(filters.regex("^helr$"))
+async def hlper_callback(client, query):
     await query.message.edit_text(
         text=help_txt,
         reply_markup=h_button,

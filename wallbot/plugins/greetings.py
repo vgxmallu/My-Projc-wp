@@ -476,6 +476,7 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("🟡2048!", callback_data="248")
         ],[
             InlineKeyboardButton("😜Emoji-Guss", callback_data="emogs"),
+            InlineKeyboardButton("🧮Math-Dual", callback_data="matd")
         ],[
             InlineKeyboardButton("⬇️", callback_data="gg"),
             InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg"),
@@ -555,6 +556,34 @@ You guess the word or concept.
 async def emogss_callback(client, query):    
     await query.message.edit_text(
         text=emogs_tx,
+        reply_markup=bak_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+math_tx="""
+🧠 **Welcome to Math Duel Bot!**
+
+Sharpen your mind and challenge your friends in fast-paced math battles! 💥
+
+🎮 **How to Play**
+• `/math` — Start a quick math quiz (solo or group)
+• Reply with `/duel` — Challenge another member to a 1v1 math duel
+• `/mathdprofile` — View your progress, score, and rank
+• `/mathdleaderboard` — See the top players worldwide 🌍
+
+🏆 **Rules**
+• The fastest correct answer wins!
+• Gain points for victories, lose points for defeats
+• Rank up and become the Math Master! 🧮
+
+🔥 **Tip:** You can also play privately against the bot in DM!
+Let’s see who’s the fastest thinker! ⚡
+"""
+
+@app.on_callback_query(filters.regex("^matd$"))
+async def emogss_callback(client, query):    
+    await query.message.edit_text(
+        text=math_tx,
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")

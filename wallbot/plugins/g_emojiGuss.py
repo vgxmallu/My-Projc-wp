@@ -154,7 +154,7 @@ async def pjlay_game(_, message: Message):
         ),
     )
 
-@app.on_message(filters.command("guss") & filters.group)
+@app.on_message(filters.command("guss"))
 async def handle_guess(_, message: Message):
     game = await games_col.find_one({"chat_id": message.chat.id, "guessed": False})
     if not game:

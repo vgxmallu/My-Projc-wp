@@ -45,7 +45,7 @@ async def start_tgapcounter(_, message):
         return await message.reply_text("⚠️ A TapCounter game is already running here!")
 
     btn = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("👆 Tap!", callback_data=f"tap_{chat_id}")]]
+        [[InlineKeyboardButton("👆 Tap!", callback_data=f"tapp_{chat_id}")]]
     )
 
     sent = await message.reply_text(
@@ -87,8 +87,8 @@ async def start_tgapcounter(_, message):
     game_sessions[chat_id]["running"] = False
 
 
-@app.on_callback_query(filters.regex(r"^tap_(\-\d+)$"))
-async def handle_tap(_, query):
+@app.on_callback_query(filters.regex(r"^tapp_(\-\d+)$"))
+async def handlde_tap(_, query):
     chat_id = int(query.data.split("_")[1])
     user = query.from_user
 

@@ -27,7 +27,7 @@ from config import DB_URL
 from wallbot import wbot as app
 load_dotenv()
 
-DB_NAME = os.getenv("DB_NAME", "sudoku_db")
+DB_NAME = os.getenv("DB_NAME", "sudokuu_db")
 CLEANUP_SECONDS = int(os.getenv("CLEANUP_SECONDS", "300"))  # seconds before a game is stale
 POINTS_WIN = int(os.getenv("POINTS_WIN", "100"))
 mongo = AsyncIOMotorClient(DB_URL)
@@ -627,6 +627,55 @@ async def cb_giveup(_, cq: CallbackQuery):
         await ensure_user(player, game.get("player_username"))
         await award_loss(player)
     await cq.answer("Solution revealed. Round ended.", show_alert=False)
+
+
+@app.on_message(filters.command("cancel"))
+async def cmd_cancel(app: Client, message: Message):
+    if len(message.command) < 2:
+        return await message.reply_text("❌ Usage: /cancel <game_id>")
+
+    gid = message.command[1]
+    try:
+        game_oid = ObjectId(gid)
+    except Exception:
+        return await message.reply_text("⚠️ Invalid game ID format.")
+
+    game = await games_col.find_one({"_id": game_oid})
+    if not game:
+        return await message.reply_text("🚫 Game not found or already ended.")
+
+    # Only player or admin can cancel
+    player = game.get("player_id")
+    allowed = False
+
+    if message.from_user.id == player:
+        allowed = True
+    else:
+        try:
+            member = await app.get_chat_member(game["chat_id"], message.from_user.id)
+            if member.status in ("administrator", "creator"):
+                allowed = True
+        except Exception:
+            allowed = False
+
+    if not allowed:
+        return await message.reply_text("⚠️ Only the player or a group admin can cancel the game.")
+
+    await games_col.update_one(
+        {"_id": game_oid},
+        {"$set": {"active": False, "last_update": datetime.utcnow()}}
+    )
+
+    try:
+        await app.edit_message_text(
+            chat_id=game["chat_id"],
+            message_id=game["message_id"],
+            text="❌ Game cancelled by user."
+        )
+    except Exception:
+        pass
+
+    await message.reply_text("✅ Game cancelled successfully.")
 
 @app.on_callback_query(filters.regex(r"^cancel\|"))
 async def cb_cancel(_, cq: CallbackQuery):

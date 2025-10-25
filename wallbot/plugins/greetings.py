@@ -477,15 +477,14 @@ bak_bt = InlineKeyboardMarkup(
 
 hlp_bt = InlineKeyboardMarkup(
         [[
-            InlineKeyboardButton("❌⭕Tic Tac Toe", callback_data="tic_gg")
+            InlineKeyboardButton("❌Tic-Tac-Toe⭕", callback_data="tic_gg"),
+            InlineKeyboardButton("⚫Gomoku🔴", callback_data="gomk_gg")
         ],[
-            InlineKeyboardButton("🔴⚫Gomoku", callback_data="gomk_gg")
+            InlineKeyboardButton("🪨Rock,Paper📃,✂️cissor", callback_data="rps"),
+            InlineKeyboardButton("🔴Connect4🟢", callback_data="cn4_gg")
         ],[
-            InlineKeyboardButton("🪨Rock,Paper📃,✂️cissor", callback_data="rps")
-        ],[
-            InlineKeyboardButton("🔴🟢Connect4", callback_data="cn4_gg")
-        ],[
-            InlineKeyboardButton("📊QuizMaster [B]🤖&[G]👥", callback_data="qz_gg")
+            InlineKeyboardButton("📊QuizMaster-[B]🤖&[G]👥", callback_data="qz_gg"),
+            InlineKeyboardButton("🟡2048!", callback_data="248")
         ],[
             InlineKeyboardButton("⬇️", callback_data="gg"),
             InlineKeyboardButton("⚔️RPG GomeZzz⚔️", callback_data="gg"),
@@ -509,6 +508,30 @@ async def hlx_callback(client, query):
     await query.message.edit_text(
         text=hlp_tx,
         reply_markup=hlp_bt,
+    )
+    await query.answer("😎Gomez Games🎮")
+
+tzf_tx="""
+🎮 Welcome to 2048 Telegram Edition!
+
+• Merge tiles with the same number to reach **2048**.
+• Use the buttons below to move tiles: **Up, Down, Left, Right**.
+
+**Controls:**
+• Tap arrows to move tiles
+• **Restart** — You can restart the game.
+
+**Commands:**
+`/play2048` tap to play 2048 group chats on here;)
+`/2048_leaderboard` See your leadership.
+
+**Tip:** __combine large tiles and avoid filling the board.__
+"""
+@app.on_callback_query(filters.regex("^248$"))
+async def townat_callback(client, query):    
+    await query.message.edit_text(
+        text=tzf_tx,
+        reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")
 

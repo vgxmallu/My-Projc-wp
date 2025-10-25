@@ -220,7 +220,7 @@ async def helpg_cmd(client, message):
     )
 
 
-@app.on_callback_query(filters.regex("^helr$"))
+@app.on_callback_query(filters.regex("^help$"))
 async def hlper_callback(client, query):
     await query.message.edit_text(
         text=help_txt,

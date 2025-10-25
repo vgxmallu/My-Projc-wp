@@ -48,7 +48,10 @@ async def leadefgrboard_cmd(_, message: Message):
     text = await get_leaderboard()
     await message.reply(text)
 
-@bot.on_message(filters.command("bf_fight"))
+@bot.on_message(filters.private & filters.command("bf_fight"))
+async def figsjs_cmd(_, message: Message):
+    await message.reply_text("Play this on Group!!")
+@bot.on_message(filters.group & filters.command("bf_fight"))
 async def figggt_cmd(_, message: Message):
     chat_id = message.chat.id
     boss_hp = random.randint(200, 500)

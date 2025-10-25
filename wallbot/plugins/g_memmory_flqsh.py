@@ -152,7 +152,7 @@ def build_cancel_kb(game_id: str):
 # ---------- Commands ----------
 
 #@app.on_message(filters.command("start") & filters.private)
-async def cmd_s+tart_private(_, m: Message):
+async def cmd_start_private(_, m: Message):
     txt = (
         "👋 Welcome to Memory Flash!\n\n"
         "Test your short-term memory.\n"

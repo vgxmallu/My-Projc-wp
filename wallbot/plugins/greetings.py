@@ -61,7 +61,7 @@ g_button = InlineKeyboardMarkup(
             InlineKeyboardButton("📣Channel", url="https://t.me/xbots_x"),
         ],
         [
-            InlineKeyboardButton("🀄Help Menu", callback_data="helr"),
+            InlineKeyboardButton("🀄Help Menu", callback_data="help"),
             InlineKeyboardButton("❌", callback_data="close")
         ],
     ]
@@ -76,7 +76,7 @@ h_button = InlineKeyboardMarkup(
     [[
         InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
     ],[
-        InlineKeyboardButton("Games Menu🕹️", callback_data="ghlp"),
+        InlineKeyboardButton("Games Menu🕹️", callback_data="g_hlp"),
         InlineKeyboardButton("➕ Extra Menu", callback_data="ext")
     ],[
         InlineKeyboardButton("About Me ℹ️", callback_data="ab"),
@@ -495,7 +495,7 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("❌", callback_data="close")
         ]]
 )
-@app.on_callback_query(filters.regex("^hlp$"))
+@app.on_callback_query(filters.regex("^g_hlp$"))
 async def hlx_callback(client, query):
     hlp_tx="""
     <blockquote>**Gomez Games** 🎮</blockquote>

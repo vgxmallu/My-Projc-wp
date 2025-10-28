@@ -592,7 +592,7 @@ You guess the word or concept.
 • `/ecguss` guss what u thinking here.
 • `/ecleaderboard show top players.</blockquote>
 """
-bak_bt = InlineKeyboardMarkup(
+emobk_bt = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
         ],[
@@ -606,7 +606,7 @@ bak_bt = InlineKeyboardMarkup(
 async def emogss_callback(client, query):    
     await query.message.edit_text(
         text=emogs_tx,
-        reply_markup=bak_bt,
+        reply_markup=emobk_bt,
     )
     await query.answer("😎Gomez Games🎮")
 
@@ -621,7 +621,7 @@ welcome to **Emoji Guess Game two** 😜
 • `/flgprofile`
 • `/flgleaderboard
 """
-bak2_bt = InlineKeyboardMarkup(
+emobk2_bt_bt = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
         ],[
@@ -634,7 +634,7 @@ bak2_bt = InlineKeyboardMarkup(
 async def emgtw_callback(client, query):    
     await query.message.edit_text(
         text=emg2_tx,
-        reply_markup=bak2_bt,
+        reply_markup=emobk2_bt,
     )
     await query.answer("😎Gomez Games🎮")
 

@@ -455,7 +455,7 @@ bak_bt = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
         ],[
-            InlineKeyboardButton("🔙 Back Menu", callback_data="hlp"),
+            InlineKeyboardButton("🔙 Back Menu", callback_data="g_hlp"),
             InlineKeyboardButton("❌", callback_data="close")
         ]]
 
@@ -472,7 +472,7 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("📊QuizMaster-[B]🤖&[G]👥", callback_data="qz_gg"),
             InlineKeyboardButton("🟡2048!", callback_data="248")
         ],[
-            InlineKeyboardButton("😜Emoji-Guss", callback_data="emogs"),
+            InlineKeyboardButton("😜Emoji-Guss", callback_data="emg"),
             InlineKeyboardButton("🧮Math-Dual", callback_data="matd")
         ],[
             InlineKeyboardButton("🧠Memory-Tiles", callback_data="mty"),
@@ -547,11 +547,11 @@ async def todt_callback(client, query):
 sudk_tx="""
 🧩 welcome to <b>Mini Sudoku (5×5)</b>
 
-• Use `/sudoku5x5` to start a round.
+•<blockquote> Use `/sudoku5x5` to start a round.
 • First user to press Start becomes the player — only that player may make moves.
 • Tap a cell → choose a number (1–5) or clear.
 • Press Finish to validate your board and claim victor.
-• `/sudokuprofile`, `/sudokuleaderboard`
+• `/sudokuprofile`, `/sudokuleaderboard`</blockquote>
 """
 @app.on_callback_query(filters.regex("^sdk$"))
 async def tosudokcallback(client, query):    
@@ -564,10 +564,10 @@ async def tosudokcallback(client, query):
 nrs_tx= """
 🔢🏃‍♀️ Welcome to Number Rush!
 
-Press the right number before time runs out!
+<blockquote>Press the right number before time runs out!
 • `/play_rush` Start the game.
 • `/rushprofile` Show your stats
-• `/rushleaderboard` Show top players
+• `/rushleaderboard` Show top players</blockquote>
 """
 @app.on_callback_query(filters.regex("^nrs$"))
 async def nrsgt_callback(client, query):    
@@ -591,10 +591,18 @@ You guess the word or concept.
 • `/ecplay` start emoji cpmbo gm.
 • `/ecguss` guss what u thinking here.
 • `/ecleaderboard show top players.</blockquote>
-
-use this command in groups!!
 """
-@app.on_callback_query(filters.regex("^emogs$"))
+bak_bt = InlineKeyboardMarkup(
+        [[
+            InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
+        ],[
+            InlineKeyboardButton("🔙 Back Menu", callback_data="g_hlp"),
+            InlineKeyboardButton("❌", callback_data="close"),
+            InlineKeyboardButton("Next ➡️", callback_data="emg2")
+        ]]
+
+)
+@app.on_callback_query(filters.regex("^emg$"))
 async def emogss_callback(client, query):    
     await query.message.edit_text(
         text=emogs_tx,
@@ -602,7 +610,7 @@ async def emogss_callback(client, query):
     )
     await query.answer("😎Gomez Games🎮")
 
-emogs2_tx="""
+emg2_tx="""
 welcome to **Emoji Guess Game two** 😜
 
 **Emoji Math Cmd:**
@@ -612,22 +620,20 @@ welcome to **Emoji Guess Game two** 😜
 • `/flgquiz`
 • `/flgprofile`
 • `/flgleaderboard
-
-use this command in groups!!
 """
 bak2_bt = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
         ],[
-            InlineKeyboardButton("🔙 Back Menu", callback_data="emogs"),
+            InlineKeyboardButton("🔙 Back Menu", callback_data="emg"),
             InlineKeyboardButton("❌", callback_data="close")
         ]]
 
 )
-@app.on_callback_query(filters.regex("^emogs2$"))
-async def emogsstow_callback(client, query):    
+@app.on_callback_query(filters.regex("^emg2$"))
+async def emgtw_callback(client, query):    
     await query.message.edit_text(
-        text=emogs2_tx,
+        text=emg2_tx,
         reply_markup=bak2_bt,
     )
     await query.answer("😎Gomez Games🎮")

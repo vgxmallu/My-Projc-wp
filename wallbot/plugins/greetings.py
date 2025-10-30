@@ -578,7 +578,7 @@ async def nrsgt_callback(client, query):
     await query.answer("😎Gomez Games🎮")
 
 emogs_tx="""
-hey im a simple *Emoji Guess Game!* 😜
+1️⃣ **Emoji Guess Game!** 😜
 I will show you emojis like 🍕+🍍=❓
 You guess the word or concept.
 
@@ -590,9 +590,9 @@ You guess the word or concept.
 **Another Commands:**
 • `/ecplay` start emoji cpmbo gm.
 • `/ecguss` guss what u thinking here.
-• `/ecleaderboard show top players.</blockquote>
+• `/ecleaderboard` show top players.</blockquote>
 """
-emobk_bt = InlineKeyboardMarkup(
+emogs_bt = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
         ],[
@@ -606,26 +606,27 @@ emobk_bt = InlineKeyboardMarkup(
 async def emogss_callback(client, query):    
     await query.message.edit_text(
         text=emogs_tx,
-        reply_markup=emobk_bt,
+        reply_markup=emogs_bt,
     )
     await query.answer("😎Gomez Games🎮")
 
 emg2_tx="""
-welcome to **Emoji Guess Game two** 😜
+2️⃣Emoji Guess Game 😜
 
-**Emoji Math Cmd:**
+<blockquote>**Emoji Math Cmd:**
 • `/emoji_math`
 • `/emleaderboard
+
 **Guss Flags Cmd:**
 • `/flgquiz`
 • `/flgprofile`
-• `/flgleaderboard
+• `/flgleaderboard</blockquote>
 """
-emobk2_bt_bt = InlineKeyboardMarkup(
+emogs2_bt = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("Play with Your friends in Chats➕", url=f"http://t.me/GomezGamesbot?startgroup=new")
         ],[
-            InlineKeyboardButton("🔙 Back Menu", callback_data="emg"),
+            InlineKeyboardButton("🔙 Back", callback_data="emg"),
             InlineKeyboardButton("❌", callback_data="close")
         ]]
 
@@ -634,7 +635,7 @@ emobk2_bt_bt = InlineKeyboardMarkup(
 async def emgtw_callback(client, query):    
     await query.message.edit_text(
         text=emg2_tx,
-        reply_markup=emobk2_bt,
+        reply_markup=emogs2_bt,
     )
     await query.answer("😎Gomez Games🎮")
 

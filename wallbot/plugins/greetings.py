@@ -472,7 +472,7 @@ hlp_bt = InlineKeyboardMarkup(
             InlineKeyboardButton("📊QuizMaster-[B]🤖&[G]👥", callback_data="qz_gg"),
             InlineKeyboardButton("🟡2048!", callback_data="248")
         ],[
-            InlineKeyboardButton("😜Emoji-Guss", callback_data="emg"),
+            InlineKeyboardButton("😜Emoji-Guss", callback_data="emog"),
             InlineKeyboardButton("🧮Math-Dual", callback_data="matd")
         ],[
             InlineKeyboardButton("🧠Memory-Tiles", callback_data="mty"),
@@ -602,7 +602,7 @@ emogs_bt = InlineKeyboardMarkup(
         ]]
 
 )
-@app.on_callback_query(filters.regex("^emg$"))
+@app.on_callback_query(filters.regex("^emog$"))
 async def emogss_callback(client, query):    
     await query.message.edit_text(
         text=emogs_tx,
@@ -663,7 +663,7 @@ Good luck!
 @app.on_callback_query(filters.regex("^mty$"))
 async def memotl_callback(client, query):    
     await query.message.edit_text(
-        text=emogs_tx,
+        text=mty_tx,
         reply_markup=bak_bt,
     )
     await query.answer("😎Gomez Games🎮")

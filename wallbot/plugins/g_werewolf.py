@@ -567,8 +567,7 @@ async def cmd_stplart(client, m: Message):
         return await m.reply("No game lobby here. Create with /create", quote=True)
     if len(g.get("players", [])) < 4:
         return await m.reply("Need at least 4 players to start.", quote=True)
-    if m.from_user.id != g.get("owner_id"):
-        return await m.reply("Only the lobby owner can start the game.", quote=True)
+    
     # Assign roles
     assign_roles_to_players(g["players"])
     # Cupid handling

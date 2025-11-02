@@ -30,8 +30,7 @@ async def gpenerate_text(_, message):
     try:
         response = requests.get(url)
         result = response.text.strip()
-        await message.reply_text(f"🧠 *AI Response:*
-{result}")
+        await message.reply_text(f"🧠 *AI Response:*{result}")
     except Exception as e:
         await message.reply_text(f"❌ Error: {e}")
 

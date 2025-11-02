@@ -143,7 +143,7 @@ async def cbexplore(_, m):
     await update_player(user["user_id"], {"gold": user["gold"], "wood": user["wood"], "stone": user["stone"], "buildings": b})
     await m.reply_text(msg)
 
-@app.on_message(filters.command("leaderboard"))
+@app.on_message(filters.command("leaderboardcb"))
 async def leadcberboard(_, m):
     top = players.find().sort("gold", -1).limit(10)
     msg = "🏆 *Top 10 Richest Cities*\n\n"

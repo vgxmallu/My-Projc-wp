@@ -10,8 +10,8 @@ from pyrogram import idle
 from pyrogram import Client
 from wallbot.plugins.g_daily_brain import run_background_tasks
 
-@wbot.on_start()
-async def on_start(client):
+
+async def loop_bc(client):
     client.loop.create_task(run_background_tasks())
     print("✅ Background task started automatically when bot runs.")
     

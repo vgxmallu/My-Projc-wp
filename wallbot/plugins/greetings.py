@@ -603,7 +603,7 @@ emogs_bt = InlineKeyboardMarkup(
 
 )
 @app.on_callback_query(filters.regex("^emog$"))
-async def emogss_callback(client, query):    
+async def emogssbhh_callback(client, query):    
     await query.message.edit_text(
         text=emogs_tx,
         reply_markup=emogs_bt,

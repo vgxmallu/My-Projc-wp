@@ -209,8 +209,3 @@ async def start(_, m):
         "Stay sharp and think daily! 🧩",
         parse_mode="markdown"
     )
-
-
-@app.on_idle()
-async def on_idle():
-    await run_background_tasks()

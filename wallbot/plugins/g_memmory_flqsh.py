@@ -31,7 +31,7 @@ from pyrogram.types import (
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson.objectid import ObjectId
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 load_dotenv()
 
 DB_NAME = os.getenv("DB_NAME", "memory_flash_db")

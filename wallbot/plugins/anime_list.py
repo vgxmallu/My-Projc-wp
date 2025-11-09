@@ -5,7 +5,7 @@ import json
 import asyncio
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from wallbot import wbot as dankbot
+from main import wbot as dankbot
 
 #from thebot.utils.errors import capture_err
 

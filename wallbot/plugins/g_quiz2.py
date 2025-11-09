@@ -29,7 +29,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from pymongo import MongoClient, ASCENDING, DESCENDING
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 from questions4 import QUESTIONS
 # ---------------- Config ----------------
 logging.basicConfig(level=logging.INFO)

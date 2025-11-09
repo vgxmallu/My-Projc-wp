@@ -1,7 +1,7 @@
 import requests
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from wallbot import wbot as app
+from main import wbot as app
 
 # ==============================
 # IMAGE GENERATION

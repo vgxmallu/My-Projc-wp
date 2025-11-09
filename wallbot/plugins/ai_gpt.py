@@ -27,7 +27,7 @@ from pymongo import MongoClient
 import openai
 
 from config import OPENAI_KEY, LOG_CHANNEL, DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 
 MONGO_URI = DB_URL
 DB_NAME = "open_ai"

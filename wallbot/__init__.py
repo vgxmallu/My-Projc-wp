@@ -12,6 +12,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from config import API_ID, API_HASH, BOT_TOKEN, DB_URL, AUTH_CHATS
 from wallbot.plugins.word import load_words, load_common_words
 from wallbot.plugins.g_amungus import cleanup_stale_games
+from wallbot.plugins.g_daily_brain import run_background_tasks
 
 
 # Log
@@ -74,4 +75,9 @@ print(f"Loaded {len(WORD_SET)} words from the word list.")
 
 loop = asyncio.get_event_loop()
 loop.create_task(cleanup_stale_games())
-print("🕵️ INFILTRATOR (Advanced Edition) running...")
+print("🕵️ Amungus INFILTRATOR (Advanced Edition) running...")
+
+loop = asyncio.get_event_loop()
+loop.loop.create_task(run_background_tasks())
+print("✅ Background task started automatically when bot runs.")
+    

@@ -1,9 +1,9 @@
 import random
 from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from wallbot import wbot as word
+from main import wbot as word
 
-from wallbot import WORD_SET, MEAN_WORD_SET
+from main import WORD_SET, MEAN_WORD_SET
 from wallbot.database.db import update_stats, get_stats
 
 

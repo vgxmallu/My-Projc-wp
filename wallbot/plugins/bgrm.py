@@ -16,7 +16,7 @@ from pyrogram.enums import ChatAction, ParseMode
 
 
 
-from wallbot import wbot as app
+from main import wbot as app
 
 
 

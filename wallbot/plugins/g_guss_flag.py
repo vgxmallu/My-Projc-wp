@@ -8,7 +8,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 
 
 DB_NAME = "flag_quiz"

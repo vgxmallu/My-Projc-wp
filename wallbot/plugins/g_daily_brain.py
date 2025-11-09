@@ -5,7 +5,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 
 ADMIN_ID = 784589736
 db = AsyncIOMotorClient(DB_URL)["mindzone_db"]

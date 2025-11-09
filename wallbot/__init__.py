@@ -1,5 +1,5 @@
 
-
+import asyncio, random
 import os
 import logging
 from os import environ, mkdir, path, sys
@@ -11,8 +11,7 @@ from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import API_ID, API_HASH, BOT_TOKEN, DB_URL, AUTH_CHATS
 from wallbot.plugins.word import load_words, load_common_words
-
-
+from wallbot.plugins.g_amungus import cleanup_stale_games
 
 
 # Log
@@ -72,3 +71,7 @@ MEAN_WORD = load_common_words()
 MEAN_WORD_SET = set(MEAN_WORD)
 
 print(f"Loaded {len(WORD_SET)} words from the word list.")
+
+loop = asyncio.get_event_loop()
+loop.create_task(cleanup_stale_games())
+print("🕵️ INFILTRATOR (Advanced Edition) running...")

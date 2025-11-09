@@ -12,7 +12,7 @@ from pyrogram.types import (
 )
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import DB_URL
-from wallbot import wbot as bot
+from main import wbot as bot
 
 # ---------------- DATABASE ---------------- #
 mongo_client = AsyncIOMotorClient(DB_URL)

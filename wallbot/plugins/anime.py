@@ -5,7 +5,7 @@ import aiohttp
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from wallbot import wbot as app
+from main import wbot as app
 from wallbot.utils.human_read import get_readable_time
 
 

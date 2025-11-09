@@ -24,7 +24,7 @@ from pyrogram import Client, filters, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import DB_URL, LOG_CHANNEL
-from wallbot import wbot as app
+from main import wbot as app
 load_dotenv()
 
 DB_NAME = os.getenv("DB_NAME", "math_duel_db")

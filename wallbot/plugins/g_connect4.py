@@ -16,7 +16,7 @@ from pyrogram.types import (
     Message
 )
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 
 
 

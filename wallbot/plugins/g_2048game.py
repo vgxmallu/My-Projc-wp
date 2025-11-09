@@ -4,7 +4,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQ
 from pymongo import MongoClient
 from datetime import datetime
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 from pymongo.errors import PyMongoError
 
 # --- Mongo ---

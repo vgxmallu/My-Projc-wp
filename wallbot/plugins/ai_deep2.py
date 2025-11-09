@@ -3,7 +3,7 @@ import requests
 from pyrogram import Client, filters
 from pyrogram.enums import ParseMode
 from config import OPENROUTER_API_KEY
-from wallbot import wbot as app
+from main import wbot as app
 
 
 SITE_URL = "https://t.me/XBOTS_X"      # Optional

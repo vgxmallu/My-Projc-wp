@@ -25,7 +25,7 @@ from pyrogram import Client, filters, idle
 from pyrogram.types import Message
 import motor.motor_asyncio
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 
 DB_NAME = "owo_db"
 

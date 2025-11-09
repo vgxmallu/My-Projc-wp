@@ -3,7 +3,7 @@ from pyrogram import filters, Client, __version__ as pyro
 from pyrogram.types import *
 
 import requests 
-from wallbot import wbot as bot
+from main import wbot as bot
 
 PM_START_TEXT = """
 **Welcome** {}~kun ฅ(≈>ܫ<≈)

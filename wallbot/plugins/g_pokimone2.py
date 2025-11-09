@@ -26,7 +26,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 import motor.motor_asyncio
 from bson import ObjectId
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 
 DB_NAME = "pokegame_db"
 

@@ -6,7 +6,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 import uuid
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 import asyncio
 
 load_dotenv()

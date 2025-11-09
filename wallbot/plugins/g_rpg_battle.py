@@ -8,7 +8,7 @@ from pymongo import MongoClient, ReturnDocument
 from pyrogram import Client, filters, enums
 from pyrogram.types import Message
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 # ------------------------ CONFIG ------------------------
 DB_NAME = "rpg_bot"
 START_COINS = 200

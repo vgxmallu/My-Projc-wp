@@ -38,7 +38,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, 
 from pymongo import MongoClient, ASCENDING, DESCENDING
 from pymongo.collection import Collection
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 from sports_q import QUESTIONS
 
 

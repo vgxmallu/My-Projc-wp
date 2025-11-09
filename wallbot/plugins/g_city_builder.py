@@ -4,7 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 load_dotenv()
 
 

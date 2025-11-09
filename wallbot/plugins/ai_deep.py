@@ -1,7 +1,7 @@
 import requests
 from pyrogram import Client, filters
 from pyrogram.enums import ParseMode
-from wallbot import wbot as app
+from main import wbot as app
 from config import GROQ_API_KEY
 
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"

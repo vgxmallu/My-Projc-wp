@@ -1,17 +1,20 @@
-from os import mkdir, path
-
-from wallbot import wbot
-
 import asyncio
 import logging
-from pyrogram import idle
+from wallbot import wbot  # Import safely from __init__.py
 
+logging.basicConfig(level=logging.INFO)
+LOGGER = logging.getLogger("WallBot")
 
-from pyrogram import Client
-
+async def main():
+    try:
+        await wbot.start()
+        LOGGER.info("💫 WallBot is running... Press Ctrl+C to stop.")
+        await asyncio.Event().wait()  # Keeps running
+    except KeyboardInterrupt:
+        LOGGER.warning("🛑 Keyboard interrupt received.")
+    finally:
+        await wbot.stop()
+        LOGGER.info("👋 WallBot stopped cleanly.")
 
 if __name__ == "__main__":
-    if not path.exists("cache"):
-        mkdir("cache")
-    wbot().run()
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())

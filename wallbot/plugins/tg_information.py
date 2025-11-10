@@ -3,7 +3,7 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto, InputMediaAnimation
 from pyrogram.enums import ChatType, UserStatus
-from wallbot import wbot as bot
+from main import wbot as bot
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import logging

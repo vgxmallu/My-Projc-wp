@@ -64,4 +64,4 @@ print("✅ Background task started automatically when bot runs.")
     
 
 # Only define the bot — do NOT start it here
-wbot = wbot()
+wbot.start()

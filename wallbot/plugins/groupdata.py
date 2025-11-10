@@ -4,7 +4,7 @@ from asyncio import sleep
 from pyrogram import Client, filters
 from pyrogram import enums
 
-from wallbot import wbot as app
+from main import wbot as app
 
 @app.on_message(~filters.private & filters.command(["groupdata"]), group=2)
 async def instatus(app, message):

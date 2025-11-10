@@ -10,7 +10,7 @@ from wallbot.database.sangmata_db import (
     sangmata_off,
     sangmata_on,
 )
-from wallbot import wbot as app
+from main import wbot as app
 
 
 

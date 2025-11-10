@@ -4,7 +4,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQ
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 DB_NAME = "whisper_db"
 EXPIRE_MINUTES = 30  # whispers auto-delete after 30 minutes
 # ----------------------------------------

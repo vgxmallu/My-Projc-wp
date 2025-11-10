@@ -11,7 +11,7 @@ from pyrogram.types import (
     CallbackQuery,
 )
 from config import DB_URL
-from wallbot import wbot as bot
+from main import wbot as bot
 
 from motor.motor_asyncio import AsyncIOMotorClient
 MONGO_URL = os.getenv("DB_URL")

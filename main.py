@@ -9,9 +9,9 @@ import time
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import API_ID, API_HASH, BOT_TOKEN, DB_URL
-from wallbotg.plugins.word import load_words, load_common_words
-from wallbotg.plugins.g_amungus import cleanup_stale_games
-from wallbotg.plugins.g_daily_brain import run_background_tasks
+from wallbot.plugins.word import load_words, load_common_words
+from wallbot.plugins.g_amungus import cleanup_stale_games
+from wallbot.plugins.g_daily_brain import run_background_tasks
 # Setup logging
 logging.basicConfig(
     level=logging.INFO,

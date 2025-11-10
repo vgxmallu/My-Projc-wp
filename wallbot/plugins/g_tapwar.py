@@ -5,7 +5,7 @@ import motor.motor_asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from config import DB_URL
-from wallbot import wbot as bot
+from main import wbot as bot
 
 
 DB_NAME = "TapWarsDB"

@@ -4,7 +4,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from telegraph import upload_file
 
-from wallbot import wbot as app
+from main import wbot as app
 
 import time
 import string

@@ -19,7 +19,7 @@ logging.basicConfig(
 )
 LOGGER = logging.getLogger("WallBot")
 
-class WallBot(Client):
+class wbot(Client):
     def __init__(self):
         super().__init__(
             "wallbot",
@@ -39,8 +39,6 @@ class WallBot(Client):
         await super().stop()
         LOGGER.info("🛑 Bot stopped cleanly.")
 
-# Only define the bot — do NOT start it here
-wbot = WallBot()
 # ---------------- Database + Word Setup ----------------
 DEV_LIST = [784589736]
 
@@ -64,3 +62,6 @@ loop = asyncio.get_event_loop()
 loop.loop.create_task(run_background_tasks())
 print("✅ Background task started automatically when bot runs.")
     
+
+# Only define the bot — do NOT start it here
+wbot = wbot()

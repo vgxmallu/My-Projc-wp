@@ -2,7 +2,7 @@ import os
 import asyncio
 import pyrogram
 from pyrogram import Client, filters
-from wallbot import wbot as app
+from main import wbot as app
 
 bullets = {
     "bullet1": ">",

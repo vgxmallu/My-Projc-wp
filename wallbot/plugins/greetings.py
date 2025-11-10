@@ -4,7 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import asyncio
 from pyrogram.errors import UserIsBlocked, PeerIdInvalid, ChatWriteForbidden
 from config import DB_URL, LOG_CHANNEL
-from wallbot import wbot as app
+from main import wbot as app
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from pyrogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove
 

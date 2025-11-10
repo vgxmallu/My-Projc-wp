@@ -3,7 +3,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
 from pymongo import MongoClient
 from config import DB_URL
-from wallbot import wbot as app
+from main import wbot as app
 
 mongo = MongoClient(DB_URL)
 db = mongo["tictactoe_bot"]
